@@ -1,0 +1,19 @@
+services:
+  client:
+    build:
+      context: .
+      dockerfile: ./apps/client/client.Dockerfile
+    ports:
+      - '4200:4200'
+  api:
+    build:
+      context: .
+      dockerfile: ./apps/api/api.Dockerfile
+    ports:
+      - '3000:3000'
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
