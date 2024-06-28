@@ -4,10 +4,10 @@ import { User } from './src/app/user/interfaces/user';
 export const typeOrmConfig: DataSourceOptions = {
   type: 'postgres',
   host: 'localhost',
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
   port: 5432,
-  username: 'postgres',
-  password: 'password',
-  database: 'rwa',
   entities: [User],
   synchronize: true,
 };

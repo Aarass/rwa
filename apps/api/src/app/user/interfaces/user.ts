@@ -6,11 +6,17 @@ export class User {
   id: number;
 
   @Column()
-  email: string;
+  username: string;
+
+  @Column()
+  passwordHash: string;
 
   @Column()
   name: string;
 
   @Column()
   surname: string;
+
+  @Column({ nullable: true })
+  refreshToken: string;
 }
