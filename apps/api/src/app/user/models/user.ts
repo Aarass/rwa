@@ -17,6 +17,9 @@ export class User {
   @Column()
   surname: string;
 
+  @Column()
+  birthDate: string;
+
   @Column({ nullable: true })
-  refreshToken: string;
+  refreshTokenHash: string;
 }

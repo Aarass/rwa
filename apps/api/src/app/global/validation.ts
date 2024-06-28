@@ -2,7 +2,9 @@ import {
   PipeTransform,
   ArgumentMetadata,
   BadRequestException,
+  Provider,
 } from '@nestjs/common';
+import { createUserSchema } from '@rwa/shared';
 import { ZodSchema } from 'zod';
 
 export class ZodValidationPipe implements PipeTransform {
@@ -12,7 +14,7 @@ export class ZodValidationPipe implements PipeTransform {
     try {
       return this.schema.parse(value);
     } catch (error) {
-      throw new BadRequestException('Validation failed');
+      throw new BadRequestException(error);
     }
   }
 }

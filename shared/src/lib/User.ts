@@ -6,6 +6,7 @@ export const createUserSchema = z
     password: z.string().min(6),
     name: z.string(),
     surname: z.string(),
+    birthDate: z.string().date(),
   })
   .required();
 

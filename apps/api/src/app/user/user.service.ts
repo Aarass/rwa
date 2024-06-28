@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './models/user';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '@rwa/shared';
+import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { User } from './models/user';
 
 @Injectable()
 export class UserService {
@@ -11,24 +11,44 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>
   ) {}
 
-  getUserById(id: number) {
-    return this.userRepository.findOne({
+  async getUserById(id: number) {
+    const user: User | null = await this.userRepository.findOne({
       where: {
         id: id,
       },
     });
+
+    return user;
   }
 
-  getUserByUsername(username: string) {
-    return this.userRepository.findOne({
+  async getUserByUsername(username: string) {
+    const user: User | null = await this.userRepository.findOne({
       where: {
         username: username,
       },
     });
+
+    return user;
   }
 
-  getAllUsers() {
-    return this.userRepository.find();
+  async getAllUsers() {
+    const users: User[] = await this.userRepository.find();
+
+    return users;
+  }
+
+  async setUserRefreshToken(userId: number, refreshToken: string) {
+    const user = await this.getUserById(userId);
+
+    if (user == null) {
+      console.error('User not found');
+      return new NotFoundException();
+    }
+
+    user.refreshTokenHash = await bcrypt.hash(refreshToken, 10);
+    await this.userRepository.update(userId, user);
+
+    return true;
   }
 
   async createUser(newUser: CreateUserDto) {
@@ -37,8 +57,12 @@ export class UserService {
       passwordHash: await bcrypt.hash(newUser.password, 10),
       name: newUser.name,
       surname: newUser.surname,
+      birthDate: newUser.birthDate,
     });
-    this.userRepository.save(user);
+
+    await this.userRepository.insert(user);
+
+    return user;
   }
 
   async deleteUserById(id: number) {
