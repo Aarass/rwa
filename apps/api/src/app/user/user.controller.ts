@@ -1,14 +1,15 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
+  UsePipes,
 } from '@nestjs/common';
+import { CreateUserDto, createUserSchema } from '@rwa/shared';
 import { UserService } from './user.service';
-import { NewUserDto } from '@rwa/shared';
+import { ZodValidationPipe } from '../global/validation';
 
 @Controller('user')
 export class UserController {
@@ -25,7 +26,8 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() newUser: NewUserDto) {
+  @UsePipes(new ZodValidationPipe(createUserSchema))
+  createUser(@Body() newUser: CreateUserDto) {
     return this.userService.createUser(newUser);
   }
 

@@ -1,1 +1,1 @@
-export * from './lib/UserDto';
+export * from './lib/User';

@@ -1,5 +1,5 @@
 import { DataSourceOptions } from 'typeorm';
-import { User } from './src/app/user/interfaces/user';
+import { User } from './src/app/user/models/user';
 
 export const typeOrmConfig: DataSourceOptions = {
   type: 'postgres',

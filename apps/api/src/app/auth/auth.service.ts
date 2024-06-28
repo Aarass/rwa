@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../user/models/user';
 
 @Injectable()
 export class AuthService {
@@ -25,23 +26,22 @@ export class AuthService {
     return result;
   }
 
-  async createAccessToken() {
-    return await this.jwtService.signAsync(
-      {},
-      {
-        expiresIn: '1h',
-        secret: process.env.JWT_SECRET,
-      }
-    );
+  async login(user: User) {
+    const payload = { username: user.username, sub: user.id };
+    return {
+      access_token: await this.createAccessToken(payload),
+    };
   }
 
-  async createRefreshToken() {
-    return await this.jwtService.signAsync(
-      {},
-      {
-        expiresIn: '7d',
-        secret: process.env.JWT_SECRET,
-      }
-    );
+  async createAccessToken(payload: any) {
+    return await this.jwtService.signAsync(payload, {
+      expiresIn: '1h',
+    });
+  }
+
+  async createRefreshToken(payload: any) {
+    return await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
   }
 }
