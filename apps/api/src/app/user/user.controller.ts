@@ -5,15 +5,25 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
   UsePipes,
 } from '@nestjs/common';
 import { CreateUserDto, createUserSchema } from '@rwa/shared';
-import { UserService } from './user.service';
+import { ExtractUser } from '../auth/decorators/user.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
+import { User } from './models/user';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getMe(@ExtractUser() user: User) {
+    return user;
+  }
 
   @Get()
   getUsers() {

@@ -1,6 +1,17 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccessToken, CreateUserDto, RefreshToken } from '@rwa/shared';
+import {
+  AccessToken,
+  AccessTokenPayload,
+  CreateUserDto,
+  RefreshToken,
+  RefreshTokenPayload,
+} from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user/models/user';
 import { UserService } from '../user/user.service';
@@ -12,7 +23,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async validateUser(username: string, password: string) {
+  async getUserWithCredentials(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username);
     if (user == null) {
       return null;
@@ -23,24 +34,31 @@ export class AuthService {
       return null;
     }
 
-    const { passwordHash, ...result } = user;
-    return result;
+    return user;
   }
 
-  async createSession(user: User) {
+  // async getMe(accessToken: AccessToken): Promise<User> {
+  //   const payload: AccessTokenPayload = this.jwtService.verify(accessToken);
+
+  //   const user = await this.userService.getUserById(payload.sub);
+
+  //   if (user == null) {
+  //     // Kapiram da ovo moze da se desi ako se user izbrise, u drugim slucajevima mislim da je bug
+  //     console.error(`Couldn't find user with id found in refresh token\n`);
+  //     throw new InternalServerErrorException();
+  //   }
+
+  //   return user;
+  // }
+
+  async login(user: User) {
     const accessToken = await this.createAccessToken({
       username: user.username,
       sub: user.id,
     });
+
     const refreshToken = await this.createRefreshToken({ sub: user.id });
-
-    if (accessToken == null || refreshToken == null) {
-      const err = new Error(`Couldn't create tokens`);
-      console.error(err);
-      throw new InternalServerErrorException(err);
-    }
-
-    await this.userService.setUserRefreshToken(user.id, refreshToken);
+    await this.saveRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
   }
@@ -49,31 +67,71 @@ export class AuthService {
     return await this.userService.createUser(newUser);
   }
 
-  async refreshSession(
+  async refresh(
     refreshToken: RefreshToken
-  ): Promise<{ newAccessToken: AccessToken; newRefreshToken: RefreshToken }> {}
+  ): Promise<{ newAccessToken: AccessToken; newRefreshToken: RefreshToken }> {
+    const payload: RefreshTokenPayload = this.jwtService.verify(refreshToken);
 
-  async createAccessToken(payload: any) {
-    try {
-      const access_token = await this.jwtService.signAsync(payload, {
-        expiresIn: '10m',
-      });
-      return access_token;
-    } catch (err) {
-      console.error(err);
-      return null;
+    const user = await this.userService.getUserById(payload.sub);
+
+    if (user == null) {
+      // Kapiram da ovo moze da se desi ako se user izbrise, u drugim slucajevima mislim da je bug
+      console.error(`Couldn't find user with id found in refresh token\n`);
+      throw new InternalServerErrorException();
     }
+
+    const tokenIsValid = await bcrypt.compare(
+      refreshToken,
+      user.refreshTokenHash
+    );
+
+    if (!tokenIsValid) {
+      console.error(
+        `User attempted to use refresh token which is not present in db`
+      );
+
+      this.revokeRefreshToken(user.id);
+      throw new ForbiddenException();
+    }
+
+    const newAccessToken = await this.createAccessToken({
+      sub: user.id,
+      username: user.username,
+    });
+
+    const newRefreshToken = await this.createRefreshToken({
+      sub: user.id,
+    });
+
+    await this.saveRefreshToken(user.id, newRefreshToken);
+
+    return { newAccessToken, newRefreshToken };
   }
 
-  async createRefreshToken(payload: any) {
-    try {
-      const refresh_token = await this.jwtService.signAsync(payload, {
-        expiresIn: '7d',
-      });
-      return refresh_token;
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
+  async logout(refreshToken: RefreshToken) {
+    const payload: RefreshTokenPayload = this.jwtService.verify(refreshToken);
+    await this.revokeRefreshToken(payload.sub);
+  }
+
+  private async saveRefreshToken(userId: number, refreshToken: RefreshToken) {
+    this.userService.setUserRefreshToken(userId, refreshToken);
+  }
+
+  private async revokeRefreshToken(userId: number) {
+    this.userService.setUserRefreshToken(userId, '');
+  }
+
+  private async createAccessToken(payload: AccessTokenPayload) {
+    const access_token = await this.jwtService.signAsync(payload, {
+      expiresIn: '10m',
+    });
+    return access_token;
+  }
+
+  private async createRefreshToken(payload: RefreshTokenPayload) {
+    const refresh_token = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
+    return refresh_token;
   }
 }

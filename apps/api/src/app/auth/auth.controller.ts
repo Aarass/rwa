@@ -1,7 +1,7 @@
 import {
   Body,
   Controller,
-  InternalServerErrorException,
+  HttpCode,
   Post,
   Req,
   Res,
@@ -20,8 +20,9 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
+  @HttpCode(200)
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken } = await this.authService.createSession(
+    const { accessToken, refreshToken } = await this.authService.login(
       req.user
     );
 
@@ -34,24 +35,40 @@ export class AuthController {
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request) {
+  @HttpCode(200)
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
     const refreshToken = req.cookies['refresh_token'];
-    const { newAccessToken, newRefreshToken } =
-      this.authService.refreshSession(refreshToken);
+    const { newAccessToken, newRefreshToken } = await this.authService.refresh(
+      refreshToken
+    );
+
+    res.cookie('refresh_token', newRefreshToken, {
+      secure: true,
+      httpOnly: true,
+    });
+
+    return newAccessToken;
+  }
+
+  @Post('logout')
+  @HttpCode(200)
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refresh_token'];
+    this.authService.logout(refreshToken);
+
+    res.cookie('refresh_token', null, {
+      secure: true,
+      httpOnly: true,
+    });
   }
 
   @Post('register')
+  @HttpCode(200)
   @UsePipes(new ZodValidationPipe(createUserSchema))
   async register(@Body() newUser: CreateUserDto) {
     return await this.authService.register(newUser);
   }
-
-  // @UseGuards(JwtAuthGuard)
-  // @Get('profile')
-  // getProfile(user: any, @Request() req, @Body() body) {
-  //   return {
-  //     user: req.user,
-  //     body: body,
-  //   };
-  // }
 }
