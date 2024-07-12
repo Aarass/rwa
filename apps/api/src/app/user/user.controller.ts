@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
@@ -12,37 +14,42 @@ import { CreateUserDto, createUserSchema } from '@rwa/shared';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
-import { User } from './models/user';
 import { UserService } from './user.service';
+import { User } from '../models/user';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
+
+  @Get('')
+  async getUsers() {
+    return await this.userService.getAllUsers();
+  }
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getMe(@ExtractUser() user: User) {
-    return user;
-  }
-
-  @Get()
-  getUsers() {
-    return this.userService.getAllUsers();
+  async getMe(@ExtractUser() user: User) {
+    return await this.userService.getUserById(user.id);
   }
 
   @Get(':id')
-  getUser(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.getUserById(id);
+  async getUser(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getUserById(id);
   }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createUserSchema))
-  createUser(@Body() newUser: CreateUserDto) {
-    return this.userService.createUser(newUser);
+  async createUser(@Body() newUser: CreateUserDto) {
+    return await this.userService.createUser(newUser);
   }
 
-  @Get(':id')
-  deleteUser(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.deleteUserById(id);
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteUser(@ExtractUser() user: User, @Param('id', ParseIntPipe) id: number) {
+    if (id != user.id) {
+      throw new UnauthorizedException();
+    }
+    return await this.userService.deleteUserById(id);
   }
 }
+

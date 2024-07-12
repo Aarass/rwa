@@ -2,7 +2,6 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -13,15 +12,15 @@ import {
   RefreshTokenPayload,
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
-import { User } from '../user/models/user';
 import { UserService } from '../user/user.service';
+import { User } from '../models/user';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService
-  ) {}
+  ) { }
 
   async getUserWithCredentials(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username);
@@ -123,7 +122,7 @@ export class AuthService {
 
   private async createAccessToken(payload: AccessTokenPayload) {
     const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '10m',
+      expiresIn: '100m',
     });
     return access_token;
   }

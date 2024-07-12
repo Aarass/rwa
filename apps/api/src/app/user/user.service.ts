@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { User } from './models/user';
+import { User } from '../models/user';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async getUserById(id: number) {
     const user: User | null = await this.userRepository.findOne({
@@ -53,11 +53,8 @@ export class UserService {
 
   async createUser(newUser: CreateUserDto) {
     let user: User = this.userRepository.create({
-      username: newUser.username,
+      ...newUser,
       passwordHash: await bcrypt.hash(newUser.password, 10),
-      name: newUser.name,
-      surname: newUser.surname,
-      birthDate: newUser.birthDate,
     });
 
     await this.userRepository.insert(user);
