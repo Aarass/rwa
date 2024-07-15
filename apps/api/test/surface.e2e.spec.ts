@@ -2,7 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CreateSportDto } from '@rwa/shared';
+import { CreateSurfaceDto } from '@rwa/shared';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppointmentModule } from '../src/app/appointment/appointment.module';
@@ -13,7 +13,7 @@ import { Sport } from '../src/entities/sport';
 import { testDatabaseTypeOrmConfig } from '../typeorm.config';
 
 // dataSource = moduleRef.get<DataSource>(getDataSourceToken());
-describe.skip('Sport e2e', () => {
+describe.only('Surface e2e', () => {
   let app: INestApplication;
   let server: App;
 
@@ -35,16 +35,15 @@ describe.skip('Sport e2e', () => {
     server = app.getHttpServer();
   });
 
-  describe(`/POST sport`, () => {
-    test('should create sport', async () => {
-      const newSport: CreateSportDto = {
-        name: 'Fudbal',
-        iconUrl: './icon.png'
+  describe(`/POST surface`, () => {
+    test('should create surface', async () => {
+      const newSurface: CreateSurfaceDto = {
+        name: 'Trava',
       }
 
       const res = await request(server)
-        .post('/sports')
-        .send(newSport)
+        .post('/surfaces')
+        .send(newSurface)
         .expect(201)
 
 
@@ -55,17 +54,3 @@ describe.skip('Sport e2e', () => {
     await app.close();
   });
 });
-
-
-export const createSport = async function (server: App, name: string) {
-  const newSport: CreateSportDto = {
-    name,
-    iconUrl: './icon.png',
-  }
-
-  const response = await request(server)
-    .post('/sports')
-    .send(newSport)
-
-  return response.body as Sport;
-}

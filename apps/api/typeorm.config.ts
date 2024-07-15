@@ -4,10 +4,10 @@ import { DataSourceOptions } from 'typeorm';
 export const typeOrmConfig: DataSourceOptions = {
   type: 'postgres',
   host: 'localhost',
+  port: 5432,
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  port: 5432,
   entities: ["apps/api/src/entities/*.ts"],
   synchronize: true,
 };

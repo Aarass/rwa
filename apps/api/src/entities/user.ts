@@ -1,9 +1,9 @@
-import { Exclude } from 'class-transformer';
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Appointment } from './appointment';
-import { UserPlaysSport } from './user-plays-sport';
-import { Participation } from './participation';
-import { Rating } from './rating';
+import { Exclude } from "class-transformer";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Appointment } from "./appointment";
+import { Participation } from "./participation";
+import { Rating } from "./rating";
+import { UserPlaysSport } from "./user-plays-sport";
 
 @Entity()
 export class User {

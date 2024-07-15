@@ -9,7 +9,16 @@ export class SportService {
     @InjectRepository(Sport) private sportRepository: Repository<Sport>,
   ) { }
 
-  getAllSports() {
-    return this.sportRepository.find();
+  async createSport(name: string, iconUrl: string) {
+    const sport = this.sportRepository.create({
+      name,
+      iconUrl
+    });
+
+    return await this.sportRepository.save(sport);
+  }
+
+  async getAllSports() {
+    return await this.sportRepository.find();
   }
 }

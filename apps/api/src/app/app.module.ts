@@ -7,6 +7,7 @@ import { SportModule } from './sport/sport.module';
 import { UserModule } from './user/user.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { UpsModule } from './ups/ups.module';
+import { SurfaceModule } from './surface/surface.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UpsModule } from './ups/ups.module';
     UserModule,
     AppointmentModule,
     UpsModule,
+    SurfaceModule,
   ],
   controllers: [],
   providers: [],

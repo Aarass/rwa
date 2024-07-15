@@ -12,6 +12,7 @@ import { AppointmentModule } from '../src/app/appointment/appointment.module';
 import { testDatabaseTypeOrmConfig } from '../typeorm.config';
 import { registerAndLogin } from './auth.e2e.spec';
 import { DataSource } from 'typeorm';
+import { createSport } from './sport.e2e.spec';
 
 // dataSource = moduleRef.get<DataSource>(getDataSourceToken());
 describe.skip('Appointment e2e', () => {
@@ -63,6 +64,8 @@ describe.skip('Appointment e2e', () => {
         .auth(accessToken, { type: "bearer" })
         .send(newAppointment)
         .expect(400)
+
+      const sport = await createSport(server, 'fudbal');
 
 
     });
