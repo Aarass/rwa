@@ -21,7 +21,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
-  async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async login(@Req() req: any, @Res({ passthrough: true }) res: Response) {
     const { accessToken, refreshToken } = await this.authService.login(
       req.user
     );
@@ -31,7 +31,7 @@ export class AuthController {
       httpOnly: true,
     });
 
-    return accessToken;
+    return { accessToken };
   }
 
   @Post('refresh')

@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserPlaysSport } from "./user-plays-sport";
+import { Appointment } from "./appointment";
 
 @Entity()
 export class Sport {
@@ -15,4 +16,6 @@ export class Sport {
   @OneToMany(() => UserPlaysSport, (ups) => ups.sport)
   usersPlayingMe: UserPlaysSport[]
 
+  @OneToMany(() => Appointment, (appointment) => appointment.sport)
+  appointments: Appointment[]
 }

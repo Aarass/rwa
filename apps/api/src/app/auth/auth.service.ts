@@ -13,7 +13,7 @@ import {
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
-import { User } from '../models/user';
+import { User } from '../../entities/user';
 
 @Injectable()
 export class AuthService {

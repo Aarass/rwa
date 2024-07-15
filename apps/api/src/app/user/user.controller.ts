@@ -7,15 +7,14 @@ import {
   ParseIntPipe,
   Post,
   UnauthorizedException,
-  UseGuards,
-  UsePipes,
+  UseGuards
 } from '@nestjs/common';
 import { CreateUserDto, createUserSchema } from '@rwa/shared';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
 import { UserService } from './user.service';
-import { User } from '../models/user';
+import { User } from '../../entities/user';
 
 @Controller('users')
 export class UserController {
@@ -38,8 +37,7 @@ export class UserController {
   }
 
   @Post()
-  @UsePipes(new ZodValidationPipe(createUserSchema))
-  async createUser(@Body() newUser: CreateUserDto) {
+  async createUser(@Body(new ZodValidationPipe(createUserSchema)) newUser: CreateUserDto) {
     return await this.userService.createUser(newUser);
   }
 

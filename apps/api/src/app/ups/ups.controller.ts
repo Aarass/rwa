@@ -3,8 +3,8 @@ import { AddSportToUserDto, addSportToUserSchema } from '@rwa/shared';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
-import { User } from '../models/user';
 import { UpsService } from './ups.service';
+import { User } from '../../entities/user';
 
 @Controller('ups')
 export class UpsController {
@@ -29,7 +29,7 @@ export class UpsController {
     try {
       return await this.upsService.addSportToUser(addSportToUserDto.sportId, user.id, addSportToUserDto.selfRating);
     }
-    catch (err) {
+    catch (err: any) {
       if (err.code != undefined) {
         if (err.code == 23505) {
           console.log('Duplicate')
