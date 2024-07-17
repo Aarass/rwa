@@ -1,39 +1,38 @@
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { request } from 'http';
+import { Test, TestingModule } from '@nestjs/testing';
 import { App } from 'supertest/types';
-import { CreateSurfaceDto } from '../../../shared/src';
 import { TestModule } from '../src/app/test/test.module';
+import { testAppointment } from './appointment.e2e';
+import { testAuth } from './auth.e2e';
+import { testSport } from './sport.e2e';
+import { testSurface } from './surface.e2e';
+import { testUser } from './user.e2e';
 
-describe.only('e2e tests', () => {
-  let app: INestApplication;
+describe('e2e tests', () => {
   let server: App;
+  let moduleRef: TestingModule;
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
+    moduleRef = await Test.createTestingModule({
       imports: [TestModule],
     }).compile();
 
-    app = moduleRef.createNestApplication();
+    let app = moduleRef.createNestApplication();
     await app.init();
 
     server = app.getHttpServer();
   });
 
-  describe(`/POST surface`, () => {
-    test('should create surface', async () => {
-      const newSurface: CreateSurfaceDto = {
-        name: 'Trava',
-      };
+  const getServer = () => {
+    return server;
+  };
 
-      const res = await request(server)
-        .post('/surfaces')
-        .send(newSurface)
-        .expect(201);
-    });
-  });
+  testUser(getServer);
+  testAuth(getServer);
+  testSport(getServer);
+  testSurface(getServer);
+  testAppointment(getServer);
 
   afterAll(async () => {
-    await app.close();
+    moduleRef.close();
   });
 });

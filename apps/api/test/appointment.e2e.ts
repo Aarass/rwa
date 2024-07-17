@@ -1,30 +1,13 @@
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { CreateAppointmentDto } from '@rwa/shared';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { TestModule } from '../src/app/test/test.module';
-import { registerAndLogin } from './auth.e2e.spec';
-import { createSport } from './sport.e2e.spec';
+import { CreateAppointmentDto } from '../../../shared/src';
+import { registerAndLogin } from './auth.e2e';
+import { createSport } from './sport.e2e';
 
-// dataSource = moduleRef.get<DataSource>(getDataSourceToken());
-describe.only('Appointment e2e', () => {
-  let app: INestApplication;
-  let server: App;
-
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [TestModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-
-    server = app.getHttpServer();
-  });
-
+export function testAppointment(getServer: () => App) {
   describe(`/POST appointment`, () => {
     test('should register, login and create appointment', async () => {
+      const server = getServer();
       const accessToken = await registerAndLogin(server);
 
       const newAppointment: CreateAppointmentDto = {
@@ -54,8 +37,4 @@ describe.only('Appointment e2e', () => {
       const sport = await createSport(server, 'fudbal');
     });
   });
-
-  // afterAll(async () => {
-  //   await app.close();
-  // });
-});
+}

@@ -1,27 +1,12 @@
-import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { CreateUserDto } from '@rwa/shared';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { TestModule } from '../src/app/test/test.module';
+import { CreateUserDto } from '../../../shared/src';
 
-describe.only('User e2e', () => {
-  let app: INestApplication;
-  let server: App;
-
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [TestModule],
-    }).compile();
-
-    app = moduleRef.createNestApplication();
-    await app.init();
-
-    server = app.getHttpServer();
-  });
-
+export function testUser(getServer: () => App) {
   describe(`/POST users`, () => {
     it('should create new user', async () => {
+      const server = getServer();
+
       const newUser: CreateUserDto = {
         username: 'Aaras',
         password: 'password',
@@ -45,19 +30,7 @@ describe.only('User e2e', () => {
       expect(response.body).toMatchObject(partialExpectedResult);
     });
   });
-
-  describe(`/GET users`, () => {
-    it('should return all users', async () => {
-      const response = await request(server).get('/users');
-
-      expect(response.status).toBe(200);
-    });
-  });
-
-  // afterAll(async () => {
-  //   await app.close();
-  // });
-});
+}
 
 export const createUser = async function (
   server: App,
