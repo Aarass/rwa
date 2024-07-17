@@ -1,12 +1,11 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { CreateSurfaceDto } from '@rwa/shared';
-import request from 'supertest';
+import { request } from 'http';
 import { App } from 'supertest/types';
+import { CreateSurfaceDto } from '../../../shared/src';
 import { TestModule } from '../src/app/test/test.module';
 
-// dataSource = moduleRef.get<DataSource>(getDataSourceToken());
-describe.only('Surface e2e', () => {
+describe.only('e2e tests', () => {
   let app: INestApplication;
   let server: App;
 
@@ -34,7 +33,7 @@ describe.only('Surface e2e', () => {
     });
   });
 
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+  afterAll(async () => {
+    await app.close();
+  });
 });

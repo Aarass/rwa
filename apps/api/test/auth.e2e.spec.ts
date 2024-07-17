@@ -1,31 +1,17 @@
 import { INestApplication } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import request from 'supertest';
 import { App } from 'supertest/types';
-
-import { AuthModule } from '../src/app/auth/auth.module'
-import { UserModule } from '../src/app/user/user.module';
-import { SportModule } from '../src/app/sport/sport.module';
-import { AppointmentModule } from '../src/app/appointment/appointment.module';
-import { testDatabaseTypeOrmConfig } from '../typeorm.config';
+import { TestModule } from '../src/app/test/test.module';
 import { createUser } from './user.e2e.spec';
 
-describe.skip('User e2e', () => {
+describe.only('User e2e', () => {
   let app: INestApplication;
   let server: App;
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
-        TypeOrmModule.forRoot(testDatabaseTypeOrmConfig),
-        AuthModule,
-        SportModule,
-        UserModule,
-        AppointmentModule,
-      ],
+      imports: [TestModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
@@ -72,14 +58,12 @@ export const registerAndLogin = async function (server: App) {
 
   await createUser(server, username, password);
 
-  const response = await request(server)
-    .post('/auth/login')
-    .send({
-      username,
-      password,
-    })
+  const response = await request(server).post('/auth/login').send({
+    username,
+    password,
+  });
 
   const accessToken = response.body.accessToken as string;
 
   return accessToken;
-}
+};

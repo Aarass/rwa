@@ -7,14 +7,20 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { User } from '../../entities/user';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    JwtModule.register({ secret: process.env.JWT_SECRET }),
+    JwtModule.registerAsync({
+      useFactory: async () => {
+        await ConfigModule.envVariablesLoaded;
+        return { secret: process.env.JWT_SECRET };
+      },
+    }),
     UserModule,
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -5,10 +5,13 @@ import { SurfaceService } from './surface.service';
 
 @Controller('surfaces')
 export class SurfaceController {
-  constructor(private surfaceService: SurfaceService) { }
+  constructor(private surfaceService: SurfaceService) {}
 
   @Post()
-  async createSurface(@Body(new ZodValidationPipe(createSurfaceSchema)) newSurface: CreateSurfaceDto) {
+  async createSurface(
+    @Body(new ZodValidationPipe(createSurfaceSchema))
+    newSurface: CreateSurfaceDto
+  ) {
     return await this.surfaceService.createSurface(newSurface.name);
   }
 }
