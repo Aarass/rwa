@@ -13,10 +13,21 @@ import { Request, Response } from 'express';
 import { ZodValidationPipe } from '../global/validation';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { ExtractUser } from './decorators/user.decorator';
+import { User } from '../../entities/user';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
+
+  @Post('register')
+  @HttpCode(200)
+  async register(
+    @Body(new ZodValidationPipe(createUserSchema)) newUser: CreateUserDto
+  ) {
+    await this.authService.register(newUser);
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -65,10 +76,10 @@ export class AuthController {
     });
   }
 
-  @Post('register')
+  @Post('test')
   @HttpCode(200)
-  @UsePipes(new ZodValidationPipe(createUserSchema))
-  async register(@Body() newUser: CreateUserDto) {
-    return await this.authService.register(newUser);
+  @UseGuards(JwtAuthGuard)
+  test(@ExtractUser() user: User) {
+    return user;
   }
 }

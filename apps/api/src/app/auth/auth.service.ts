@@ -20,7 +20,7 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService
-  ) { }
+  ) {}
 
   async getUserWithCredentials(username: string, password: string) {
     const user = await this.userService.getUserByUsername(username);
@@ -59,11 +59,15 @@ export class AuthService {
     const refreshToken = await this.createRefreshToken({ sub: user.id });
     await this.saveRefreshToken(user.id, refreshToken);
 
+    console.log('in login', refreshToken);
+
     return { accessToken, refreshToken };
   }
 
   async register(newUser: CreateUserDto) {
-    return await this.userService.createUser(newUser);
+    const user = await this.userService.createUser(newUser);
+    const refreshToken = await this.createRefreshToken({ sub: user.id });
+    await this.saveRefreshToken(user.id, refreshToken);
   }
 
   async refresh(
@@ -79,6 +83,9 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
 
+    console.log('rt hash', user.refreshTokenHash);
+
+    console.log(user);
     const tokenIsValid = await bcrypt.compare(
       refreshToken,
       user.refreshTokenHash
@@ -113,11 +120,11 @@ export class AuthService {
   }
 
   private async saveRefreshToken(userId: number, refreshToken: RefreshToken) {
-    this.userService.setUserRefreshToken(userId, refreshToken);
+    await this.userService.setUserRefreshToken(userId, refreshToken);
   }
 
   private async revokeRefreshToken(userId: number) {
-    this.userService.setUserRefreshToken(userId, '');
+    await this.userService.setUserRefreshToken(userId, '');
   }
 
   private async createAccessToken(payload: AccessTokenPayload) {

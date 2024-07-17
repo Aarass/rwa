@@ -9,7 +9,7 @@ import { User } from '../../entities/user';
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>
-  ) { }
+  ) {}
 
   async getUserById(id: number) {
     const user: User | null = await this.userRepository.findOne({
@@ -46,7 +46,10 @@ export class UserService {
     }
 
     user.refreshTokenHash = await bcrypt.hash(refreshToken, 10);
-    await this.userRepository.update(userId, user);
+    console.log('hash', user.refreshTokenHash);
+    // await this.userRepository.update(userId, user);
+    const updatedUser = await this.userRepository.save(user);
+    console.log(updatedUser);
 
     return true;
   }

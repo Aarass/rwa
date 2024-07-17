@@ -6,6 +6,8 @@ import { testAuth } from './auth.e2e';
 import { testSport } from './sport.e2e';
 import { testSurface } from './surface.e2e';
 import { testUser } from './user.e2e';
+import cookieParser from 'cookie-parser';
+import { GlobalInterceptor } from '../src/app/global/global.interceptor';
 
 describe('e2e tests', () => {
   let server: App;
@@ -17,6 +19,8 @@ describe('e2e tests', () => {
     }).compile();
 
     let app = moduleRef.createNestApplication();
+    app.use(cookieParser());
+    app.useGlobalInterceptors(new GlobalInterceptor());
     await app.init();
 
     server = app.getHttpServer();
