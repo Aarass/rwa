@@ -57,9 +57,7 @@ export class AuthService {
     });
 
     const refreshToken = await this.createRefreshToken({ sub: user.id });
-    await this.saveRefreshToken(user.id, refreshToken);
-
-    console.log('in login', refreshToken);
+    await this.setRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
   }
@@ -67,13 +65,19 @@ export class AuthService {
   async register(newUser: CreateUserDto) {
     const user = await this.userService.createUser(newUser);
     const refreshToken = await this.createRefreshToken({ sub: user.id });
-    await this.saveRefreshToken(user.id, refreshToken);
+    await this.setRefreshToken(user.id, refreshToken);
   }
 
   async refresh(
     refreshToken: RefreshToken
   ): Promise<{ newAccessToken: AccessToken; newRefreshToken: RefreshToken }> {
-    const payload: RefreshTokenPayload = this.jwtService.verify(refreshToken);
+    let payload: RefreshTokenPayload;
+    try {
+      payload = this.jwtService.verify(refreshToken);
+    } catch (e) {
+      console.error('Invalid token');
+      throw new ForbiddenException();
+    }
 
     const user = await this.userService.getUserById(payload.sub);
 
@@ -83,9 +87,11 @@ export class AuthService {
       throw new InternalServerErrorException();
     }
 
-    console.log('rt hash', user.refreshTokenHash);
+    if (user.refreshTokenHash == null) {
+      console.error(`User has no refresh token stored in db`);
+      throw new ForbiddenException();
+    }
 
-    console.log(user);
     const tokenIsValid = await bcrypt.compare(
       refreshToken,
       user.refreshTokenHash
@@ -93,10 +99,10 @@ export class AuthService {
 
     if (!tokenIsValid) {
       console.error(
-        `User attempted to use refresh token which is not present in db`
+        `User attempted to use different refresh token than the one stored in db`
       );
 
-      this.revokeRefreshToken(user.id);
+      await this.revokeRefreshToken(user.id);
       throw new ForbiddenException();
     }
 
@@ -109,7 +115,7 @@ export class AuthService {
       sub: user.id,
     });
 
-    await this.saveRefreshToken(user.id, newRefreshToken);
+    await this.setRefreshToken(user.id, newRefreshToken);
 
     return { newAccessToken, newRefreshToken };
   }
@@ -119,7 +125,7 @@ export class AuthService {
     await this.revokeRefreshToken(payload.sub);
   }
 
-  private async saveRefreshToken(userId: number, refreshToken: RefreshToken) {
+  private async setRefreshToken(userId: number, refreshToken: RefreshToken) {
     await this.userService.setUserRefreshToken(userId, refreshToken);
   }
 
@@ -135,9 +141,15 @@ export class AuthService {
   }
 
   private async createRefreshToken(payload: RefreshTokenPayload) {
-    const refresh_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '7d',
-    });
+    const refresh_token = await this.jwtService.signAsync(
+      // { ...payload, shake: Math.random() },
+      payload,
+      {
+        expiresIn: '7d',
+      }
+    );
+
+    console.log(this.jwtService.decode(refresh_token), refresh_token);
     return refresh_token;
   }
 }

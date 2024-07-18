@@ -1,9 +1,10 @@
-import { Exclude } from "class-transformer";
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Appointment } from "./appointment";
-import { Participation } from "./participation";
-import { Rating } from "./rating";
-import { UserPlaysSport } from "./user-plays-sport";
+import { Exclude } from 'class-transformer';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Appointment } from './appointment';
+import { Participation } from './participation';
+import { Rating } from './rating';
+import { UserPlaysSport } from './user-plays-sport';
+import { string } from 'zod';
 
 @Entity()
 export class User {
@@ -31,14 +32,14 @@ export class User {
 
   // TODO
   @Column()
-  city: string
+  city: string;
 
-  @Column({ nullable: true })
-  biography: string;
+  @Column({ type: 'varchar', nullable: true })
+  biography: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
-  refreshTokenHash: string;
+  refreshTokenHash: string | null;
 
   @OneToMany(() => Appointment, (appointment) => appointment.organizer)
   organizedAppointments: Appointment[];
@@ -47,7 +48,7 @@ export class User {
   sportsIPlay: UserPlaysSport[];
 
   @OneToMany(() => Participation, (participation) => participation.user)
-  participations: Participation[]
+  participations: Participation[];
 
   @OneToMany(() => Rating, (rating) => rating.userRated)
   usersWhichRatedMe: Rating[];

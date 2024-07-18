@@ -4,7 +4,11 @@ import { RegisterUserDto } from '../../../shared/src';
 import { createUser } from './user.e2e';
 
 export function testAuth(getServer: () => App) {
-  describe.only(`/POST auth`, () => {
+  describe(`/POST auth`, () => {
+    beforeEach(async () => {
+      await new Promise((r) => setTimeout(r, 1000));
+    });
+
     it('should register new user', async () => {
       const server = getServer();
 
@@ -65,14 +69,69 @@ export function testAuth(getServer: () => App) {
         .expect(200);
     });
 
+    let newAccessToken: string, newRefreshToken: string;
+
     it('should return new access token and set new refresh token', async () => {
       const server = getServer();
 
-      const req = request(server)
+      const response = await request(server)
         .post('/auth/refresh')
-        .set('Cookie', [`refresh_token=${refreshToken}`]);
+        .set('Cookie', [`refresh_token=${refreshToken}`])
+        .expect(200);
 
-      const response = await req;
+      expect(response).toHaveProperty('body');
+      expect(response.body).toHaveProperty('accessToken');
+      expect(response.body.accessToken).not.toBeNull();
+
+      const cookies = response.get('Set-Cookie');
+      expect(cookies).not.toBeUndefined();
+      expect(cookies![0]).not.toBeUndefined();
+      expect(cookies![0]).toMatch(/^refresh_token=/);
+      const cookie = cookies![0];
+
+      newAccessToken = response.body.accessToken;
+      newRefreshToken = cookie.substring(14).slice(0, cookie.length - 14 - 26);
+    });
+
+    it('should be able to use new access token', async () => {
+      const server = getServer();
+      await request(server)
+        .post('/auth/test')
+        .auth(newAccessToken, { type: 'bearer' })
+        .expect(200);
+    });
+
+    it('should be able to still use old access token until it expires', async () => {
+      const server = getServer();
+      await request(server)
+        .post('/auth/test')
+        .auth(accessToken, { type: 'bearer' })
+        .expect(200);
+    });
+
+    it('should be able to use new refresh token', async () => {
+      const server = getServer();
+      await request(server)
+        .post('/auth/refresh')
+        .set('Cookie', [`refresh_token=${newRefreshToken}`])
+        .expect(200);
+    });
+
+    it(`shouldn't be able to use old refresh token`, async () => {
+      const server = getServer();
+
+      await request(server)
+        .post('/auth/refresh')
+        .set('Cookie', [`refresh_token=${refreshToken}`])
+        .expect(403);
+    });
+
+    it(`should logout user`, async () => {
+      const server = getServer();
+      await request(server)
+        .post('/auth/logout')
+        .set('Cookie', [`refresh_token=${refreshToken}`])
+        .expect(200);
     });
   });
 }

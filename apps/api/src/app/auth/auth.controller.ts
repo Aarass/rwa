@@ -61,14 +61,14 @@ export class AuthController {
       httpOnly: true,
     });
 
-    return newAccessToken;
+    return { accessToken: newAccessToken };
   }
 
   @Post('logout')
   @HttpCode(200)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refresh_token'];
-    this.authService.logout(refreshToken);
+    await this.authService.logout(refreshToken);
 
     res.cookie('refresh_token', null, {
       secure: true,
