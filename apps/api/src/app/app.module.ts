@@ -8,13 +8,13 @@ import { Sport } from '../entities/sport';
 import { Surface } from '../entities/surface';
 import { User } from '../entities/user';
 import { UserPlaysSport } from '../entities/user-plays-sport';
-import { AppointmentModule } from './appointment/appointment.module';
+import { AppointmentModule } from './appointments/appointments.module';
 import { AuthModule } from './auth/auth.module';
-import { SportModule } from './sport/sport.module';
-import { SurfaceModule } from './surface/surface.module';
 import { TestModule } from './test/test.module';
 import { UpsModule } from './ups/ups.module';
 import { UserModule } from './user/user.module';
+import { SportsModule } from './sports/sports.module';
+import { SurfacesModule } from './surfaces/surfaces.module';
 
 @Module({
   imports: [
@@ -38,12 +38,12 @@ import { UserModule } from './user/user.module';
       synchronize: true,
     }),
     AuthModule,
-    SportModule,
     UserModule,
     AppointmentModule,
     UpsModule,
-    SurfaceModule,
     TestModule,
+    SportsModule,
+    SurfacesModule,
   ],
   controllers: [],
   providers: [],

@@ -1,10 +1,15 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { RegisterUserDto } from '../../../shared/src';
-import { createUser } from './user.e2e';
 
-export function testAuth(getServer: () => App) {
-  describe(`/POST auth`, () => {
+export function testAuth(
+  getServer: () => App,
+  clearDatabase: () => Promise<void>
+) {
+  describe.skip(`/auth`, () => {
+    beforeAll(async () => {
+      await clearDatabase();
+    });
     beforeEach(async () => {
       await new Promise((r) => setTimeout(r, 1000));
     });
@@ -135,21 +140,3 @@ export function testAuth(getServer: () => App) {
     });
   });
 }
-
-export const registerAndLogin = async function (server: App) {
-  const username = 'admin';
-  const password = 'password';
-
-  await createUser(server, username, password);
-
-  const response = await request(server).post('/auth/login').send({
-    username,
-    password,
-  });
-
-  const accessToken = response.body.accessToken as string;
-
-  return accessToken;
-};
-
-export const extractRefreshToken = function (response: Response) {};

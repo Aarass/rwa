@@ -8,10 +8,12 @@ import { testSurface } from './surface.e2e';
 import { testUser } from './user.e2e';
 import cookieParser from 'cookie-parser';
 import { GlobalInterceptor } from '../src/app/global/global.interceptor';
+import { DataSource, getConnection } from 'typeorm';
 
 describe('e2e tests', () => {
   let server: App;
   let moduleRef: TestingModule;
+  let dataSource: DataSource;
 
   beforeAll(async () => {
     moduleRef = await Test.createTestingModule({
@@ -23,6 +25,8 @@ describe('e2e tests', () => {
     app.useGlobalInterceptors(new GlobalInterceptor());
     await app.init();
 
+    dataSource = moduleRef.get<DataSource>(DataSource);
+
     server = app.getHttpServer();
   });
 
@@ -30,11 +34,20 @@ describe('e2e tests', () => {
     return server;
   };
 
-  testUser(getServer);
-  testAuth(getServer);
-  testSport(getServer);
-  testSurface(getServer);
-  testAppointment(getServer);
+  const clearDatabase = async () => {
+    const entities = dataSource.entityMetadatas;
+    for (const entity of entities) {
+      const repository = await dataSource.getRepository(entity.name);
+      const query = `TRUNCATE "${entity.tableName}" RESTART IDENTITY CASCADE;`;
+      await repository.query(query);
+    }
+  };
+
+  testUser(getServer, clearDatabase);
+  testAuth(getServer, clearDatabase);
+  testSport(getServer, clearDatabase);
+  testSurface(getServer, clearDatabase);
+  testAppointment(getServer, clearDatabase);
 
   afterAll(async () => {
     moduleRef.close();

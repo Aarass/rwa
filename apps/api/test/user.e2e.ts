@@ -2,9 +2,11 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { CreateUserDto } from '../../../shared/src';
 import { User } from '../src/entities/user';
-import { use } from 'passport';
 
-export function testUser(getServer: () => App) {
+export function testUser(
+  getServer: () => App,
+  clearDatabase: () => Promise<void>
+) {
   let id: number;
   const newUser: CreateUserDto = {
     username: 'Aaras',
@@ -22,7 +24,10 @@ export function testUser(getServer: () => App) {
     ...rest,
   };
 
-  describe(`/POST users`, () => {
+  describe(`/users`, () => {
+    beforeAll(async () => {
+      await clearDatabase();
+    });
     it('should create new user', async () => {
       const server = getServer();
 
@@ -34,9 +39,7 @@ export function testUser(getServer: () => App) {
 
       id = createdUser.id;
     });
-  });
 
-  describe(`/GET users`, () => {
     it('should retrive previously created user', async () => {
       const server = getServer();
 
@@ -60,22 +63,3 @@ export function testUser(getServer: () => App) {
     });
   });
 }
-
-export const createUser = async function (
-  server: App,
-  username: string,
-  password: string
-) {
-  const newUser: CreateUserDto = {
-    username,
-    password,
-    name: 'Aleksandar',
-    surname: 'Prokopovic',
-    city: 'Leskovac',
-    biography: '',
-    birthDate: '2002-08-29',
-    phoneNumber: '0621715606',
-  };
-
-  await request(server).post('/users').send(newUser);
-};

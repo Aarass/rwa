@@ -149,7 +149,6 @@ export class AuthService {
       }
     );
 
-    console.log(this.jwtService.decode(refresh_token), refresh_token);
     return refresh_token;
   }
 }
