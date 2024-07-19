@@ -1,14 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateAppointmentDto } from '@rwa/shared';
+import {
+  AppointmentFilters,
+  CreateAppointmentDto,
+  UpdateAppointmentDto,
+} from '@rwa/shared';
 import { Repository } from 'typeorm';
 import { Appointment } from '../../entities/appointment';
+import { Participation } from '../../entities/participation';
 
 @Injectable()
 export class AppointmentsService {
   constructor(
     @InjectRepository(Appointment)
-    private appointmentRepository: Repository<Appointment>
+    private appointmentRepository: Repository<Appointment>,
+    @InjectRepository(Participation)
+    private participationRepository: Repository<Participation>
   ) {}
 
   async create(userId: number, newAppointment: CreateAppointmentDto) {
@@ -30,6 +37,15 @@ export class AppointmentsService {
     }
   }
 
+  async findWithFilters(filters: AppointmentFilters) {
+    return await this.appointmentRepository.find({
+      where: {
+        canceled: filters.canceled,
+      },
+      relations: ['participants'],
+    });
+  }
+
   async findAll() {
     return await this.appointmentRepository.find();
   }
@@ -38,7 +54,43 @@ export class AppointmentsService {
     return await this.appointmentRepository.findOneBy({ id });
   }
 
-  async remove(id: number) {
-    return await this.appointmentRepository.delete({ id });
+  async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
+    console.log(updateAppointmentDto);
+    const res = await this.appointmentRepository.update(
+      id,
+      updateAppointmentDto
+    );
+
+    console.log(res);
+    return;
+
+    await this.participationRepository.update(
+      {
+        appointmentId: id,
+      },
+      {
+        userHasSeenChanges: false,
+      }
+    );
+  }
+
+  // Korisnik ce moci samo da otkaze termin, ne i da ga u potpunosti obrise
+  // async remove(id: number) {
+  //   return await this.appointmentRepository.delete({ id });
+  // }
+
+  async cancel(id: number) {
+    await this.appointmentRepository.update(id, {
+      canceled: true,
+    });
+
+    await this.participationRepository.update(
+      {
+        appointmentId: id,
+      },
+      {
+        userHasSeenChanges: false,
+      }
+    );
   }
 }

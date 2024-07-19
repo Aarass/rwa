@@ -1,6 +1,9 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { CreateAppointmentDto } from '../../../shared/src';
+import {
+  CreateAppointmentDto,
+  UpdateAppointmentDto,
+} from '../../../shared/src';
 import { createSport, createSurface, ezLogin } from './helper/helper';
 import { Appointment } from '../src/entities/appointment';
 
@@ -30,6 +33,7 @@ export function testAppointment(
       sportId: -99,
     };
     let id: number;
+    let accessToken: string;
 
     it('should not be possible to create appointment without being logged in', async () => {
       const server = getServer();
@@ -38,7 +42,7 @@ export function testAppointment(
 
     it('should create appointment', async () => {
       const server = getServer();
-      const accessToken = await ezLogin(server);
+      accessToken = await ezLogin(server);
       const surface = await createSurface(server, 'trava');
       const sport = await createSport(server, 'fudbal');
 
@@ -84,6 +88,70 @@ export function testAppointment(
           minutes: 30,
         },
       });
+    });
+
+    it('should retrieve list of appointments which contain created appointment', async () => {
+      const server = getServer();
+
+      const appointments = (
+        await request(server).get(`/appointments`).expect(200)
+      ).body as Appointment[];
+
+      expect(appointments).toBeDefined();
+      expect(Array.isArray(appointments)).toBe(true);
+
+      const appointment = appointments.find((a) => a.id == id);
+
+      expect(appointment).toBeDefined();
+
+      const { duration, ...rest } = appointment!;
+      expect(appointment).toMatchObject({
+        ...rest,
+        duration: {
+          hours: 2,
+          minutes: 30,
+        },
+      });
+    });
+
+    it('should cancel the appointment', async () => {
+      const server = getServer();
+
+      const uncanceledAppointment = (
+        await request(server).get(`/appointments/${id}`).expect(200)
+      ).body as Appointment;
+      expect(uncanceledAppointment.canceled).toBe(false);
+
+      await request(server)
+        .post(`/appointments/${id}/cancel`)
+        .auth(accessToken, { type: 'bearer' })
+        .expect(200);
+
+      const canceledAppointment = (
+        await request(server).get(`/appointments/${id}`).expect(200)
+      ).body as Appointment;
+      expect(canceledAppointment.canceled).toBe(true);
+
+      const appointments = (
+        await request(server).get(`/appointments?canceled=false`).expect(200)
+      ).body as Appointment[];
+
+      expect(Array.isArray(appointments)).toBe(true);
+      expect(appointments.length).toBe(0);
+    });
+
+    it('should update the appointment', async () => {
+      const server = getServer();
+
+      const update: UpdateAppointmentDto = {
+        location: 'ndwad',
+      };
+
+      const res = await request(server)
+        .patch(`/appointments/${id}`)
+        .auth(accessToken, { type: 'bearer' })
+        .send(update)
+        .expect(200);
     });
   });
 }

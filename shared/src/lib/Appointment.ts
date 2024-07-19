@@ -1,6 +1,25 @@
 import { z } from 'zod';
 
-export const createAppointmentSchema = z
+export const createAppointmentSchema = z.object({
+  location: z.string(),
+  date: z.string().date(),
+  startTime: z.string(),
+  duration: z.string(),
+  totalPlayers: z.number(),
+  missingPlayers: z.number(),
+  minSkillLevel: z.number(),
+  maxSkillLevel: z.number(),
+  minAge: z.number(),
+  maxAge: z.number(),
+  pricePerPlayer: z.number(),
+  additionalInformation: z.string(),
+  surfaceId: z.number(),
+  sportId: z.number(),
+});
+
+export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
+
+export const updateAppointmentSchema = z
   .object({
     location: z.string(),
     date: z.string().date(),
@@ -17,9 +36,9 @@ export const createAppointmentSchema = z
     surfaceId: z.number(),
     sportId: z.number(),
   })
-// .required();
+  .partial();
 
-export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
+export type UpdateAppointmentDto = z.infer<typeof updateAppointmentSchema>;
 
 // export const createAppointmentSchema = z
 //   .object({
