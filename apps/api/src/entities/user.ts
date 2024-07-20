@@ -5,6 +5,7 @@ import { Participation } from './participation';
 import { Rating } from './rating';
 import { UserPlaysSport } from './user-plays-sport';
 import { string } from 'zod';
+import { Role } from '@rwa/shared';
 
 @Entity()
 export class User {
@@ -17,6 +18,9 @@ export class User {
   @Column()
   @Exclude()
   passwordHash: string;
+
+  // @Column({ type: 'varchar', array: true })
+  // roles: Role[];
 
   @Column()
   name: string;

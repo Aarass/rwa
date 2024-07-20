@@ -2,6 +2,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { CreateSportDto } from '../../../shared/src';
 import { Sport } from '../src/entities/sport';
+import { ezLogin } from './helper/helper';
 
 export function testSport(
   getServer: () => App,
@@ -21,8 +22,11 @@ export function testSport(
     it('should create sport', async () => {
       const server = getServer();
 
+      const accessToken = await ezLogin(server);
+
       const res = await request(server)
         .post('/sports')
+        .auth(accessToken, { type: 'bearer' })
         .send(newSport)
         .expect(201);
 

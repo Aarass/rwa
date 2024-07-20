@@ -53,6 +53,7 @@ export class UserService {
   async createUser(newUser: CreateUserDto) {
     let user: User = this.userRepository.create({
       ...newUser,
+      // roles: ['user'],
       passwordHash: await bcrypt.hash(newUser.password, 10),
     });
 

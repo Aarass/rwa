@@ -40,7 +40,7 @@ export function testAppointment(
       const res = await request(server).post('/appointments').expect(401);
     });
 
-    it('should create appointment', async () => {
+    it.only('should create appointment', async () => {
       const server = getServer();
       accessToken = await ezLogin(server);
       const surface = await createSurface(server, 'trava');

@@ -18,7 +18,7 @@ export function testParticipation(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe.only(`/participations`, () => {
+  describe(`/participations`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });

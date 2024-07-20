@@ -7,16 +7,21 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateSportDto, createSportSchema } from '@rwa/shared';
 import { ZodValidationPipe } from '../global/validation';
 import { SportsService } from './sports.service';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 
 @Controller('sports')
 export class SportsController {
   constructor(private readonly sportsService: SportsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async create(
     @Body(new ZodValidationPipe(createSportSchema))
     createSportDto: CreateSportDto

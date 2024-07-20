@@ -27,6 +27,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
 import { AppointmentsService } from './appointments.service';
 import { OK } from 'zod';
+import { use } from 'passport';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -36,9 +37,11 @@ export class AppointmentsController {
   @UseGuards(JwtAuthGuard)
   async create(
     @ExtractUser() user: User,
-    @Body(new ZodValidationPipe(createAppointmentSchema))
+    @Body()
     createAppointmentDto: CreateAppointmentDto
   ) {
+    console.log('Tu sam');
+    console.log(user);
     return await this.appointmentService.create(user.id, createAppointmentDto);
   }
 

@@ -16,6 +16,8 @@ import { UserModule } from './user/user.module';
 import { SportsModule } from './sports/sports.module';
 import { SurfacesModule } from './surfaces/surfaces.module';
 import { ParticipationsModule } from './participations/participations.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -48,6 +50,11 @@ import { ParticipationsModule } from './participations/participations.module';
     ParticipationsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
+  ],
 })
 export class AppModule {}
