@@ -9,6 +9,7 @@ import { testUser } from './user.e2e';
 import cookieParser from 'cookie-parser';
 import { GlobalInterceptor } from '../src/app/global/global.interceptor';
 import { DataSource, getConnection } from 'typeorm';
+import { testParticipation } from './participation.e2e';
 
 describe('e2e tests', () => {
   let server: App;
@@ -48,6 +49,7 @@ describe('e2e tests', () => {
   testSport(getServer, clearDatabase);
   testSurface(getServer, clearDatabase);
   testAppointment(getServer, clearDatabase);
+  testParticipation(getServer, clearDatabase);
 
   afterAll(async () => {
     moduleRef.close();

@@ -15,6 +15,7 @@ import { UpsModule } from './ups/ups.module';
 import { UserModule } from './user/user.module';
 import { SportsModule } from './sports/sports.module';
 import { SurfacesModule } from './surfaces/surfaces.module';
+import { ParticipationsModule } from './participations/participations.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SurfacesModule } from './surfaces/surfaces.module';
     TestModule,
     SportsModule,
     SurfacesModule,
+    ParticipationsModule,
   ],
   controllers: [],
   providers: [],

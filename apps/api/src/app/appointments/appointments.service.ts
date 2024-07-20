@@ -47,22 +47,23 @@ export class AppointmentsService {
   }
 
   async findAll() {
-    return await this.appointmentRepository.find();
+    return await this.appointmentRepository.find({
+      relations: ['participants'],
+    });
   }
 
   async findOne(id: number) {
-    return await this.appointmentRepository.findOneBy({ id });
+    return await this.appointmentRepository.findOne({
+      where: { id },
+      relations: ['participants'],
+    });
   }
 
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    console.log(updateAppointmentDto);
     const res = await this.appointmentRepository.update(
       id,
       updateAppointmentDto
     );
-
-    console.log(res);
-    return;
 
     await this.participationRepository.update(
       {

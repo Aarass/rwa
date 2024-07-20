@@ -9,5 +9,6 @@ import { Participation } from '../../entities/participation';
   imports: [TypeOrmModule.forFeature([Appointment, Participation])],
   controllers: [AppointmentsController],
   providers: [AppointmentsService],
+  exports: [AppointmentsService],
 })
 export class AppointmentModule {}

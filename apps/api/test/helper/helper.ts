@@ -2,6 +2,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import {
   AccessToken,
+  CreateAppointmentDto,
   CreateSportDto,
   CreateSurfaceDto,
   CreateUserDto,
@@ -9,6 +10,7 @@ import {
 import { Sport } from '../../src/entities/sport';
 import { User } from '../../src/entities/user';
 import { Surface } from '../../src/entities/surface';
+import { Appointment } from '../../src/entities/appointment';
 
 export const createUser = async function (
   server: App,
@@ -46,7 +48,7 @@ export const createSurface = async function (server: App, name: string) {
 };
 
 export const ezLogin = async function (server: App) {
-  const username = 'admin';
+  const username = 'admin' + Math.random() * 100;
   const password = 'password';
 
   await request(server).post('/auth/register').send({
@@ -66,4 +68,17 @@ export const ezLogin = async function (server: App) {
       password,
     })
   ).body.accessToken as AccessToken;
+};
+
+export const createAppointment = async function (
+  server: App,
+  accessToken: string,
+  newAppointment: CreateAppointmentDto
+) {
+  return (
+    await request(server)
+      .post('/appointments')
+      .auth(accessToken, { type: 'bearer' })
+      .send(newAppointment)
+  ).body as Appointment;
 };

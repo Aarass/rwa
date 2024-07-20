@@ -7,10 +7,10 @@ export class Participation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ default: true })
   approved: boolean;
 
-  @Column()
+  @Column({ default: true })
   userHasSeenChanges: boolean;
 
   @Column('int', { name: 'appointmentId', nullable: false })
