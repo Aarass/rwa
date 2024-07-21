@@ -28,26 +28,24 @@ import { ZodValidationPipe } from '../global/validation';
 import { AppointmentsService } from './appointments.service';
 import { OK } from 'zod';
 import { use } from 'passport';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('appointments')
 export class AppointmentsController {
   constructor(private appointmentService: AppointmentsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async create(
     @ExtractUser() user: User,
-    @Body()
+    @Body(new ZodValidationPipe(createAppointmentSchema))
     createAppointmentDto: CreateAppointmentDto
   ) {
-    console.log('Tu sam');
-    console.log(user);
+    console.log('unutra sam');
     return await this.appointmentService.create(user.id, createAppointmentDto);
   }
 
   @Post(':id/cancel')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
   async cancel(@ExtractUser() user: User, @Param('id') id: number) {
     const appointment = await this.appointmentService.findOne(id);
 
@@ -62,18 +60,19 @@ export class AppointmentsController {
     await this.appointmentService.cancel(id);
   }
 
+  @Public()
   @Get()
   async find(@Query() filters: AppointmentFilters) {
     return await this.appointmentService.findWithFilters(filters);
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.appointmentService.findOne(id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
   async update(
     @ExtractUser() user: User,
     @Param('id') id: number,

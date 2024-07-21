@@ -2,6 +2,8 @@ import { ExtractJwt, Strategy as JwtPassportStrategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { UserService } from '../../user/user.service';
+import { AccessTokenPayload } from '@rwa/shared';
+import { User } from 'apps/api/src/entities/user';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(JwtPassportStrategy) {
@@ -14,6 +16,16 @@ export class JwtStrategy extends PassportStrategy(JwtPassportStrategy) {
   }
 
   async validate(payload: any) {
-    return await this.userService.getUserById(payload.sub);
+    try {
+      if (payload.sub == undefined) {
+        return {
+          roles: payload.roles,
+        } as User;
+      }
+      return await this.userService.getUserById(payload.sub);
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   }
 }

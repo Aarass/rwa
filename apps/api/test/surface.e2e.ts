@@ -17,11 +17,12 @@ export function testSurface(
     };
     let id: number;
 
-    it('should create sport', async () => {
+    it('should create surface', async () => {
       const server = getServer();
 
       const res = await request(server)
         .post('/surfaces')
+        .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
         .send(newSurface)
         .expect(201);
 
@@ -33,7 +34,7 @@ export function testSurface(
       id = surface.id;
     });
 
-    it('should retrieve previously created sport', async () => {
+    it('should retrieve previously created surface', async () => {
       const server = getServer();
 
       const res = await request(server).get(`/surfaces/${id}`).expect(200);
@@ -45,7 +46,7 @@ export function testSurface(
       expect(surface).toMatchObject(newSurface);
     });
 
-    it('should retrieve list of sports which contain previously created sport', async () => {
+    it('should retrieve list of surfaces which contain previously created surface', async () => {
       const server = getServer();
 
       const res = await request(server).get('/surfaces').expect(200);
@@ -61,10 +62,13 @@ export function testSurface(
       expect(surface).toMatchObject(newSurface);
     });
 
-    it('should delete a sport', async () => {
+    it('should delete a surface', async () => {
       const server = getServer();
 
-      const res = await request(server).delete(`/surfaces/${id}`).expect(200);
+      const res = await request(server)
+        .delete(`/surfaces/${id}`)
+        .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
+        .expect(200);
     });
 
     it('should recieve an error', async () => {

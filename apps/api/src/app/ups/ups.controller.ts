@@ -1,49 +1,61 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, UnauthorizedException, UseGuards, UsePipes } from '@nestjs/common';
-import { AddSportToUserDto, addSportToUserSchema } from '@rwa/shared';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { User } from '../../entities/user';
+import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
 import { UpsService } from './ups.service';
-import { User } from '../../entities/user';
+import { CreateUpsDto, createUpsSchema } from '@rwa/shared';
 
 @Controller('ups')
 export class UpsController {
-  constructor(
-    private upsService: UpsService
-  ) { }
+  constructor(private upsService: UpsService) {}
 
   @Get('user/me')
-  @UseGuards(JwtAuthGuard)
   getMySports(@ExtractUser() user: User) {
     return this.upsService.getUserSports(user.id);
   }
 
+  @Public()
   @Get('user/:id')
   getUserSports(@Param('id', ParseIntPipe) id: number) {
     return this.upsService.getUserSports(id);
   }
 
   @Post('')
-  @UseGuards(JwtAuthGuard)
-  async addSportToUser(@Body(new ZodValidationPipe(addSportToUserSchema)) addSportToUserDto: AddSportToUserDto, @ExtractUser() user: User) {
+  async addSportToUser(
+    @ExtractUser() user: User,
+    @Body(new ZodValidationPipe(createUpsSchema))
+    upsDto: CreateUpsDto
+  ) {
     try {
-      return await this.upsService.addSportToUser(addSportToUserDto.sportId, user.id, addSportToUserDto.selfRating);
-    }
-    catch (err: any) {
+      return await this.upsService.addSportToUser(user.id, upsDto);
+    } catch (err: any) {
       if (err.code != undefined) {
         if (err.code == 23505) {
-          console.log('Duplicate')
+          console.log('Duplicate');
           throw new BadRequestException();
         }
       }
-      console.log(typeof err);
       return err;
     }
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
-  async removeSportFromUser(@ExtractUser() user: User, @Param('id') id: number) {
+  async removeSportFromUser(
+    @ExtractUser() user: User,
+    @Param('id', ParseIntPipe) id: number
+  ) {
     const ups = await this.upsService.getUps(id);
     if (ups == null) {
       throw new NotFoundException();

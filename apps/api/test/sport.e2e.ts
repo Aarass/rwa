@@ -22,11 +22,9 @@ export function testSport(
     it('should create sport', async () => {
       const server = getServer();
 
-      const accessToken = await ezLogin(server);
-
       const res = await request(server)
         .post('/sports')
-        .auth(accessToken, { type: 'bearer' })
+        .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
         .send(newSport)
         .expect(201);
 
@@ -69,7 +67,10 @@ export function testSport(
     it('should delete a sport', async () => {
       const server = getServer();
 
-      const res = await request(server).delete(`/sports/${id}`).expect(200);
+      const res = await request(server)
+        .delete(`/sports/${id}`)
+        .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
+        .expect(200);
     });
 
     it('should recieve an error', async () => {

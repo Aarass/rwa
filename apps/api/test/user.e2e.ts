@@ -32,7 +32,11 @@ export function testUser(
       const server = getServer();
 
       const createdUser = (
-        await request(server).post('/users').send(newUser).expect(201)
+        await request(server)
+          .post('/users')
+          .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
+          .send(newUser)
+          .expect(201)
       ).body as User;
 
       expect(createdUser).toMatchObject(partialExpectedResult);

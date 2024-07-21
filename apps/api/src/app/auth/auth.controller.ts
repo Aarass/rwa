@@ -16,11 +16,13 @@ import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { ExtractUser } from './decorators/user.decorator';
 import { User } from '../../entities/user';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Public()
   @Post('register')
   @HttpCode(200)
   async register(
@@ -29,6 +31,7 @@ export class AuthController {
     await this.authService.register(newUser);
   }
 
+  @Public()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
@@ -45,6 +48,7 @@ export class AuthController {
     return { accessToken };
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(200)
   async refresh(
@@ -64,6 +68,7 @@ export class AuthController {
     return { accessToken: newAccessToken };
   }
 
+  @Public()
   @Post('logout')
   @HttpCode(200)
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
@@ -78,7 +83,6 @@ export class AuthController {
 
   @Post('test')
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
   test(@ExtractUser() user: User) {
     return user;
   }

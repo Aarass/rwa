@@ -20,6 +20,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ParticipationsService } from './participations.service';
 import { AppointmentsService } from '../appointments/appointments.service';
 import { ZodValidationPipe } from '../global/validation';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('participations')
 export class ParticipationsController {
@@ -29,7 +30,6 @@ export class ParticipationsController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async create(
     @ExtractUser() user: User,
     @Body(new ZodValidationPipe(createParticipationSchema))
@@ -54,18 +54,19 @@ export class ParticipationsController {
     );
   }
 
+  @Public()
   @Get()
   async findAll() {
     return await this.participationsService.findAll();
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return await this.participationsService.findOne(id);
   }
 
   @Patch(':id/seen')
-  @UseGuards(JwtAuthGuard)
   async markSeen(
     @ExtractUser() user: User,
     @Param('id', ParseIntPipe) id: number
@@ -84,7 +85,6 @@ export class ParticipationsController {
   }
 
   @Patch(':id/reject')
-  @UseGuards(JwtAuthGuard)
   async reject(
     @ExtractUser() user: User,
     @Param('id', ParseIntPipe) id: number
@@ -103,7 +103,6 @@ export class ParticipationsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
   async remove(
     @ExtractUser() user: User,
     @Param('id', ParseIntPipe) id: number

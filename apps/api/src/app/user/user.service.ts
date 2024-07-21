@@ -14,7 +14,7 @@ export class UserService {
   async getUserById(id: number) {
     const user: User | null = await this.userRepository.findOne({
       where: {
-        id: id,
+        id,
       },
     });
 
@@ -53,7 +53,7 @@ export class UserService {
   async createUser(newUser: CreateUserDto) {
     let user: User = this.userRepository.create({
       ...newUser,
-      // roles: ['user'],
+      roles: ['user'],
       passwordHash: await bcrypt.hash(newUser.password, 10),
     });
 

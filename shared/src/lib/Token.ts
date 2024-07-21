@@ -2,7 +2,7 @@ export type Role = 'user' | 'admin';
 export interface AccessTokenPayload {
   username: string;
   sub: number;
-  // roles: Role[];
+  roles: Role[];
 }
 
 export interface RefreshTokenPayload {

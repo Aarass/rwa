@@ -6,7 +6,7 @@ export function testAuth(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe.skip(`/auth`, () => {
+  describe(`/auth`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });

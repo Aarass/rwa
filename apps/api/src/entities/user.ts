@@ -1,11 +1,10 @@
+import { Role } from '@rwa/shared';
 import { Exclude } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Appointment } from './appointment';
 import { Participation } from './participation';
 import { Rating } from './rating';
 import { UserPlaysSport } from './user-plays-sport';
-import { string } from 'zod';
-import { Role } from '@rwa/shared';
 
 @Entity()
 export class User {
@@ -19,8 +18,8 @@ export class User {
   @Exclude()
   passwordHash: string;
 
-  // @Column({ type: 'varchar', array: true })
-  // roles: Role[];
+  @Column({ type: 'varchar', array: true })
+  roles: Role[];
 
   @Column()
   name: string;

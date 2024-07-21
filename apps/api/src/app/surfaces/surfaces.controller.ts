@@ -1,34 +1,34 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  ParseIntPipe,
+  Get,
   NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
 } from '@nestjs/common';
-import { SurfacesService } from './surfaces.service';
 import { CreateSurfaceDto } from '@rwa/shared';
+import { SurfacesService } from './surfaces.service';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 @Controller('surfaces')
 export class SurfacesController {
   constructor(private readonly surfacesService: SurfacesService) {}
 
+  @Roles(['admin'])
   @Post()
-  async create(
-    @Body() createSurfaceDto: CreateSurfaceDto
-  ): Promise<
-    import('/home/aleksandar/Documents/source/rwa/apps/api/src/entities/surface').Surface
-  > {
+  async create(@Body() createSurfaceDto: CreateSurfaceDto) {
     return this.surfacesService.create(createSurfaceDto);
   }
 
+  @Public()
   @Get()
   async findAll() {
     return this.surfacesService.findAll();
   }
 
+  @Public()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const surface = await this.surfacesService.findOne(id);
@@ -40,6 +40,7 @@ export class SurfacesController {
     return surface;
   }
 
+  @Roles(['admin'])
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.surfacesService.remove(id);

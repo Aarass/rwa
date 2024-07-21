@@ -54,7 +54,7 @@ export class AuthService {
     const accessToken = await this.createAccessToken({
       username: user.username,
       sub: user.id,
-      // roles: user.roles,
+      roles: user.roles,
     });
 
     const refreshToken = await this.createRefreshToken({ sub: user.id });
@@ -110,7 +110,7 @@ export class AuthService {
     const newAccessToken = await this.createAccessToken({
       sub: user.id,
       username: user.username,
-      // roles: user.roles,
+      roles: user.roles,
     });
 
     const newRefreshToken = await this.createRefreshToken({ sub: user.id });

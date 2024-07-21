@@ -33,6 +33,7 @@ export class AppointmentsService {
       if (err.code != undefined && err.code == 23503) {
         console.error('foreign_key_violation');
       }
+      console.error(err);
       throw new BadRequestException();
     }
   }

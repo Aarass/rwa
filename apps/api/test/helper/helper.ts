@@ -37,14 +37,29 @@ export const createSport = async function (server: App, name: string) {
     iconUrl: './icon.png',
   };
 
-  return (await request(server).post('/sports').send(newSport)).body as Sport;
+  if (process.env.ADMIN_TOKEN == undefined) {
+    console.error('No admin token in .env');
+    throw '';
+  }
+
+  const res = await request(server)
+    .post('/sports')
+    .auth(process.env.ADMIN_TOKEN, { type: 'bearer' })
+    .send(newSport)
+    .expect(201);
+
+  return res.body as Sport;
 };
 
 export const createSurface = async function (server: App, name: string) {
   const newSurface: CreateSurfaceDto = { name };
 
-  return (await request(server).post('/surfaces').send(newSurface))
-    .body as Surface;
+  return (
+    await request(server)
+      .post('/surfaces')
+      .auth(process.env.ADMIN_TOKEN!, { type: 'bearer' })
+      .send(newSurface)
+  ).body as Surface;
 };
 
 export const ezLogin = async function (server: App) {

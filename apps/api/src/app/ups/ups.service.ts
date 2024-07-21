@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserPlaysSport } from '../../entities/user-plays-sport';
+import { CreateUpsDto } from '@rwa/shared';
 
 @Injectable()
 export class UpsService {
   constructor(
-    @InjectRepository(UserPlaysSport) private userPlaysSportRepository: Repository<UserPlaysSport>,
-  ) { }
+    @InjectRepository(UserPlaysSport)
+    private userPlaysSportRepository: Repository<UserPlaysSport>
+  ) {}
 
   async getUps(id: number) {
     return await this.userPlaysSportRepository.findOneBy({ id });
@@ -17,25 +19,23 @@ export class UpsService {
     const sports = await this.userPlaysSportRepository.find({
       where: {
         user: {
-          id: id
-        }
+          id: id,
+        },
       },
       select: ['id', 'sport', 'selfRatedSkillLevel'],
-      relations: ['sport']
+      relations: ['sport'],
     });
 
     return sports;
   }
 
-  async addSportToUser(sportId: number, userId: number, selfRating: number) {
+  async addSportToUser(userId: number, upsDto: CreateUpsDto) {
     const ups = this.userPlaysSportRepository.create({
-      user: { id: userId },
-      sport: { id: sportId },
-      selfRatedSkillLevel: selfRating
+      userId,
+      ...upsDto,
     });
 
-    await this.userPlaysSportRepository.insert(ups);
-    return ups;
+    return await this.userPlaysSportRepository.save(ups);
   }
 
   async removeSportFromUser(upsId: number) {
