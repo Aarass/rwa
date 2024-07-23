@@ -30,7 +30,7 @@ export function testParticipation(
 
     it('should create an appointment and a participation', async () => {
       let newAppointment: CreateAppointmentDto = {
-        location: 'Skolsko dvorisete u Vinarce',
+        locationId: 'ChIJOS9xY7KCVUcROAbIlRA1s9E',
         date: '2024-07-20',
         startTime: '19:00:00',
         duration: '2 hours 30 minutes',
@@ -133,7 +133,7 @@ export function testParticipation(
       const server = getServer();
 
       const update: UpdateAppointmentDto = {
-        location: 'ndwad',
+        missingPlayers: 0,
       };
 
       const res = await request(server)

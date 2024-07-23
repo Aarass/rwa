@@ -9,15 +9,18 @@ import { Participation } from './participation';
 import { Surface } from './surface';
 import { User } from './user';
 import { Sport } from './sport';
+import { Location } from './location';
 
 @Entity()
 export class Appointment {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // TODO
-  @Column()
-  location: string;
+  @Column('int', { name: 'locationId', nullable: false })
+  locationId: string;
+
+  @ManyToOne(() => Location, (location) => location.appointments)
+  location: Location;
 
   @Column({ type: 'date' })
   date: string;

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createAppointmentSchema = z.object({
-  location: z.string(),
+  locationId: z.string(),
   date: z.string().date(),
   startTime: z.string(),
   duration: z.string(),
@@ -21,7 +21,7 @@ export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
 
 export const updateAppointmentSchema = z
   .object({
-    location: z.string(),
+    locationId: z.string(),
     date: z.string().date(),
     startTime: z.string(),
     duration: z.string(),

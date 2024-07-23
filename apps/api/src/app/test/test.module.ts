@@ -18,6 +18,8 @@ import { SportsModule } from '../sports/sports.module';
 import { SurfacesModule } from '../surfaces/surfaces.module';
 import { UpsModule } from '../ups/ups.module';
 import { UserModule } from '../user/user.module';
+import { Location } from '../../entities/location';
+import { LocationsModule } from '../locations/locations.module';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { UserModule } from '../user/user.module';
             Participation,
             Sport,
             Surface,
+            Location,
           ],
           synchronize: true,
           dropSchema: true,
@@ -53,6 +56,7 @@ import { UserModule } from '../user/user.module';
     UpsModule,
     SurfacesModule,
     ParticipationsModule,
+    LocationsModule,
   ],
   providers: [
     {

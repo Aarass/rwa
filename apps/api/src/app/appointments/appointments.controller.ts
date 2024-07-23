@@ -40,7 +40,6 @@ export class AppointmentsController {
     @Body(new ZodValidationPipe(createAppointmentSchema))
     createAppointmentDto: CreateAppointmentDto
   ) {
-    console.log('unutra sam');
     return await this.appointmentService.create(user.id, createAppointmentDto);
   }
 

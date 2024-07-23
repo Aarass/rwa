@@ -19,6 +19,8 @@ import { SurfacesModule } from './surfaces/surfaces.module';
 import { TestModule } from './test/test.module';
 import { UpsModule } from './ups/ups.module';
 import { UserModule } from './user/user.module';
+import { Location } from '../entities/location';
+import { LocationsModule } from './locations/locations.module';
 
 @Module({
   imports: [
@@ -38,6 +40,7 @@ import { UserModule } from './user/user.module';
         Participation,
         Sport,
         Surface,
+        Location,
       ],
       synchronize: true,
     }),
@@ -49,6 +52,7 @@ import { UserModule } from './user/user.module';
     SportsModule,
     SurfacesModule,
     ParticipationsModule,
+    LocationsModule,
   ],
   controllers: [],
   providers: [

@@ -21,7 +21,7 @@ export function testUps(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe.only(`/ups`, () => {
+  describe(`/ups`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });

@@ -8,6 +8,7 @@ import {
 import { Repository } from 'typeorm';
 import { Appointment } from '../../entities/appointment';
 import { Participation } from '../../entities/participation';
+import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
 export class AppointmentsService {
@@ -15,10 +16,26 @@ export class AppointmentsService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     @InjectRepository(Participation)
-    private participationRepository: Repository<Participation>
+    private participationRepository: Repository<Participation>,
+    private locationService: LocationsService
   ) {}
 
   async create(userId: number, newAppointment: CreateAppointmentDto) {
+    let location = await this.locationService.findOne(
+      newAppointment.locationId
+    );
+
+    if (location == null) {
+      console.log('Prvi put vidim ovu lokaciju, potrazicu na google-u...');
+      location = await this.locationService.create(newAppointment.locationId);
+
+      if (location == null) {
+        throw new BadRequestException();
+      }
+    }
+
+    console.log(location);
+
     const appointment = this.appointmentRepository.create({
       ...newAppointment,
       participants: [],

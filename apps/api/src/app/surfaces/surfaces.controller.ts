@@ -8,17 +8,21 @@ import {
   ParseIntPipe,
   Post,
 } from '@nestjs/common';
-import { CreateSurfaceDto } from '@rwa/shared';
+import { CreateSurfaceDto, createSurfaceSchema } from '@rwa/shared';
 import { SurfacesService } from './surfaces.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { ZodValidationPipe } from '../global/validation';
 @Controller('surfaces')
 export class SurfacesController {
   constructor(private readonly surfacesService: SurfacesService) {}
 
   @Roles(['admin'])
   @Post()
-  async create(@Body() createSurfaceDto: CreateSurfaceDto) {
+  async create(
+    @Body(new ZodValidationPipe(createSurfaceSchema))
+    createSurfaceDto: CreateSurfaceDto
+  ) {
     return this.surfacesService.create(createSurfaceDto);
   }
 

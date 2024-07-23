@@ -11,13 +11,13 @@ export function testAppointment(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe(`/appointments`, () => {
+  describe.only(`/appointments`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });
 
     let newAppointment: CreateAppointmentDto = {
-      location: 'Skolsko dvorisete u Vinarce',
+      locationId: 'ChIJOS9xY7KCVUcROAbIlRA1s9E',
       date: '2024-07-20',
       startTime: '19:00:00',
       duration: '2 hours 30 minutes',
@@ -40,7 +40,7 @@ export function testAppointment(
       const res = await request(server).post('/appointments').expect(401);
     });
 
-    it('should create appointment', async () => {
+    it.each(Array(2).fill(null))('should create appointment', async () => {
       const server = getServer();
       accessToken = await ezLogin(server);
       const surface = await createSurface(server, 'trava');
@@ -144,7 +144,7 @@ export function testAppointment(
       const server = getServer();
 
       const update: UpdateAppointmentDto = {
-        location: 'ndwad',
+        missingPlayers: 0,
       };
 
       const res = await request(server)
