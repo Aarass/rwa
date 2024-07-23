@@ -1,10 +1,17 @@
 import { Role } from '@rwa/shared';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Appointment } from './appointment';
 import { Participation } from './participation';
 import { Rating } from './rating';
 import { UserPlaysSport } from './user-plays-sport';
+import { Location } from './location';
 
 @Entity()
 export class User {
@@ -33,9 +40,11 @@ export class User {
   @Column({ type: 'date' })
   birthDate: string;
 
-  // TODO
-  @Column()
-  city: string;
+  @Column('int', { name: 'locationId', nullable: false })
+  locationId: string;
+
+  @ManyToOne(() => Location, (location) => location.users)
+  location: Location;
 
   @Column({ type: 'varchar', nullable: true })
   biography: string | null;

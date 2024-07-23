@@ -4,11 +4,13 @@ import { CreateUserDto } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
 import { User } from '../../entities/user';
+import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository: Repository<User>
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private locationService: LocationsService
   ) {}
 
   async getUserById(id: number) {
@@ -51,6 +53,8 @@ export class UserService {
   }
 
   async createUser(newUser: CreateUserDto) {
+    await this.locationService.checkLocation(newUser.locationId);
+
     let user: User = this.userRepository.create({
       ...newUser,
       roles: ['user'],

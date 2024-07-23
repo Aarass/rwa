@@ -11,7 +11,7 @@ export function testAppointment(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe.only(`/appointments`, () => {
+  describe(`/appointments`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });
@@ -39,8 +39,8 @@ export function testAppointment(
       const server = getServer();
       const res = await request(server).post('/appointments').expect(401);
     });
-
-    it.each(Array(2).fill(null))('should create appointment', async () => {
+    // .each(Array(2).fill(null))
+    it('should create appointment', async () => {
       const server = getServer();
       accessToken = await ezLogin(server);
       const surface = await createSurface(server, 'trava');

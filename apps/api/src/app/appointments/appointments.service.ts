@@ -21,20 +21,7 @@ export class AppointmentsService {
   ) {}
 
   async create(userId: number, newAppointment: CreateAppointmentDto) {
-    let location = await this.locationService.findOne(
-      newAppointment.locationId
-    );
-
-    if (location == null) {
-      console.log('Prvi put vidim ovu lokaciju, potrazicu na google-u...');
-      location = await this.locationService.create(newAppointment.locationId);
-
-      if (location == null) {
-        throw new BadRequestException();
-      }
-    }
-
-    console.log(location);
+    await this.locationService.checkLocation(newAppointment.locationId);
 
     const appointment = this.appointmentRepository.create({
       ...newAppointment,

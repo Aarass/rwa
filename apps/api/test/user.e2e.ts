@@ -13,7 +13,7 @@ export function testUser(
     password: 'password',
     name: 'Aleksandar',
     surname: 'Prokopovic',
-    city: 'Leskovac',
+    locationId: 'ChIJOS9xY7KCVUcROAbIlRA1s9E',
     biography: '',
     birthDate: '1999-01-08',
     phoneNumber: '0621715606',

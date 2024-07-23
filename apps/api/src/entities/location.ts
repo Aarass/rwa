@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Appointment } from './appointment';
+import { User } from './user';
 
 @Entity()
 export class Location {
@@ -18,4 +19,7 @@ export class Location {
 
   @OneToMany(() => Appointment, (appointment) => appointment.location)
   appointments: Appointment[];
+
+  @OneToMany(() => User, (user) => user.location)
+  users: User[];
 }

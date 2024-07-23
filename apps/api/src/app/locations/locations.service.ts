@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLocationDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
@@ -78,6 +82,21 @@ export class LocationsService {
     }
 
     return data;
+  }
+
+  async checkLocation(id: string) {
+    let location = await this.findOne(id);
+
+    if (location == null) {
+      // console.info('Prvi put vidim ovu lokaciju, potrazicu na google-u...');
+      location = await this.create(id);
+
+      if (location == null) {
+        throw new BadRequestException();
+      }
+    } else {
+      // console.info('Lokacija vec postoji u bazi');
+    }
   }
 
   async findAll() {
