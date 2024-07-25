@@ -5,6 +5,8 @@ import { AppModule } from './app/app.module';
 import { GlobalInterceptor } from './app/global/global.interceptor';
 import { RolesGuard } from './app/auth/guards/roles.guard';
 
+import './app/global/typeorm.extension';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3000;

@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import {
   AppointmentFilters,
+  appointmentFiltersSchema,
   CreateAppointmentDto,
   createAppointmentSchema,
   UpdateAppointmentDto,
@@ -61,8 +62,15 @@ export class AppointmentsController {
 
   @Public()
   @Get()
-  async find(@Query() filters: AppointmentFilters) {
-    return await this.appointmentService.findWithFilters(filters);
+  async find(
+    @Body(new ZodValidationPipe(appointmentFiltersSchema))
+    filters: AppointmentFilters,
+    @Query('lat')
+    lat: number,
+    @Query('lng')
+    lng: number
+  ) {
+    return await this.appointmentService.findWithFilters(filters, { lat, lng });
   }
 
   @Public()

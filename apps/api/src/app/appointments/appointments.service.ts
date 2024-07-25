@@ -5,7 +5,7 @@ import {
   CreateAppointmentDto,
   UpdateAppointmentDto,
 } from '@rwa/shared';
-import { Repository } from 'typeorm';
+import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
 import { Appointment } from '../../entities/appointment';
 import { Participation } from '../../entities/participation';
 import { LocationsService } from '../locations/locations.service';
@@ -42,13 +42,66 @@ export class AppointmentsService {
     }
   }
 
-  async findWithFilters(filters: AppointmentFilters) {
-    return await this.appointmentRepository.find({
-      where: {
-        canceled: filters.canceled,
-      },
-      relations: ['participants'],
-    });
+  async findWithFilters(
+    filters: AppointmentFilters,
+    loc?: { lat: number; lng: number }
+  ) {
+    if (filters.skip == undefined) {
+      filters.skip = 0;
+    }
+
+    if (filters.take == undefined) {
+      filters.take = 10;
+    }
+
+    const nulledFilters: {
+      [K in keyof AppointmentFilters]-?: AppointmentFilters[K] | null;
+    } = {
+      sportId: filters.sportId ?? null,
+      age: filters.age ?? null,
+      skill: filters.skill ?? null,
+      minDate: filters.minDate ?? null,
+      maxDate: filters.maxDate ?? null,
+      minTime: filters.minTime ?? null,
+      maxTime: filters.maxTime ?? null,
+      maxPrice: filters.maxPrice ?? null,
+      distance: filters.distance ?? null,
+      organizerId: filters.organizerId ?? null,
+      canceled: filters.canceled ?? null,
+      skip: filters.skip ?? null,
+      take: filters.take ?? null,
+    };
+
+    return await this.appointmentRepository
+      .createQueryBuilder('appointment')
+      .leftJoinAndSelect('appointment.location', 'location')
+      .leftJoinAndSelect('appointment.participants', 'participants')
+      .setParameters({
+        ...nulledFilters,
+      })
+      .where(
+        `appointment.sportId = COALESCE(:sportId, appointment.sportId) AND 
+         appointment.minAge <= COALESCE(:age, appointment.minAge) AND 
+         appointment.maxAge >= COALESCE(:age, appointment.maxAge) AND 
+         appointment.minSkillLevel <= COALESCE(:skill, appointment.minSkillLevel) AND 
+         appointment.maxSkillLevel >= COALESCE(:skill, appointment.maxSkillLevel) AND 
+         appointment.date >= COALESCE(:minDate, appointment.date) AND 
+         appointment.date <= COALESCE(:maxDate, appointment.date) AND 
+         appointment.startTime >= COALESCE(:minTime, appointment.startTime) AND 
+         appointment.startTime <= COALESCE(:maxTime, appointment.startTime) AND 
+         appointment.pricePerPlayer <= COALESCE(:maxPrice, appointment.pricePerPlayer) AND 
+         appointment.organizerId = COALESCE(:organizerId, appointment.organizerId) AND 
+         appointment.canceled = COALESCE(:canceled, appointment.canceled)`
+      )
+      .if(nulledFilters.distance != null, function () {
+        return this.andWhere(
+          `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= :maxDistance`,
+          nulledFilters.distance!
+        );
+      })
+      .skip(filters.skip)
+      .take(filters.take)
+      .getMany();
   }
 
   async findAll() {
