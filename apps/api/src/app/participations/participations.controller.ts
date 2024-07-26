@@ -48,6 +48,26 @@ export class ParticipationsController {
       throw new ForbiddenException();
     }
 
+    const userAge = Math.abs(
+      new Date(
+        Date.now() - new Date(user.birthDate).getTime()
+      ).getUTCFullYear() - 1970
+    );
+
+    if (userAge < appointment.minAge || userAge > appointment.maxAge) {
+      console.log('Korisnik je izvan starosnih granica termina');
+      throw new ForbiddenException();
+    }
+
+    const userSkillLevel = 3;
+    if (
+      userSkillLevel < appointment.minSkillLevel ||
+      userSkillLevel > appointment.maxSkillLevel
+    ) {
+      console.log('Korisnik je izvan skill granica termina');
+      throw new ForbiddenException();
+    }
+
     return await this.participationsService.create(
       user.id,
       createParticipationDto

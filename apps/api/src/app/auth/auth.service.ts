@@ -6,14 +6,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import {
   AccessToken,
-  AccessTokenPayload,
   CreateUserDto,
   RefreshToken,
   RefreshTokenPayload,
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '../user/user.service';
 import { User } from '../../entities/user';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -51,11 +50,7 @@ export class AuthService {
   // }
 
   async login(user: User) {
-    const accessToken = await this.createAccessToken({
-      username: user.username,
-      sub: user.id,
-      roles: user.roles,
-    });
+    const accessToken = await this.createAccessToken(user);
 
     const refreshToken = await this.createRefreshToken({ sub: user.id });
     await this.setRefreshToken(user.id, refreshToken);
@@ -107,11 +102,7 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    const newAccessToken = await this.createAccessToken({
-      sub: user.id,
-      username: user.username,
-      roles: user.roles,
-    });
+    const newAccessToken = await this.createAccessToken(user);
 
     const newRefreshToken = await this.createRefreshToken({ sub: user.id });
     await this.setRefreshToken(user.id, newRefreshToken);
@@ -132,11 +123,21 @@ export class AuthService {
     await this.userService.setUserRefreshToken(userId, '');
   }
 
-  private async createAccessToken(payload: AccessTokenPayload) {
-    const access_token = await this.jwtService.signAsync(payload, {
-      expiresIn: '100m',
-    });
-    return access_token;
+  private async createAccessToken(user: User) {
+    const { passwordHash, refreshTokenHash, ...payload } = user;
+    try {
+      const access_token = await this.jwtService.signAsync(
+        { user: payload },
+        {
+          expiresIn: '100m',
+        }
+      );
+      return access_token;
+    } catch (err) {
+      console.log('auth.service.ts:133', payload);
+      console.log('auth.service.ts:134', err);
+      return '';
+    }
   }
 
   private async createRefreshToken(payload: RefreshTokenPayload) {

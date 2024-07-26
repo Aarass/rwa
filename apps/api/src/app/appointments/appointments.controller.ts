@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   ForbiddenException,
   Get,
   HttpCode,
@@ -12,7 +11,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import {
   AppointmentFilters,
@@ -23,13 +21,11 @@ import {
   updateAppointmentSchema,
 } from '@rwa/shared';
 import { User } from '../../entities/user';
+import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
 import { AppointmentsService } from './appointments.service';
-import { OK } from 'zod';
-import { use } from 'passport';
-import { Public } from '../auth/decorators/public.decorator';
+import '../global/typeorm.extension';
 
 @Controller('appointments')
 export class AppointmentsController {

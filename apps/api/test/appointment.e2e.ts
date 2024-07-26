@@ -133,7 +133,12 @@ export function testAppointment(
       expect(canceledAppointment.canceled).toBe(true);
 
       const appointments = (
-        await request(server).get(`/appointments?canceled=false`).expect(200)
+        await request(server)
+          .get(`/appointments`)
+          .send({
+            canceled: false,
+          })
+          .expect(200)
       ).body as Appointment[];
 
       expect(Array.isArray(appointments)).toBe(true);
