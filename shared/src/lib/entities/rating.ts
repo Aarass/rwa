@@ -1,5 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from "typeorm";
-import { User } from "./user";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
+import { User } from './user';
 
 @Entity()
 @Unique(['userRated', 'userRating'])
@@ -16,3 +22,5 @@ export class Rating {
   @Column()
   value: number;
 }
+
+export interface RatingDto extends Rating {}

@@ -12,10 +12,9 @@ import {
   CreateParticipationDto,
   UpdateAppointmentDto,
   CreateUpsDto,
+  UserPlaysSport,
 } from '../../../shared/src';
-import { Participation } from '../src/entities/participation';
 import { authenticate } from 'passport';
-import { UserPlaysSport } from '../src/entities/user-plays-sport';
 
 export function testUps(
   getServer: () => App,

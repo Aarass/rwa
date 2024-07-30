@@ -34,3 +34,5 @@ export class Participation {
   @ManyToOne(() => User, (user) => user.participations, { nullable: false })
   user: User;
 }
+
+export interface ParticipationDto extends Participation {}

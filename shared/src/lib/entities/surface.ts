@@ -1,5 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Appointment } from "./appointment";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Appointment } from './appointment';
 
 @Entity()
 export class Surface {
@@ -12,3 +12,5 @@ export class Surface {
   @OneToMany(() => Appointment, (appointment) => appointment.surface)
   appointments: Appointment[];
 }
+
+export interface SurfaceDto extends Surface {}

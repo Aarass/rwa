@@ -10,9 +10,9 @@ import {
 import {
   CreateAppointmentDto,
   CreateParticipationDto,
+  Participation,
   UpdateAppointmentDto,
 } from '../../../shared/src';
-import { Participation } from '../src/entities/participation';
 import { authenticate } from 'passport';
 
 export function testParticipation(

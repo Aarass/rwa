@@ -2,17 +2,17 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import {
   AccessToken,
+  Appointment,
   CreateAppointmentDto,
   CreateSportDto,
   CreateSurfaceDto,
   CreateUpsDto,
   CreateUserDto,
+  Sport,
+  Surface,
+  User,
+  UserPlaysSport,
 } from '../../../../shared/src';
-import { Sport } from '../../src/entities/sport';
-import { User } from '../../src/entities/user';
-import { Surface } from '../../src/entities/surface';
-import { Appointment } from '../../src/entities/appointment';
-import { UserPlaysSport } from '../../src/entities/user-plays-sport';
 
 export const createUser = async function (
   server: App,

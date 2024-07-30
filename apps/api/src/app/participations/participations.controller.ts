@@ -14,7 +14,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CreateParticipationDto, createParticipationSchema } from '@rwa/shared';
-import { User } from '../../entities/user';
+import { User } from '@rwa/shared';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ParticipationsService } from './participations.service';

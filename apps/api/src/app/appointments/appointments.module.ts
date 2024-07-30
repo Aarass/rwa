@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppointmentsController } from './appointments.controller';
 import { AppointmentsService } from './appointments.service';
-import { Appointment } from '../../entities/appointment';
-import { Participation } from '../../entities/participation';
-import { Location } from '../../entities/location';
+import { Appointment } from '@rwa/shared';
+import { Participation } from '@rwa/shared';
+import { Location } from '@rwa/shared';
 import { HttpModule } from '@nestjs/axios';
 import { LocationsModule } from '../locations/locations.module';
 

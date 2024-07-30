@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { CreateSurfaceDto } from '../../../shared/src';
-import { Surface } from '../src/entities/surface';
+import { CreateSurfaceDto, Surface } from '../../../shared/src';
 
 export function testSurface(
   getServer: () => App,

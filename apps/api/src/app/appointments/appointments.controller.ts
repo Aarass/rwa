@@ -22,7 +22,7 @@ import {
   UpdateAppointmentDto,
   updateAppointmentSchema,
 } from '@rwa/shared';
-import { User } from '../../entities/user';
+import { User } from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';

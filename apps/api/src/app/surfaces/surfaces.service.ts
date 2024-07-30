@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSurfaceDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
-import { Surface } from '../../entities/surface';
+import { Surface } from '@rwa/shared';
 
 @Injectable()
 export class SurfacesService {

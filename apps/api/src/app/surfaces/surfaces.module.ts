@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Surface } from '../../entities/surface';
+import { Surface } from '@rwa/shared';
 import { SurfacesController } from './surfaces.controller';
 import { SurfacesService } from './surfaces.service';
 

@@ -11,7 +11,7 @@ import {
   RefreshTokenPayload,
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../entities/user';
+import { User } from '@rwa/shared';
 import { UserService } from '../user/user.service';
 
 @Injectable()
