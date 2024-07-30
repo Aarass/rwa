@@ -21,12 +21,14 @@ import { ParticipationsService } from './participations.service';
 import { AppointmentsService } from '../appointments/appointments.service';
 import { ZodValidationPipe } from '../global/validation';
 import { Public } from '../auth/decorators/public.decorator';
+import { UpsService } from '../ups/ups.service';
 
 @Controller('participations')
 export class ParticipationsController {
   constructor(
     private participationsService: ParticipationsService,
-    private appointmentService: AppointmentsService
+    private appointmentService: AppointmentsService,
+    private upsService: UpsService
   ) {}
 
   @Post()
@@ -40,12 +42,15 @@ export class ParticipationsController {
     );
 
     if (appointment == null) {
-      throw new BadRequestException();
+      throw new NotFoundException('Appointment does not exist');
+    }
+
+    if (appointment.canceled) {
+      throw new ForbiddenException(`Can't register for a canceled appointment`);
     }
 
     if (appointment.missingPlayers == appointment.participants.length) {
-      console.log('Termin je popunjen');
-      throw new ForbiddenException();
+      throw new ForbiddenException('Appointment is full');
     }
 
     const userAge = Math.abs(
@@ -55,23 +60,44 @@ export class ParticipationsController {
     );
 
     if (userAge < appointment.minAge || userAge > appointment.maxAge) {
-      console.log('Korisnik je izvan starosnih granica termina');
-      throw new ForbiddenException();
+      throw new ForbiddenException(
+        'User is outside the age range for this appointment'
+      );
     }
 
-    const userSkillLevel = 3;
+    const ups = await this.upsService.getUserSport(
+      user.id,
+      appointment.sportId
+    );
+
+    if (ups == null) {
+      throw new ForbiddenException('User does not play that sport');
+    }
+
+    const userSkillLevel = ups.selfRatedSkillLevel;
     if (
       userSkillLevel < appointment.minSkillLevel ||
       userSkillLevel > appointment.maxSkillLevel
     ) {
-      console.log('Korisnik je izvan skill granica termina');
-      throw new ForbiddenException();
+      throw new ForbiddenException(
+        'User is outside the skill range for this appointment'
+      );
     }
 
-    return await this.participationsService.create(
-      user.id,
-      createParticipationDto
-    );
+    try {
+      return await this.participationsService.create(
+        user.id,
+        createParticipationDto
+      );
+    } catch (err: any) {
+      if (err.code != undefined && err.code == 23505) {
+        console.error('unique_key_violation');
+        throw new ForbiddenException(
+          `Can't register for the same appointment more than once`
+        );
+      }
+      throw new ForbiddenException('Unknown error');
+    }
   }
 
   @Public()
@@ -94,11 +120,11 @@ export class ParticipationsController {
     const participation = await this.participationsService.findOne(id);
 
     if (participation == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Participation not found');
     }
 
     if (participation.userId != user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`Can't edit others participation`);
     }
 
     await this.participationsService.markSeen(id);
@@ -112,11 +138,13 @@ export class ParticipationsController {
     const participation = await this.participationsService.findOne(id);
 
     if (participation == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Participation not found');
     }
 
     if (participation.appointment.organizerId != user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(
+        `User is not the organizer of the appointment`
+      );
     }
 
     await this.participationsService.reject(id);
@@ -130,11 +158,11 @@ export class ParticipationsController {
     const participation = await this.participationsService.findOne(id);
 
     if (participation == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Participation not found');
     }
 
     if (participation.userId != user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`Can't delete others participation`);
     }
 
     await this.participationsService.remove(id);

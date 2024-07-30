@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   AppointmentFilters,
+  AppointmentsOrdering,
   CreateAppointmentDto,
   UpdateAppointmentDto,
 } from '@rwa/shared';
@@ -9,6 +10,8 @@ import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
 import { Appointment } from '../../entities/appointment';
 import { Participation } from '../../entities/participation';
 import { LocationsService } from '../locations/locations.service';
+import { GeoPointDto } from 'shared/src/lib/Point';
+import { assert } from 'console';
 
 @Injectable()
 export class AppointmentsService {
@@ -35,16 +38,17 @@ export class AppointmentsService {
       return await this.appointmentRepository.findOneBy({ id: wid.id });
     } catch (err: any) {
       if (err.code != undefined && err.code == 23503) {
-        console.error('foreign_key_violation');
+        throw new BadRequestException(`Referenced object does not exist`);
       }
       console.error(err);
-      throw new BadRequestException();
+      throw new BadRequestException(`Unexpected error`);
     }
   }
 
-  async findWithFilters(
+  async findAll(
     filters: AppointmentFilters,
-    loc?: { lat: number; lng: number }
+    ordering?: AppointmentsOrdering,
+    userLocation?: GeoPointDto
   ) {
     if (filters.skip == undefined) {
       filters.skip = 0;
@@ -65,14 +69,14 @@ export class AppointmentsService {
       minTime: filters.minTime ?? null,
       maxTime: filters.maxTime ?? null,
       maxPrice: filters.maxPrice ?? null,
-      distance: filters.distance ?? null,
+      maxDistance: filters.maxDistance ?? null,
       organizerId: filters.organizerId ?? null,
       canceled: filters.canceled ?? null,
       skip: filters.skip ?? null,
       take: filters.take ?? null,
     };
 
-    return await this.appointmentRepository
+    let query = this.appointmentRepository
       .createQueryBuilder('appointment')
       .leftJoinAndSelect('appointment.location', 'location')
       .leftJoinAndSelect('appointment.participants', 'participants')
@@ -93,21 +97,53 @@ export class AppointmentsService {
          appointment.organizerId = COALESCE(:organizerId, appointment.organizerId) AND 
          appointment.canceled = COALESCE(:canceled, appointment.canceled)`
       )
-      .if(nulledFilters.distance != null, function () {
-        return this.andWhere(
-          `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= :maxDistance`,
-          nulledFilters.distance!
-        );
-      })
       .skip(filters.skip)
-      .take(filters.take)
-      .getMany();
-  }
+      .take(filters.take);
 
-  async findAll() {
-    return await this.appointmentRepository.find({
-      relations: ['participants'],
-    });
+    if (
+      nulledFilters.maxDistance != null ||
+      (ordering != undefined && ordering.by == 'distance')
+    ) {
+      if (userLocation == undefined) {
+        throw new BadRequestException(
+          `User must pass its location to filter or sort by distance`
+        );
+      }
+
+      query.setParameters(userLocation);
+    }
+
+    if (nulledFilters.maxDistance != null) {
+      query = query.andWhere(
+        `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= (:maxDistance * 0.621371192)`
+      );
+    }
+
+    if (ordering != undefined) {
+      switch (ordering.by) {
+        case 'distance':
+          query = query
+            .addSelect(
+              `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2))`,
+              'distance'
+            )
+            .orderBy('distance', ordering.direction);
+          break;
+        case 'date':
+          query = query
+            .orderBy('appointment.date', ordering.direction)
+            .addOrderBy('appointment.startTime', ordering.direction);
+          break;
+        case 'price':
+          query = query.orderBy(
+            'appointment.pricePerPlayer',
+            ordering.direction
+          );
+          break;
+      }
+    }
+
+    return await query.getMany();
   }
 
   async findOne(id: number) {

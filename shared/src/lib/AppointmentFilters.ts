@@ -10,11 +10,7 @@ export const appointmentFiltersSchema = z
     minTime: z.string().time(),
     maxTime: z.string().time(),
     maxPrice: z.number(),
-    distance: z.object({
-      maxDistance: z.number(),
-      lat: z.number(),
-      lng: z.number(),
-    }),
+    maxDistance: z.number(),
     organizerId: z.number(),
     canceled: z.boolean(),
     skip: z.number(),

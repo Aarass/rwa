@@ -1,8 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Appointment } from './appointment';
 import { User } from './user';
 
 @Entity()
+@Unique(['appointment', 'user'])
 export class Participation {
   @PrimaryGeneratedColumn()
   id: number;

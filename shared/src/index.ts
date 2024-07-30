@@ -7,4 +7,5 @@ export * from './lib/Surface';
 export * from './lib/Appointment';
 export * from './lib/Participation';
 export * from './lib/AppointmentFilters';
+export * from './lib/AppointmentsOrdering';
 export * from './lib/Location';

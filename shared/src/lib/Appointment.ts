@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import { appointmentFiltersSchema } from './AppointmentFilters';
+import { appointmentsOrderingSchema } from './AppointmentsOrdering';
+import { geoPointSchema } from './Point';
 
 export const createAppointmentSchema = z.object({
   locationId: z.string(),
@@ -39,6 +42,16 @@ export const updateAppointmentSchema = z
   .partial();
 
 export type UpdateAppointmentDto = z.infer<typeof updateAppointmentSchema>;
+
+export const findAppointmentsSchema = z
+  .object({
+    filters: appointmentFiltersSchema,
+    ordering: appointmentsOrderingSchema,
+    userLocation: geoPointSchema,
+  })
+  .partial();
+
+export type FindAppointmentsDto = z.infer<typeof findAppointmentsSchema>;
 
 // export const createAppointmentSchema = z
 //   .object({

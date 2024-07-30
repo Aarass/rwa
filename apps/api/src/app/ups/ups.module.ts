@@ -7,6 +7,7 @@ import { UserPlaysSport } from '../../entities/user-plays-sport';
 @Module({
   imports: [TypeOrmModule.forFeature([UserPlaysSport])],
   controllers: [UpsController],
-  providers: [UpsService]
+  providers: [UpsService],
+  exports: [UpsService],
 })
-export class UpsModule { }
+export class UpsModule {}

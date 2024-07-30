@@ -4,6 +4,7 @@ import {
   createAppointment,
   createSport,
   createSurface,
+  createUps,
   ezLogin,
 } from './helper/helper';
 import {
@@ -18,7 +19,7 @@ export function testParticipation(
   getServer: () => App,
   clearDatabase: () => Promise<void>
 ) {
-  describe.only(`/participations`, () => {
+  describe(`/participations`, () => {
     beforeAll(async () => {
       await clearDatabase();
     });
@@ -28,7 +29,9 @@ export function testParticipation(
     let accessTokenOrganizer: string;
     let accessTokenParticipant: string;
 
-    it('should create an appointment and a participation', async () => {
+    it('should create everything required to test participations', async () => {
+      const server = getServer();
+
       let newAppointment: CreateAppointmentDto = {
         locationId: 'ChIJOS9xY7KCVUcROAbIlRA1s9E',
         date: '2024-07-20',
@@ -38,32 +41,42 @@ export function testParticipation(
         missingPlayers: 10,
         minSkillLevel: 1,
         maxSkillLevel: 3,
-        minAge: -1,
-        maxAge: -1,
+        minAge: 10,
+        maxAge: 35,
         pricePerPlayer: 0,
         additionalInformation: '',
         surfaceId: -99,
         sportId: -99,
       };
 
-      const server = getServer();
       accessTokenOrganizer = await ezLogin(server);
-      const surface = await createSurface(server, 'trava');
+      accessTokenParticipant = await ezLogin(server);
+
       const sport = await createSport(server, 'fudbal');
+      const surface = await createSurface(server, 'trava');
+      const ups = await createUps(server, accessTokenParticipant, sport.id, 3);
 
       newAppointment.surfaceId = surface.id;
       newAppointment.sportId = sport.id;
+
       const appointment = await createAppointment(
         server,
         accessTokenOrganizer,
         newAppointment
       );
 
-      const newParticipation: CreateParticipationDto = {
-        appointmentId: appointment.id,
-      };
+      appointmentId = appointment.id;
+    });
 
-      accessTokenParticipant = await ezLogin(server);
+    it('should not be possible to create participation without being logged in', async () => {
+      const server = getServer();
+      const res = await request(server).post('/participations').expect(401);
+    });
+
+    it('should create a participation', async () => {
+      const server = getServer();
+
+      const newParticipation: CreateParticipationDto = { appointmentId };
 
       const response = await request(server)
         .post('/participations')
@@ -73,12 +86,23 @@ export function testParticipation(
 
       const participation = response.body as Participation;
 
-      expect(participation.appointmentId).toBe(appointment.id);
+      expect(participation.appointmentId).toBe(appointmentId);
       expect(participation.approved).toBe(true);
       expect(participation.userHasSeenChanges).toBe(true);
 
       participationId = participation.id;
-      appointmentId = participation.appointment.id;
+    });
+
+    it('user should not be able to apply for participation more than once', async () => {
+      const server = getServer();
+
+      const newParticipation: CreateParticipationDto = { appointmentId };
+
+      const tmp = await request(server)
+        .post('/participations')
+        .auth(accessTokenParticipant, { type: 'bearer' })
+        .send(newParticipation)
+        .expect(403);
     });
 
     it('should retrive created participation', async () => {

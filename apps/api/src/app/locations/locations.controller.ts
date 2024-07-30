@@ -28,7 +28,9 @@ export class LocationsController {
     @Body(new ZodValidationPipe(createLocationSchema))
     createLocationDto: CreateLocationDto
   ) {
-    return await this.locationsService.create(createLocationDto.locationId);
+    return await this.locationsService.searchOnGoogleAndSave(
+      createLocationDto.locationId
+    );
   }
 
   @Public()

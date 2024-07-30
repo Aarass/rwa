@@ -71,21 +71,20 @@ export class AuthService {
     try {
       payload = this.jwtService.verify(refreshToken);
     } catch (e) {
-      console.error('Invalid token');
-      throw new ForbiddenException();
+      throw new ForbiddenException('Invalid token');
     }
 
     const user = await this.userService.getUserById(payload.sub);
 
     if (user == null) {
       // Kapiram da ovo moze da se desi ako se user izbrise, u drugim slucajevima mislim da je bug
-      console.error(`Couldn't find user with id found in refresh token\n`);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(
+        `Couldn't find user with id found in refresh token\n`
+      );
     }
 
     if (user.refreshTokenHash == null) {
-      console.error(`User has no refresh token stored in db`);
-      throw new ForbiddenException();
+      throw new ForbiddenException(`User has no refresh token stored in db`);
     }
 
     const tokenIsValid = await bcrypt.compare(
@@ -94,12 +93,10 @@ export class AuthService {
     );
 
     if (!tokenIsValid) {
-      console.error(
+      await this.revokeRefreshToken(user.id);
+      throw new ForbiddenException(
         `User attempted to use different refresh token than the one stored in db`
       );
-
-      await this.revokeRefreshToken(user.id);
-      throw new ForbiddenException();
     }
 
     const newAccessToken = await this.createAccessToken(user);

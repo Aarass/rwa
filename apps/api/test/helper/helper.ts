@@ -5,12 +5,14 @@ import {
   CreateAppointmentDto,
   CreateSportDto,
   CreateSurfaceDto,
+  CreateUpsDto,
   CreateUserDto,
 } from '../../../../shared/src';
 import { Sport } from '../../src/entities/sport';
 import { User } from '../../src/entities/user';
 import { Surface } from '../../src/entities/surface';
 import { Appointment } from '../../src/entities/appointment';
+import { UserPlaysSport } from '../../src/entities/user-plays-sport';
 
 export const createUser = async function (
   server: App,
@@ -51,6 +53,28 @@ export const createSport = async function (server: App, name: string) {
   return res.body as Sport;
 };
 
+export const createUps = async function (
+  server: App,
+  accessToken: string,
+  sportId: number,
+  rating: number
+) {
+  const newUps: CreateUpsDto = {
+    sportId: sportId,
+    selfRatedSkillLevel: rating,
+  };
+
+  const ups = (
+    await request(server)
+      .post('/ups')
+      .auth(accessToken, { type: 'bearer' })
+      .send(newUps)
+      .expect(201)
+  ).body as UserPlaysSport;
+
+  return ups;
+};
+
 export const createSurface = async function (server: App, name: string) {
   const newSurface: CreateSurfaceDto = { name };
 
@@ -63,7 +87,7 @@ export const createSurface = async function (server: App, name: string) {
 };
 
 export const ezLogin = async function (server: App) {
-  const username = 'admin' + Math.random() * 100;
+  const username = 'user' + Math.random() * 100;
   const password = 'password';
 
   await request(server).post('/auth/register').send({

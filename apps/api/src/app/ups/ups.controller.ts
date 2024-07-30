@@ -38,17 +38,7 @@ export class UpsController {
     @Body(new ZodValidationPipe(createUpsSchema))
     upsDto: CreateUpsDto
   ) {
-    try {
-      return await this.upsService.addSportToUser(user.id, upsDto);
-    } catch (err: any) {
-      if (err.code != undefined) {
-        if (err.code == 23505) {
-          console.log('Duplicate');
-          throw new BadRequestException();
-        }
-      }
-      return err;
-    }
+    return await this.upsService.addSportToUser(user.id, upsDto);
   }
 
   @Delete(':id')
@@ -57,12 +47,13 @@ export class UpsController {
     @Param('id', ParseIntPipe) id: number
   ) {
     const ups = await this.upsService.getUps(id);
+
     if (ups == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('Ups does not exist');
     }
 
     if (ups.userId != user.id) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(`Can't delete others ups`);
     }
 
     return await this.upsService.removeSportFromUser(id);

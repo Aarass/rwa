@@ -17,6 +17,8 @@ import {
   appointmentFiltersSchema,
   CreateAppointmentDto,
   createAppointmentSchema,
+  FindAppointmentsDto,
+  findAppointmentsSchema,
   UpdateAppointmentDto,
   updateAppointmentSchema,
 } from '@rwa/shared';
@@ -46,11 +48,11 @@ export class AppointmentsController {
     const appointment = await this.appointmentService.findOne(id);
 
     if (appointment == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('The appointment does not exist');
     }
 
     if (appointment.organizerId != user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`Can't cancel others appointments`);
     }
 
     await this.appointmentService.cancel(id);
@@ -59,14 +61,14 @@ export class AppointmentsController {
   @Public()
   @Get()
   async find(
-    @Body(new ZodValidationPipe(appointmentFiltersSchema))
-    filters: AppointmentFilters,
-    @Query('lat')
-    lat: number,
-    @Query('lng')
-    lng: number
+    @Body(new ZodValidationPipe(findAppointmentsSchema))
+    criteria: FindAppointmentsDto
   ) {
-    return await this.appointmentService.findWithFilters(filters, { lat, lng });
+    return await this.appointmentService.findAll(
+      criteria.filters ?? {},
+      criteria.ordering,
+      criteria.userLocation
+    );
   }
 
   @Public()
@@ -83,17 +85,17 @@ export class AppointmentsController {
     updateAppointmentDto: UpdateAppointmentDto
   ) {
     if (Object.keys(updateAppointmentDto).length === 0) {
-      throw new BadRequestException();
+      throw new BadRequestException('There is nothing to update');
     }
 
     const appointment = await this.appointmentService.findOne(id);
 
     if (appointment == null) {
-      throw new NotFoundException();
+      throw new NotFoundException(`Appointment does not exist`);
     }
 
     if (appointment.organizerId != user.id) {
-      throw new ForbiddenException();
+      throw new ForbiddenException(`Can't update others appointment`);
     }
 
     if (

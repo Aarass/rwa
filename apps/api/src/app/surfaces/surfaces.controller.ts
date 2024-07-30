@@ -38,7 +38,7 @@ export class SurfacesController {
     const surface = await this.surfacesService.findOne(id);
 
     if (surface == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('The surface does not exist');
     }
 
     return surface;

@@ -17,7 +17,7 @@ export class LocationsService {
     private locationRepository: Repository<Location>,
     private http: HttpService
   ) {}
-  async create(locationId: string): Promise<Location | null> {
+  async searchOnGoogleAndSave(locationId: string): Promise<Location | null> {
     const response = await firstValueFrom(
       this.http.get<GeocodeResponse>(
         `https://maps.googleapis.com/maps/api/geocode/json?place_id=${locationId}&key=${process.env.GOOGLE_KEY}`
@@ -89,10 +89,10 @@ export class LocationsService {
 
     if (location == null) {
       // console.info('Prvi put vidim ovu lokaciju, potrazicu na google-u...');
-      location = await this.create(id);
+      location = await this.searchOnGoogleAndSave(id);
 
       if (location == null) {
-        throw new BadRequestException();
+        throw new BadRequestException(`Invalid location id`);
       }
     } else {
       // console.info('Lokacija vec postoji u bazi');

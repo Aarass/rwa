@@ -47,7 +47,7 @@ export class SportsController {
     const sport = await this.sportsService.findOne(id);
 
     if (sport == null) {
-      throw new NotFoundException();
+      throw new NotFoundException('The sport does not exist');
     }
 
     return sport;

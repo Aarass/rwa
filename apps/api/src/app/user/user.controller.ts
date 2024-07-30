@@ -53,7 +53,9 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number
   ) {
     if (!user.roles.includes('admin') && id != user.id) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException(
+        `User can't delete other users, u must be admin`
+      );
     }
     return await this.userService.deleteUserById(id);
   }
