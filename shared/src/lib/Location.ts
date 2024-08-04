@@ -8,10 +8,9 @@ export const createLocationSchema = z
 
 export type CreateLocationDto = z.infer<typeof createLocationSchema>;
 
-export const getSuggestionLocationSchema = z
-  .object({
-    input: z.string(),
-  })
-  .required();
+export const locationSuggestionSchema = z.object({
+  description: z.string(),
+  place_id: z.string(),
+});
 
-export type GetSuggestLocationDto = z.infer<typeof getSuggestionLocationSchema>;
+export type LocationSuggestionDto = z.infer<typeof locationSuggestionSchema>;

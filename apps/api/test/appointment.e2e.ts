@@ -124,7 +124,7 @@ export function testAppointment(
 
     it('should retrieve list of appointments which contain created appointment', async () => {
       const appointments = (
-        await request(server).get(`/appointments`).expect(200)
+        await request(server).post(`/appointments/search`).expect(200)
       ).body as Appointment[];
 
       expect(appointments).toBeDefined();
@@ -162,7 +162,7 @@ export function testAppointment(
 
       const appointments = (
         await request(server)
-          .get(`/appointments`)
+          .post(`/appointments/search`)
           .send({
             filters: {
               canceled: false,
@@ -231,7 +231,7 @@ export function testAppointment(
       it('all', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({} as FindAppointmentsDto)
             .expect(200)
         ).body;
@@ -241,7 +241,7 @@ export function testAppointment(
       it('sportId', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 sportId: soccer.id,
@@ -255,7 +255,7 @@ export function testAppointment(
       it('maxDistance', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 maxDistance: 33,
@@ -277,7 +277,7 @@ export function testAppointment(
       it('too young', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 age: 5,
@@ -291,7 +291,7 @@ export function testAppointment(
       it('too old', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 age: 55,
@@ -305,7 +305,7 @@ export function testAppointment(
       it('right age', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 age: 15,
@@ -319,7 +319,7 @@ export function testAppointment(
       it('not canceled', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 canceled: false,
@@ -333,7 +333,7 @@ export function testAppointment(
       it('max date', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 maxDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
@@ -349,7 +349,7 @@ export function testAppointment(
       it('min date', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 minDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
@@ -365,7 +365,7 @@ export function testAppointment(
       it('min time', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 minTime: '19:00:00',
@@ -379,7 +379,7 @@ export function testAppointment(
       it('max time', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 maxTime: '19:00:00',
@@ -393,7 +393,7 @@ export function testAppointment(
       it('min time and max time', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 minTime: '18:00:00',
@@ -408,7 +408,7 @@ export function testAppointment(
       it('canceled', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 canceled: true,
@@ -422,7 +422,7 @@ export function testAppointment(
       it('skip', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               filters: {
                 skip: 10,
@@ -436,7 +436,7 @@ export function testAppointment(
       it('distance asc', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               ordering: {
                 by: 'distance',
@@ -458,7 +458,7 @@ export function testAppointment(
       it('distance desc', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               ordering: {
                 by: 'distance',
@@ -480,7 +480,7 @@ export function testAppointment(
       it('price', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               ordering: {
                 by: 'price',
@@ -498,7 +498,7 @@ export function testAppointment(
       it('date', async () => {
         let appointments = (
           await request(server)
-            .get(`/appointments`)
+            .post(`/appointments/search`)
             .send({
               ordering: {
                 by: 'date',

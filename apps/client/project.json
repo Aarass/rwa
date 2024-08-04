@@ -5,6 +5,24 @@
   "prefix": "app",
   "sourceRoot": "apps/client/src",
   "tags": [],
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss",
+      "skipTests": true
+    },
+    "@schematics/angular:class": {
+      "skipTests": true
+    },
+    "@schematics/angular:directive": {
+      "skipTests": true
+    },
+    "@schematics/angular:pipe": {
+      "skipTests": true
+    },
+    "@schematics/angular:service": {
+      "skipTests": true
+    }
+  },
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
@@ -22,7 +40,12 @@
             "input": "apps/client/public"
           }
         ],
-        "styles": ["apps/client/src/styles.scss"],
+        "styles": [
+          "node_modules/primeflex/primeflex.css",
+          "node_modules/primeng/resources/themes/aura-light-blue/theme.css",
+          "node_modules/primeng/resources/primeng.min.css",
+          "apps/client/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -79,6 +102,24 @@
       "options": {
         "jestConfig": "apps/client/jest.config.ts"
       }
+    }
+  },
+  "generators": {
+    "@schematics/angular:component": {
+      "style": "scss",
+      "skipTests": true
+    },
+    "@schematics/angular:class": {
+      "skipTests": true
+    },
+    "@schematics/angular:directive": {
+      "skipTests": true
+    },
+    "@schematics/angular:pipe": {
+      "skipTests": true
+    },
+    "@schematics/angular:service": {
+      "skipTests": true
     }
   }
 }

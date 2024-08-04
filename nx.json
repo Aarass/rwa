@@ -50,6 +50,9 @@
       "strict": true,
       "style": "scss",
       "unitTestRunner": "jest"
+    },
+    "@nx/angular:component": {
+      "style": "scss"
     }
   },
   "plugins": [

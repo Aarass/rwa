@@ -6,14 +6,10 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { LocationsService } from './locations.service';
-import {
-  CreateLocationDto,
-  createLocationSchema,
-  GetSuggestLocationDto,
-  getSuggestionLocationSchema,
-} from '@rwa/shared';
+import { CreateLocationDto, createLocationSchema } from '@rwa/shared';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { Public } from '../auth/decorators/public.decorator';
@@ -36,10 +32,10 @@ export class LocationsController {
   @Public()
   @Get('/suggestion')
   async suggest(
-    @Body(new ZodValidationPipe(getSuggestionLocationSchema))
-    dto: GetSuggestLocationDto
+    @Query('input')
+    input: string
   ) {
-    return await this.locationsService.suggest(dto.input);
+    return await this.locationsService.suggest(input);
   }
 
   @Public()

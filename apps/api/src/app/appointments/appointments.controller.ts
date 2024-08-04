@@ -59,7 +59,8 @@ export class AppointmentsController {
   }
 
   @Public()
-  @Get()
+  @Post('search')
+  @HttpCode(200)
   async find(
     @Body(new ZodValidationPipe(findAppointmentsSchema))
     criteria: FindAppointmentsDto
