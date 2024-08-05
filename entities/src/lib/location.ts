@@ -23,5 +23,3 @@ export class Location {
   @OneToMany(() => User, (user) => user.location)
   users: User[];
 }
-
-export interface LocationDto extends Location {}

@@ -12,8 +12,8 @@ import {
   CreateParticipationDto,
   UpdateAppointmentDto,
   CreateUpsDto,
-  UserPlaysSport,
 } from '../../../shared/src';
+import { UserPlaysSport } from '../../../entities/src';
 import { authenticate } from 'passport';
 
 export function testUps(

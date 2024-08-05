@@ -5,6 +5,16 @@
     "declaration": true,
     "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "../entities/src/lib/appointment.ts",
+    "../entities/src/lib/location.ts",
+    "../entities/src/lib/participation.ts",
+    "../entities/src/lib/rating.ts",
+    "../entities/src/lib/sport.ts",
+    "../entities/src/lib/surface.ts",
+    "../entities/src/lib/user-plays-sport.ts",
+    "../entities/src/lib/user.ts"
+  ],
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"]
 }

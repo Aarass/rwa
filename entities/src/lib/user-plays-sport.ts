@@ -29,5 +29,3 @@ export class UserPlaysSport {
   @Column()
   selfRatedSkillLevel: number;
 }
-
-export interface UserPlaysSportDto extends UserPlaysSport {}

@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Location } from '@rwa/shared';
+import { Location } from '@rwa/entities';
 import { LocationsController } from './locations.controller';
 import { LocationsService } from './locations.service';
 

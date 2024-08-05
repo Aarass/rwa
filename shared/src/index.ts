@@ -9,5 +9,3 @@ export * from './lib/Participation';
 export * from './lib/AppointmentFilters';
 export * from './lib/AppointmentsOrdering';
 export * from './lib/Location';
-
-export * from './lib/entities/entities.module';

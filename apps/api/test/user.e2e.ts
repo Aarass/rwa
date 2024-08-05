@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { CreateUserDto, User } from '../../../shared/src';
+import { CreateUserDto } from '../../../shared/src';
+import { User } from '../../../entities/src';
 
 export function testUser(
   getServer: () => App,

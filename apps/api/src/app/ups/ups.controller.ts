@@ -10,7 +10,7 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@rwa/shared';
+import { User } from '@rwa/entities';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';

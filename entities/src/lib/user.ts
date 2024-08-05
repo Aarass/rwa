@@ -68,6 +68,3 @@ export class User {
   @OneToMany(() => Rating, (rating) => rating.userRating)
   usersWhichIRated: Rating[];
 }
-
-export interface UserDto
-  extends Omit<User, 'passwordHash' | 'refreshTokenHash'> {}

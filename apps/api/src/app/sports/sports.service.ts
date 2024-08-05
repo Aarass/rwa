@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSportDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
-import { Sport } from '@rwa/shared';
+import { Sport } from '@rwa/entities';
 
 @Injectable()
 export class SportsService {

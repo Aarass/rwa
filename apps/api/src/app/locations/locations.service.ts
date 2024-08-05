@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateLocationDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
-import { Location } from '@rwa/shared';
+import { Location } from '@rwa/entities';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 

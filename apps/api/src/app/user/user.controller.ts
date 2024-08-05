@@ -14,7 +14,7 @@ import { ExtractUser } from '../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ZodValidationPipe } from '../global/validation';
 import { UserService } from './user.service';
-import { User } from '@rwa/shared';
+import { User } from '@rwa/entities';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 

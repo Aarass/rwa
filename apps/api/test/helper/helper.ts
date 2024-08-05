@@ -2,17 +2,19 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import {
   AccessToken,
-  Appointment,
   CreateAppointmentDto,
   CreateSportDto,
   CreateSurfaceDto,
   CreateUpsDto,
   CreateUserDto,
+} from '../../../../shared/src';
+import {
+  Appointment,
   Sport,
   Surface,
   User,
   UserPlaysSport,
-} from '../../../../shared/src';
+} from '../../../../entities/src';
 
 export const createUser = async function (
   server: App,

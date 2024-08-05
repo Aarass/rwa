@@ -1,6 +1,7 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { CreateSportDto, Sport } from '../../../shared/src';
+import { CreateSportDto } from '../../../shared/src';
+import { Sport } from '../../../entities/src';
 import { ezLogin } from './helper/helper';
 
 export function testSport(

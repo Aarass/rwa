@@ -6,14 +6,14 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="username" autocomplete="off" formControlName="usernameControl" required />
+              <input pInputText id="username" autocomplete="off" formControlName="username" required />
               <label for="username">Username</label>
             </p-floatLabel>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password id="password" [feedback]="false" formControlName="passwordControl" inputStyleClass="w-full"
+              <p-password id="password" [feedback]="false" formControlName="password" inputStyleClass="w-full"
                 styleClass="w-full" required="true" />
               <label for="password">Password</label>
             </span>
@@ -21,7 +21,7 @@
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password id="password" [feedback]="false" formControlName="passwordControl" inputStyleClass="w-full"
+              <p-password id="password" [feedback]="false" formControlName="password" inputStyleClass="w-full"
                 styleClass="w-full" required="true" />
               <label for="password">Confirm Password</label>
             </span>
@@ -39,21 +39,21 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="name" autocomplete="off" formControlName="nameControl" required />
+              <input pInputText id="name" autocomplete="off" formControlName="name" required />
               <label for="name">Name</label>
             </p-floatLabel>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="surname" autocomplete="off" formControlName="surnameControl" required />
+              <input pInputText id="surname" autocomplete="off" formControlName="surname" required />
               <label for="surname">Surname</label>
             </p-floatLabel>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="phonenumber" autocomplete="off" formControlName="phoneNumberControl" required />
+              <input pInputText id="phonenumber" autocomplete="off" formControlName="phoneNumber" required />
               <label for="phonenumber">Phone number</label>
             </p-floatLabel>
           </div>
@@ -70,7 +70,7 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4 w-full">
             <p-floatLabel class="w-full">
-              <p-calendar id="birthdate" formControlName="birthDateControl" [inputStyle]="{'width':'100%'}"
+              <p-calendar id="birthdate" formControlName="birthDate" [inputStyle]="{'width':'100%'}"
                 [style]="{'width':'100%'}" required="true" />
               <label for="birthdate">Birth date</label>
             </p-floatLabel>
@@ -80,7 +80,7 @@
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
               <p-autoComplete id="location" [suggestions]="suggestions" optionLabel="description"
-                formControlName="locationControl" (completeMethod)=" getLocationSuggestions($event)" styleClass="w-full"
+                formControlName="location" (completeMethod)=" getLocationSuggestions($event)" styleClass="w-full"
                 inputStyleClass="w-full" required="true" />
               <label for="location">Location</label>
             </p-floatLabel>
@@ -88,7 +88,7 @@
 
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <textarea id="bio" rows="5" cols="30" pInputTextarea formControlName="biographyControl"></textarea>
+              <textarea id="bio" rows="5" cols="30" pInputTextarea formControlName="biography"></textarea>
               <label for="bio">Biography</label>
             </p-floatLabel>
           </div>
@@ -96,7 +96,7 @@
           <p-messages [(value)]="messages" [enableService]="false" />
           <div class="flex justify-content-between">
             <p-button (onClick)="prevCallback.emit()" icon="pi pi-arrow-left" iconPos="left" rounded="true" />
-            <p-button (onClick)="test()" icon="pi pi-check" iconPos="right" rounded="true" />
+            <p-button (onClick)="submit()" icon="pi pi-check" iconPos="right" rounded="true" />
           </div>
         </ng-template>
       </p-stepperPanel>

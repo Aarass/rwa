@@ -19,5 +19,3 @@ export class Sport {
   @OneToMany(() => Appointment, (appointment) => appointment.sport)
   appointments: Appointment[];
 }
-
-export interface SportDto extends Sport {}

@@ -1,13 +1,11 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
 import {
-  Appointment,
   CreateAppointmentDto,
   FindAppointmentsDto,
-  Sport,
-  Surface,
   UpdateAppointmentDto,
 } from '../../../shared/src';
+import { Appointment, Sport, Surface } from '../../../entities/src';
 import {
   createAppointment,
   createSport,

@@ -7,8 +7,7 @@ import {
   UpdateAppointmentDto,
 } from '@rwa/shared';
 import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
-import { Appointment } from '@rwa/shared';
-import { Participation } from '@rwa/shared';
+import { Appointment, Participation } from '@rwa/entities';
 import { LocationsService } from '../locations/locations.service';
 import { GeoPointDto } from 'shared/src/lib/Point';
 import { assert } from 'console';

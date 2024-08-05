@@ -81,5 +81,3 @@ export class Appointment {
   @OneToMany(() => Participation, (participation) => participation.appointment)
   participants: Participation[];
 }
-
-export interface AppointmentDto extends Appointment {}

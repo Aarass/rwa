@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateParticipationDto } from '@rwa/shared';
-import { Participation } from '@rwa/shared';
+import { Participation } from '@rwa/entities';
 import { Repository } from 'typeorm';
 
 @Injectable()

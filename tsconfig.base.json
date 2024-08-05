@@ -16,6 +16,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@rwa/entities": ["entities/src/index.ts"],
       "@rwa/shared": ["shared/src/index.ts"]
     }
   },

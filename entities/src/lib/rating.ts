@@ -22,5 +22,3 @@ export class Rating {
   @Column()
   value: number;
 }
-
-export interface RatingDto extends Rating {}

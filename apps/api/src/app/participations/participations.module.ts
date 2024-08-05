@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Participation } from '@rwa/shared';
+import { Participation } from '@rwa/entities';
 import { AppointmentModule } from '../appointments/appointments.module';
 import { ParticipationsController } from './participations.controller';
 import { ParticipationsService } from './participations.service';

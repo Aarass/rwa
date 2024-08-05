@@ -15,7 +15,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { ExtractUser } from './decorators/user.decorator';
-import { User } from '@rwa/shared';
+import { User } from '@rwa/entities';
 import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
