@@ -1,19 +1,41 @@
 import {
+  HTTP_INTERCEPTORS,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
+import {
   ApplicationConfig,
-  provideZoneChangeDetection,
   isDevMode,
+  provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { appRoutes } from './app.routes';
-import { provideStore } from '@ngrx/store';
-import { provideEffects } from '@ngrx/effects';
-import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { httpInterceptor } from './http.interceptor';
+import { provideRouter } from '@angular/router';
+import { provideEffects } from '@ngrx/effects';
+import { provideStore } from '@ngrx/store';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { MessageService } from 'primeng/api';
+import { DialogService } from 'primeng/dynamicdialog';
+import { appRoutes } from './app.routes';
+import { AuthEffects } from './features/auth/store/effects';
+import { authReducer } from './features/auth/store/reducer';
+import { MyHttpInterceptor } from './http.interceptor';
+import { ConfigService } from './features/global/services/config/config.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    {
+      provide: MessageService,
+    },
+    {
+      provide: DialogService,
+    },
+    {
+      provide: ConfigService,
+    },
+    provideStore({
+      auth: authReducer,
+    }),
+    provideEffects([AuthEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -22,11 +44,10 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
       connectInZone: true,
     }),
-    provideEffects(),
-    provideStore(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
-    provideHttpClient(withInterceptors([httpInterceptor])),
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true },
     provideAnimations(),
   ],
 };

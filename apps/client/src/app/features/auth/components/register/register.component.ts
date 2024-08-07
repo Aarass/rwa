@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
@@ -11,24 +11,24 @@ import { PanelModule } from 'primeng/panel';
 import { PasswordModule } from 'primeng/password';
 import { StepperModule } from 'primeng/stepper';
 
-import { LocationSuggestionDto } from '@rwa/shared';
-import { CreateUserDto } from '@rwa/shared';
-import { createUserSchema } from '@rwa/shared';
+import {
+  LocationSuggestionDto,
+  RegisterUserDto,
+  createUserSchema as registerUserSchema,
+} from '@rwa/shared';
 import {
   AutoCompleteCompleteEvent,
   AutoCompleteModule,
 } from 'primeng/autocomplete';
-import { take } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { LocationService } from '../../../location/services/location/location.service';
 
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Message } from 'primeng/api';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { Message, MessageService } from 'primeng/api';
 import { AuthService } from '../../services/auth/auth.service';
+import { register } from '../../store/actions';
+import { selectIsCurrentlyRegistering } from '../../store/selectors';
 
 @Component({
   selector: 'app-register',
@@ -51,56 +51,118 @@ import { AuthService } from '../../services/auth/auth.service';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit, OnDestroy {
   formGroup = new FormGroup({
-    username: new FormControl('', [Validators.required]),
+    username: new FormControl(''),
     password: new FormControl(''),
+    confirmPassword: new FormControl(''),
     name: new FormControl(''),
     surname: new FormControl(''),
     phoneNumber: new FormControl(''),
-    birthDate: new FormControl(''),
+    birthDate: new FormControl<Date | null>(null),
     biography: new FormControl(''),
     location: new FormControl<LocationSuggestionDto | null>(null),
   });
+
   suggestions: LocationSuggestionDto[] = [];
-  messages: Message[] = [];
+
+  death = new Subject<void>();
+  loading: boolean = false;
 
   constructor(
+    private messageService: MessageService,
     private locationService: LocationService,
-    private authService: AuthService
+    private store: Store
   ) {}
+
+  ngOnInit(): void {
+    this.store
+      .select(selectIsCurrentlyRegistering)
+      .pipe(takeUntil(this.death))
+      .subscribe((val) => {
+        this.loading = val;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.death.next();
+    this.death.complete();
+  }
 
   getLocationSuggestions(event: AutoCompleteCompleteEvent) {
     this.locationService
       .getSuggestions(event.query)
       .pipe(take(1))
       .subscribe((res) => {
-        this.suggestions = res.predictions;
+        if (res != null) {
+          this.suggestions = res.predictions;
+        } else {
+          this.suggestions = [];
+        }
       });
   }
 
-  submit() {
-    const { location, ...rest } = this.formGroup.getRawValue();
+  async submit() {
+    const values = this.formGroup.getRawValue();
 
     if (
-      location === null ||
-      rest.biography === null ||
-      rest.username === null ||
-      rest.password === null ||
-      rest.name === null ||
-      rest.surname === null ||
-      rest.birthDate === null
+      values.biography == null ||
+      values.birthDate == null ||
+      values.location == null ||
+      values.name == null ||
+      values.password == null ||
+      values.phoneNumber == null ||
+      values.surname == null ||
+      values.username == null
     ) {
+      this.messageService.clear('register');
+      this.messageService.add({
+        key: 'register',
+        severity: 'error',
+        summary:
+          'GLOBAL' + ': ' + 'There are empty fields that need to be filled out',
+      });
       return;
     }
 
-    if (rest.username != null) {
-      const createUserDto: any = {
-        ...rest,
-        locationId: location.place_id,
-      };
-      const output = createUserSchema.parse(createUserDto);
-      console.log(output);
+    if (values.location.place_id == undefined) {
+      this.messageService.clear('register');
+      this.messageService.add({
+        key: 'register',
+        severity: 'error',
+        summary: 'LOCATION' + ': ' + 'Invalid location',
+      });
+      return;
     }
+
+    const registerUserDto: RegisterUserDto = {
+      biography: values.biography,
+      birthDate: values.birthDate.toISOString().split('T')[0],
+      locationId: values.location.place_id,
+      name: values.name,
+      password: values.password,
+      phoneNumber: values.phoneNumber,
+      surname: values.surname,
+      username: values.username,
+    };
+
+    const zodResult = await registerUserSchema.safeParseAsync(registerUserDto);
+
+    if (zodResult.success == false) {
+      const error = zodResult.error.errors[0];
+      this.messageService.clear('register');
+      this.messageService.add({
+        key: 'register',
+        severity: 'error',
+        summary: error.path.toString().toUpperCase() + ': ' + error.message,
+      });
+      return;
+    }
+
+    this.messageService.clear('register');
+    this.loading = true;
+
+    this.store.dispatch(register(registerUserDto));
+    return;
   }
 }

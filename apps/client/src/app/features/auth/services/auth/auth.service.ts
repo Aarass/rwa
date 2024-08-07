@@ -1,25 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RegisterUserDto } from '@rwa/shared';
-import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '../../../global/services/config/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   register(registrationData: RegisterUserDto) {
     return this.http.post(
-      'http://localhost:3000/auth/register',
+      `${this.configService.getBackendBaseURL()}/auth/register`,
       registrationData
     );
   }
 
   login(username: string, password: string) {
-    return this.http.post('http://localhost:3000/auth/login', {
-      username,
-      password,
-    });
+    return this.http.post<{ accessToken: string }>(
+      `${this.configService.getBackendBaseURL()}/auth/login`,
+      {
+        username,
+        password,
+      }
+    );
+  }
+
+  refresh() {
+    return this.http.post<{ accessToken: string }>(
+      `${this.configService.getBackendBaseURL()}/auth/refresh`,
+      {}
+    );
   }
 }

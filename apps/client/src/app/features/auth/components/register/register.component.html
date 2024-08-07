@@ -21,7 +21,7 @@
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password id="password" [feedback]="false" formControlName="password" inputStyleClass="w-full"
+              <p-password id="password" [feedback]="false" formControlName="confirmPassword" inputStyleClass="w-full"
                 styleClass="w-full" required="true" />
               <label for="password">Confirm Password</label>
             </span>
@@ -93,13 +93,13 @@
             </p-floatLabel>
           </div>
 
-          <p-messages [(value)]="messages" [enableService]="false" />
           <div class="flex justify-content-between">
             <p-button (onClick)="prevCallback.emit()" icon="pi pi-arrow-left" iconPos="left" rounded="true" />
-            <p-button (onClick)="submit()" icon="pi pi-check" iconPos="right" rounded="true" />
+            <p-button (onClick)="submit()" [loading]="loading" icon="pi pi-check" iconPos="right" rounded="true" />
           </div>
         </ng-template>
       </p-stepperPanel>
     </p-stepper>
+    <p-messages key="register" [hideTransitionOptions]="'0ms'" />
   </div>
 </p-card>

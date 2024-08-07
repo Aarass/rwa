@@ -18,4 +18,9 @@ export const createUserSchema = z
   .required();
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;
+export const registerUserSchema = createUserSchema;
 export type RegisterUserDto = CreateUserDto;
+export interface LoginUserDto {
+  username: string;
+  password: string;
+}

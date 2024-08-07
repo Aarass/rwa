@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
@@ -14,8 +20,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
-import { catchError, EMPTY, take } from 'rxjs';
-import { AuthService } from '../../services/auth/auth.service';
+import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { login } from '../../store/actions';
+import {
+  selectAuthStatus,
+  selectIsCurrentlyLoggingIn,
+} from '../../store/selectors';
+import { AuthStatus } from '../../store/state';
 
 @Component({
   selector: 'app-login',
@@ -33,59 +44,56 @@ import { AuthService } from '../../services/auth/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
-  @Output()
-  close = new EventEmitter<void>();
-
-  loading: boolean = false;
+export class LoginComponent implements OnInit, OnDestroy {
+  @Output() close = new EventEmitter<void>();
 
   formGroup = new FormGroup({
     usernameControl: new FormControl<string>('', [Validators.required]),
     passwordControl: new FormControl<string>('', [Validators.required]),
   });
 
-  constructor(
-    private messageService: MessageService,
-    private authService: AuthService
-  ) {}
+  death = new Subject<void>();
+  loading: boolean = false;
+
+  constructor(private store: Store, private messageService: MessageService) {}
+
+  ngOnInit(): void {
+    this.store
+      .select(selectIsCurrentlyLoggingIn)
+      .pipe(takeUntil(this.death))
+      .subscribe((val) => {
+        this.loading = val;
+      });
+
+    this.store
+      .select(selectAuthStatus)
+      .pipe(
+        takeUntil(this.death),
+        filter((val) => {
+          return val == AuthStatus.LoggedIn;
+        })
+      )
+      .subscribe((val) => {
+        this.close.emit();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.death.next();
+    this.death.complete();
+  }
 
   submit() {
-    console.log(this.formGroup.getRawValue());
-
     if (this.formGroup.valid) {
-      this.loading = true;
-
-      this.authService
-        .login(
-          this.formGroup.controls.usernameControl.value!,
-          this.formGroup.controls.passwordControl.value!
-        )
-        .pipe(
-          take(1),
-          catchError((err: HttpErrorResponse) => {
-            this.messageService.add({
-              key: 'login',
-              severity: 'error',
-              summary: err.error.message,
-            });
-
-            this.loading = false;
-            return EMPTY;
-          })
-        )
-        .subscribe((res) => {
-          this.messageService.clear('login');
-          this.messageService.add({
-            key: 'global',
-            severity: 'success',
-            summary: 'Successfully signed in',
-          });
-          this.loading = false;
-          this.formGroup.reset();
-          this.close.emit();
-        });
+      this.store.dispatch(
+        login({
+          username: this.formGroup.controls.usernameControl.value!,
+          password: this.formGroup.controls.passwordControl.value!,
+        })
+      );
     } else {
-      this.loading = false;
+      // TODO
+      // Prikazivanje gresaksa
     }
   }
 

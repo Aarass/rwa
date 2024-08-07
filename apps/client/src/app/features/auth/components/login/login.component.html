@@ -16,5 +16,5 @@
     <p-button label="Cancel" severity="secondary" (onClick)="cancel()" />
     <p-button label="Sign In" [loading]="loading" (onClick)="submit()" />
   </div>
-  <p-messages key="login" />
+  <p-messages key="login" [hideTransitionOptions]="'0ms'" />
 </div>

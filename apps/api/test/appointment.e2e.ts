@@ -1,18 +1,17 @@
 import request from 'supertest';
 import { App } from 'supertest/types';
+import { Appointment, Sport, Surface } from '../../../entities/src';
 import {
   CreateAppointmentDto,
   FindAppointmentsDto,
   UpdateAppointmentDto,
 } from '../../../shared/src';
-import { Appointment, Sport, Surface } from '../../../entities/src';
 import {
   createAppointment,
   createSport,
   createSurface,
   ezLogin,
 } from './helper/helper';
-import { fileURLToPath } from 'url';
 
 export function testAppointment(
   getServer: () => App,

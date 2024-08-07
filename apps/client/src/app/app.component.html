@@ -5,24 +5,12 @@
   </ng-template>
   <ng-template pTemplate="end">
     <div class="flex align-items-center gap-2">
-      @if (false) {
-      <ng-container>
-        <p>Ime</p>
-        <p>Prezime</p>
-        <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" onclick=""
-          class="cursor-pointer	" (click)="profile()" />
-      </ng-container>
+      <!-- @if (authStatus == 1) { -->
+      @if (0) {
+      <app-profile-summary></app-profile-summary>
       } @else {
-      <ng-container>
-        <div class="card flex justify-content-center">
-          <p-dialog header="Sign In" [modal]="true" draggable="false" [(visible)]="visible" [style]="{ width: '25rem' }"
-            resizable="false" dismissableMask="true">
-            <app-login (close)="visible = false"></app-login>
-          </p-dialog>
-          <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
-        </div>
-        <p-button (onClick)="goToSingUpPage()" label="Sign Up" outlined="true" />
-      </ng-container>
+      <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
+      <p-button (onClick)="goToSingUpPage()" label="Sign Up" outlined="true" />
       }
       <span class="mr-5"></span>
     </div>
