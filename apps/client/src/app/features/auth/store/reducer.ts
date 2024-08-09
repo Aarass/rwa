@@ -4,6 +4,7 @@ import {
   login,
   loginFailed,
   loginSuccess,
+  logout,
   refreshFailed,
   refreshSuccess,
   register,
@@ -55,6 +56,14 @@ export const authReducer = createReducer(
     };
   }),
   on(loginFailed, refreshFailed, (state, action) => {
+    return {
+      ...state,
+      accessToken: null,
+      decodedPayload: null,
+      status: AuthStatus.NotLoggedIn,
+    };
+  }),
+  on(logout, (state, action) => {
     return {
       ...state,
       accessToken: null,

@@ -27,3 +27,13 @@ export const selectAccessToken = createSelector(
   authFeature,
   (state) => state.accessToken
 );
+
+export const selectAccessTokenWithDecodedPayload = createSelector(
+  authFeature,
+  (state) => {
+    return {
+      accessToken: state.accessToken,
+      payload: state.decodedPayload,
+    };
+  }
+);

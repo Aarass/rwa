@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ForbiddenException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
@@ -108,7 +110,13 @@ export class AuthService {
   }
 
   async logout(refreshToken: RefreshToken) {
-    const payload: RefreshTokenPayload = this.jwtService.verify(refreshToken);
+    let payload: RefreshTokenPayload;
+    try {
+      payload = await this.jwtService.verifyAsync(refreshToken);
+    } catch (err) {
+      throw new BadRequestException('Problem with refresh token');
+    }
+
     await this.revokeRefreshToken(payload.sub);
   }
 

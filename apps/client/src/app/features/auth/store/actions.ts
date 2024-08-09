@@ -27,3 +27,5 @@ export const refreshSuccess = createAction(
   props<{ accessToken: AccessToken }>()
 );
 export const refreshFailed = createAction('[Auth] Refresh Failed');
+
+export const logout = createAction('[Auth] Logout');

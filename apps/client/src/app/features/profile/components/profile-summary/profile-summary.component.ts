@@ -6,11 +6,13 @@ import { Router } from '@angular/router';
 import { selectDecodedPayload } from '../../../auth/store/selectors';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MenuItem } from 'primeng/api';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { logout } from '../../../auth/store/actions';
 
 @Component({
   selector: 'app-profile-summary',
   standalone: true,
-  imports: [CommonModule, AvatarModule],
+  imports: [CommonModule, AvatarModule, SpeedDialModule],
   templateUrl: './profile-summary.component.html',
   styleUrl: './profile-summary.component.scss',
 })
@@ -21,12 +23,14 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
   userSurname: string = '';
   items: MenuItem[] = [
     {
-      icon: 'pi pi-sign-out',
-      command: () => {},
+      icon: 'pi pi-user',
+      routerLink: ['/profile'],
     },
     {
-      icon: 'pi pi-user',
-      routerLink: ['/fileupload'],
+      icon: 'pi pi-sign-out',
+      command: () => {
+        this.logout();
+      },
     },
   ];
 
@@ -50,7 +54,7 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
     this.death.complete();
   }
 
-  avatarClick() {
-    this.router.navigate(['profile']);
+  logout() {
+    this.store.dispatch(logout());
   }
 }

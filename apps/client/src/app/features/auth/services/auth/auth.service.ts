@@ -32,4 +32,11 @@ export class AuthService {
       {}
     );
   }
+
+  logout() {
+    return this.http.post(
+      `${this.configService.getBackendBaseURL()}/auth/logout`,
+      {}
+    );
+  }
 }

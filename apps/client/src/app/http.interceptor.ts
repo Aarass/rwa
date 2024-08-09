@@ -13,13 +13,13 @@ import {
   EMPTY,
   exhaustMap,
   Observable,
-  retry,
   take,
   takeWhile,
   tap,
+  throwError,
 } from 'rxjs';
 import { refresh } from './features/auth/store/actions';
-import { selectAccessToken } from './features/auth/store/selectors';
+import { selectAccessTokenWithDecodedPayload } from './features/auth/store/selectors';
 import { ConfigService } from './features/global/services/config/config.service';
 @Injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
@@ -34,10 +34,11 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
     let shouldRetry = true;
 
-    return this.store.select(selectAccessToken).pipe(
-      take(2),
+    return this.store.select(selectAccessTokenWithDecodedPayload).pipe(
       takeWhile(() => shouldRetry),
-      exhaustMap((accessToken) => {
+      take(2),
+      exhaustMap((data) => {
+        const { accessToken, payload } = data;
         return handler
           .handle(
             request.clone({
@@ -52,22 +53,118 @@ export class MyHttpInterceptor implements HttpInterceptor {
             })
           )
           .pipe(
-            // Za slucaj da se request izvrsi bez greske
-            tap(() => {
-              shouldRetry = false;
-            }),
+            tap(() => (shouldRetry = false)),
             catchError((err: HttpErrorResponse) => {
-              if (accessToken != null && err.status == 401) {
-                this.store.dispatch(refresh());
-                shouldRetry = true;
-              } else {
-                shouldRetry = false;
+              if (err.status == 401) {
+                if (payload != null && checkIfJwtExpired(payload.exp)) {
+                  this.store.dispatch(refresh());
+                  return EMPTY;
+                }
               }
-
-              return EMPTY;
+              return throwError(() => err);
             })
           );
       })
     );
   }
 }
+
+function checkIfJwtExpired(exp: number) {
+  return Date.now() >= exp * 1000;
+}
+
+// intercept(
+//   request: HttpRequest<any>,
+//   handler: HttpHandler
+// ): Observable<HttpEvent<any>> {
+//   if (!request.url.startsWith(this.configService.getBackendBaseURL())) {
+//     return handler.handle(request);
+//   }
+
+//   return this.store.select(selectAccessToken).pipe(
+//     take(2),
+//     exhaustMap((accessToken) => {
+//       return handler
+//         .handle(
+//           request.clone({
+//             withCredentials: true,
+//             headers:
+//               accessToken == null
+//                 ? undefined
+//                 : new HttpHeaders().set(
+//                     'Authorization',
+//                     `Bearer ${accessToken}`
+//                   ),
+//           })
+//         )
+//         .pipe(
+//           catchError((err: HttpErrorResponse) => {
+//             if (accessToken != null && err.status == 401) {
+//               this.store.dispatch(refresh());
+//               return EMPTY;
+//             } else {
+//               return throwError(() => err);
+//             }
+//           })
+//         );
+//     })
+//   );
+// }
+
+//   intercept(
+//     request: HttpRequest<any>,
+//     handler: HttpHandler
+//   ): Observable<HttpEvent<any>> {
+//     if (!request.url.startsWith(this.configService.getBackendBaseURL())) {
+//       return handler.handle(request);
+//     }
+
+//     return this.store.select(selectAccessToken).pipe(
+//       take(1),
+//       exhaustMap((accessToken) => {
+//         return handler
+//           .handle(
+//             request.clone({
+//               withCredentials: true,
+//               headers:
+//                 accessToken == null
+//                   ? undefined
+//                   : new HttpHeaders().set(
+//                       'Authorization',
+//                       `Bearer ${accessToken}`
+//                     ),
+//             })
+//           )
+//           .pipe(
+//             catchError((err: HttpErrorResponse) => {
+//               if (accessToken != null && err.status == 401) {
+//                 console.log('Retryujem');
+//                 this.store.dispatch(refresh());
+//                 return this.store.select(selectAccessToken).pipe(
+//                   skip(1),
+//                   take(1),
+//                   exhaustMap((accessToken) => {
+//                     return handler.handle(
+//                       request.clone({
+//                         withCredentials: true,
+//                         headers:
+//                           accessToken == null
+//                             ? undefined
+//                             : new HttpHeaders().set(
+//                                 'Authorization',
+//                                 `Bearer ${accessToken}`
+//                               ),
+//                       })
+//                     );
+//                   })
+//                 );
+//               } else {
+//                 return throwError(() => err);
+//                 // console.log('Vracam empty');
+//                 // return EMPTY;
+//               }
+//             })
+//           );
+//       })
+//     );
+//   }

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, EMPTY, exhaustMap, map, of, switchMap } from 'rxjs';
+import { catchError, EMPTY, exhaustMap, map, of, switchMap, tap } from 'rxjs';
 import {
   login,
   loginFailed,
   loginSuccess,
+  logout,
   refresh,
   refreshFailed,
   refreshSuccess,
@@ -103,4 +104,24 @@ export class AuthEffects {
       })
     );
   });
+
+  logout$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(logout),
+        exhaustMap(() => {
+          return this.authService.logout().pipe(
+            tap(() => {
+              this.messageService.add({
+                key: 'global',
+                severity: 'success',
+                summary: 'Logged out successfully',
+              });
+            })
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
 }

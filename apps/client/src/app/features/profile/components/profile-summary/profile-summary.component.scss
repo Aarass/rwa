@@ -2,4 +2,27 @@
   display: flex;
   align-items: center;
   gap: .5rem;
+
+  ::ng-deep {
+    .p-speeddial-direction-down {
+      top: 1.25rem;
+    }
+
+    .p-speeddial {
+
+      .p-button {
+        background-color: transparent;
+        border-color: transparent;
+
+        .p-avatar {
+          // background-color: black;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+
+
+
+  }
 }

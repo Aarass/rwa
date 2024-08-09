@@ -5,8 +5,8 @@
   </ng-template>
   <ng-template pTemplate="end">
     <div class="flex align-items-center gap-2">
-      <!-- @if (authStatus == 1) { -->
-      @if (0) {
+      @if (authStatus == 1) {
+      <!-- @if (1) { -->
       <app-profile-summary></app-profile-summary>
       } @else {
       <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
