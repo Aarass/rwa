@@ -12,7 +12,7 @@ import {
   register,
   registerFailed,
   registerSuccess,
-} from './actions';
+} from './auth.actions';
 import { AuthService } from '../services/auth/auth.service';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';

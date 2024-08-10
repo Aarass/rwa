@@ -25,10 +25,9 @@ import { LocationService } from '../../../location/services/location/location.se
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Message, MessageService } from 'primeng/api';
-import { AuthService } from '../../services/auth/auth.service';
-import { register } from '../../store/actions';
-import { selectIsCurrentlyRegistering } from '../../store/selectors';
+import { MessageService } from 'primeng/api';
+import { register } from '../../store/auth.actions';
+import { authFeature } from '../../store/auth.feature';
 
 @Component({
   selector: 'app-register',
@@ -77,7 +76,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store
-      .select(selectIsCurrentlyRegistering)
+      .select(authFeature.selectIsCurrentlyRegistering)
       .pipe(takeUntil(this.death))
       .subscribe((val) => {
         this.loading = val;

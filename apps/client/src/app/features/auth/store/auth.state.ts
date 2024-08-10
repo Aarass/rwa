@@ -1,7 +1,7 @@
 import { AccessTokenPayload } from '@rwa/shared';
 
 export interface AuthState {
-  status: AuthStatus;
+  status: AuthStatus | null;
   decodedPayload: AccessTokenPayload | null;
   accessToken: string | null;
   isCurrentlyRegistering: boolean;

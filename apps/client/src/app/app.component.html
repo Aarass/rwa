@@ -4,7 +4,7 @@
     <img class="h-4rem cursor-pointer	" src="placeholder-logo.png" alt="logo" routerLink="/">
   </ng-template>
   <ng-template pTemplate="end">
-    <div class="flex align-items-center gap-2">
+    <div class="flex align-items-center gap-2" *ngIf="authStatus != null">
       @if (authStatus == 1) {
       <!-- @if (1) { -->
       <app-profile-summary></app-profile-summary>

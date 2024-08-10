@@ -1,14 +1,15 @@
 <div [formGroup]="formGroup" class="form" (keydown.enter)="submit()">
   <div class="flex align-items-center gap-3 mb-4 mt-4">
     <p-floatLabel class="w-full">
-      <input pInputText id="username" autocomplete="off" formControlName="usernameControl" class="w-full" />
+      <input pInputText name="username" id="username" autocomplete="off" formControlName="usernameControl"
+        class="w-full" />
       <label for="username">Username</label>
     </p-floatLabel>
   </div>
   <div class="flex align-items-center gap-3 mb-5">
     <span class="p-float-label w-full">
-      <p-password id="password" [feedback]="false" formControlName="passwordControl" inputStyleClass="w-full"
-        styleClass="w-full" [toggleMask]="true" />
+      <p-password name="password" id="password" [feedback]="false" formControlName="passwordControl"
+        inputStyleClass="w-full" styleClass="w-full" [toggleMask]="true" />
       <label for="password">Password</label>
     </span>
   </div>

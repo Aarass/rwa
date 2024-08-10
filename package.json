@@ -80,7 +80,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "@ngrx/component-store": "^18.0.0",
     "@ngrx/effects": "^18.0.0",
-    "@ngrx/entity": "^18.0.0",
+    "@ngrx/entity": "^18.0.2",
     "@ngrx/router-store": "^18.0.0",
     "@ngrx/store": "^18.0.0",
     "@types/express": "^4.17.21",

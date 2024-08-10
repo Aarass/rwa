@@ -6,24 +6,26 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="username" autocomplete="off" formControlName="username" required />
-              <label for="username">Username</label>
+              <input pInputText name="register-username" id="register-username" autocomplete="off"
+                formControlName="username" required />
+              <label for="register-username">Username</label>
             </p-floatLabel>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password id="password" [feedback]="false" formControlName="password" inputStyleClass="w-full"
-                styleClass="w-full" required="true" />
-              <label for="password">Password</label>
+              <p-password name="register-password" id="register-password" [feedback]="false" formControlName="password"
+                inputStyleClass="w-full" styleClass="w-full" required="true" autocomplete="new-password" />
+              <label for="register-password">Password</label>
             </span>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password id="password" [feedback]="false" formControlName="confirmPassword" inputStyleClass="w-full"
-                styleClass="w-full" required="true" />
-              <label for="password">Confirm Password</label>
+              <p-password name="register-confirm-password" id="register-confirm-password" [feedback]="false"
+                formControlName="confirmPassword" inputStyleClass="w-full" styleClass="w-full" required="true"
+                autocomplete="off" />
+              <label for="register-confirm-password">Confirm Password</label>
             </span>
           </div>
 

@@ -18,9 +18,9 @@ import {
   tap,
   throwError,
 } from 'rxjs';
-import { refresh } from './features/auth/store/actions';
-import { selectAccessTokenWithDecodedPayload } from './features/auth/store/selectors';
+import { refresh } from './features/auth/store/auth.actions';
 import { ConfigService } from './features/global/services/config/config.service';
+import { authFeature } from './features/auth/store/auth.feature';
 @Injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
   constructor(private store: Store, private configService: ConfigService) {}
@@ -34,38 +34,40 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
     let shouldRetry = true;
 
-    return this.store.select(selectAccessTokenWithDecodedPayload).pipe(
-      takeWhile(() => shouldRetry),
-      take(2),
-      exhaustMap((data) => {
-        const { accessToken, payload } = data;
-        return handler
-          .handle(
-            request.clone({
-              withCredentials: true,
-              headers:
-                accessToken == null
-                  ? undefined
-                  : new HttpHeaders().set(
-                      'Authorization',
-                      `Bearer ${accessToken}`
-                    ),
-            })
-          )
-          .pipe(
-            tap(() => (shouldRetry = false)),
-            catchError((err: HttpErrorResponse) => {
-              if (err.status == 401) {
-                if (payload != null && checkIfJwtExpired(payload.exp)) {
-                  this.store.dispatch(refresh());
-                  return EMPTY;
+    return this.store
+      .select(authFeature.selectAccessTokenWithDecodedPayload)
+      .pipe(
+        takeWhile(() => shouldRetry),
+        take(2),
+        exhaustMap((data) => {
+          const { accessToken, payload } = data;
+          return handler
+            .handle(
+              request.clone({
+                withCredentials: true,
+                headers:
+                  accessToken == null
+                    ? undefined
+                    : new HttpHeaders().set(
+                        'Authorization',
+                        `Bearer ${accessToken}`
+                      ),
+              })
+            )
+            .pipe(
+              tap(() => (shouldRetry = false)),
+              catchError((err: HttpErrorResponse) => {
+                if (err.status == 401) {
+                  if (payload != null && checkIfJwtExpired(payload.exp)) {
+                    this.store.dispatch(refresh());
+                    return EMPTY;
+                  }
                 }
-              }
-              return throwError(() => err);
-            })
-          );
-      })
-    );
+                return throwError(() => err);
+              })
+            );
+        })
+      );
   }
 }
 

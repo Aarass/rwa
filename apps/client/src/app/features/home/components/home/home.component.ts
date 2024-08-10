@@ -16,7 +16,7 @@ export class HomeComponent {
   constructor(private configService: ConfigService, private http: HttpClient) {}
   async test() {
     const res = await firstValueFrom(
-      this.http.post(`${this.configService.getBackendBaseURL()}/users`, {})
+      this.http.get(`${this.configService.getBackendBaseURL()}/ups/user/me`, {})
     );
     console.log(res);
   }

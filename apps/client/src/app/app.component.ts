@@ -1,21 +1,25 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { MessageService, PrimeNGConfig } from 'primeng/api';
-import { MenubarModule } from 'primeng/menubar';
-import { BadgeModule } from 'primeng/badge';
-import { ToastModule } from 'primeng/toast';
-import { InputTextModule } from 'primeng/inputtext';
-import { CommonModule } from '@angular/common';
-import { RippleModule } from 'primeng/ripple';
-import { ButtonModule } from 'primeng/button';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { LoginComponent } from './features/auth/components/login/login.component';
 import { Store } from '@ngrx/store';
-import { selectAuthStatus } from './features/auth/store/selectors';
-import { Subject, takeUntil } from 'rxjs';
-import { AuthStatus } from './features/auth/store/state';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { PrimeNGConfig } from 'primeng/api';
+import { BadgeModule } from 'primeng/badge';
+import { ButtonModule } from 'primeng/button';
+import {
+  DialogService,
+  DynamicDialogModule,
+  DynamicDialogRef,
+} from 'primeng/dynamicdialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { MenubarModule } from 'primeng/menubar';
+import { RippleModule } from 'primeng/ripple';
+import { ToastModule } from 'primeng/toast';
+import { firstValueFrom, Subject, take, takeUntil } from 'rxjs';
+import { LoginComponent } from './features/auth/components/login/login.component';
+import { refresh } from './features/auth/store/auth.actions';
+import { AuthStatus } from './features/auth/store/auth.state';
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
+import { authFeature } from './features/auth/store/auth.feature';
 
 @Component({
   standalone: true,
@@ -39,7 +43,7 @@ import { ProfileSummaryComponent } from './features/profile/components/profile-s
 export class AppComponent implements OnInit, OnDestroy {
   death = new Subject<void>();
 
-  authStatus: AuthStatus = AuthStatus.NotLoggedIn;
+  authStatus: AuthStatus | null = null;
   singInDialogRef: DynamicDialogRef<LoginComponent> | null = null;
 
   constructor(
@@ -53,12 +57,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.primengConfig.ripple = true;
 
     this.store
-      .select(selectAuthStatus)
+      .select(authFeature.selectStatus)
       .pipe(takeUntil(this.death))
       .subscribe((val) => {
         this.authStatus = val;
-        this.closeSignInDialog();
+        if (val == AuthStatus.LoggedIn) {
+          this.closeSignInDialog();
+        }
       });
+
+    this.store.dispatch(refresh());
   }
 
   ngOnDestroy(): void {
@@ -66,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.death.complete();
   }
 
-  showSignInDialog() {
+  async showSignInDialog() {
     this.singInDialogRef = this.dialogService.open(LoginComponent, {
       header: 'Sign in',
       modal: true,
@@ -74,6 +82,12 @@ export class AppComponent implements OnInit, OnDestroy {
       resizable: false,
       dismissableMask: true,
     });
+
+    (await firstValueFrom(this.singInDialogRef.onChildComponentLoaded)).close
+      .pipe(take(1))
+      .subscribe(() => {
+        this.closeSignInDialog();
+      });
   }
 
   closeSignInDialog() {

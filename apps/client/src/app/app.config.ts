@@ -11,15 +11,15 @@ import {
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
-import { provideStore } from '@ngrx/store';
+import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { appRoutes } from './app.routes';
-import { AuthEffects } from './features/auth/store/effects';
-import { authReducer } from './features/auth/store/reducer';
-import { MyHttpInterceptor } from './http.interceptor';
+import { AuthEffects } from './features/auth/store/auth.effects';
+import { authFeature } from './features/auth/store/auth.feature';
 import { ConfigService } from './features/global/services/config/config.service';
+import { MyHttpInterceptor } from './http.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,9 +32,8 @@ export const appConfig: ApplicationConfig = {
     {
       provide: ConfigService,
     },
-    provideStore({
-      auth: authReducer,
-    }),
+    provideStore(),
+    provideState(authFeature),
     provideEffects([AuthEffects]),
     provideStoreDevtools({
       maxAge: 25,

@@ -21,12 +21,9 @@ import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
 import { filter, Subject, takeUntil, tap } from 'rxjs';
-import { login } from '../../store/actions';
-import {
-  selectAuthStatus,
-  selectIsCurrentlyLoggingIn,
-} from '../../store/selectors';
-import { AuthStatus } from '../../store/state';
+import { login } from '../../store/auth.actions';
+import { AuthStatus } from '../../store/auth.state';
+import { authFeature } from '../../store/auth.feature';
 
 @Component({
   selector: 'app-login',
@@ -59,14 +56,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store
-      .select(selectIsCurrentlyLoggingIn)
+      .select(authFeature.selectIsCurrentlyLoggingIn)
       .pipe(takeUntil(this.death))
       .subscribe((val) => {
         this.loading = val;
       });
 
     this.store
-      .select(selectAuthStatus)
+      .select(authFeature.selectStatus)
       .pipe(
         takeUntil(this.death),
         filter((val) => {

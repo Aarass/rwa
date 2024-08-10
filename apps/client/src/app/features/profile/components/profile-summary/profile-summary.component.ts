@@ -3,11 +3,11 @@ import { CommonModule } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
-import { selectDecodedPayload } from '../../../auth/store/selectors';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 import { SpeedDialModule } from 'primeng/speeddial';
-import { logout } from '../../../auth/store/actions';
+import { logout } from '../../../auth/store/auth.actions';
+import { authFeature } from '../../../auth/store/auth.feature';
 
 @Component({
   selector: 'app-profile-summary',
@@ -38,7 +38,7 @@ export class ProfileSummaryComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store
-      .select(selectDecodedPayload)
+      .select(authFeature.selectDecodedPayload)
       .pipe(
         filter((val) => val != null),
         takeUntil(this.death)
