@@ -4,12 +4,14 @@ export interface SportDto {
   id: number;
   name: string;
   iconUrl: string;
+  imageUrl: string;
 }
 
 export const createSportSchema = z
   .object({
     name: z.string(),
     iconUrl: z.string(),
+    imageUrl: z.string(),
   })
   .required();
 
