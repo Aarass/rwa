@@ -21,6 +21,7 @@ import { TestModule } from './test/test.module';
 import { UpsModule } from './ups/ups.module';
 import { UserModule } from './user/user.module';
 import { LocationsModule } from './locations/locations.module';
+import { ImagesModule } from './images/images.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { LocationsModule } from './locations/locations.module';
     SurfacesModule,
     ParticipationsModule,
     LocationsModule,
+    ImagesModule,
   ],
   controllers: [],
   providers: [

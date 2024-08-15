@@ -8,7 +8,7 @@
     "target": "es2021",
     "strictNullChecks": true,
     "strict": true,
-    "strictPropertyInitialization": false,
+    "strictPropertyInitialization": false
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
   "include": ["src/**/*.ts"]
