@@ -1,0 +1,40 @@
+.sport-card-dim {
+  height: 4rem;
+  width: 15rem;
+}
+
+.sport {
+  height: 5rem;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 1.5rem;
+
+
+
+  img {
+    width: 5rem;
+    height: 5rem;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  // div {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   height: 33%;
+  //   width: 75%;
+  //   background-color: white;
+
+  //   display: flex;
+  //   justify-content: start;
+  //   align-items: center;
+  // }
+}

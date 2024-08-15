@@ -1,0 +1,21 @@
+<div [formGroup]="formGroup" class="form" (keydown.enter)="submit()">
+  <div class="flex align-items-center gap-3 mb-4 mt-4 w-full">
+    <p-floatLabel class="w-full">
+      <p-dropdown [options]="sports" formControlName="selectedSportControl" optionLabel="name"
+        placeholder="Select a Sport" inputId="sport" styleClass="w-full" />
+      <label for=" sport">Select a Sport</label>
+    </p-floatLabel>
+  </div>
+  <div class="gap-3 mb-4 mt-4">
+    <label for="skill-level" class="block mb-1">Skill level</label>
+
+    <p-rating formControlName="skillLevelControl" [cancel]="false" />
+  </div>
+
+  <div class="flex justify-content-end gap-2">
+    <p-button label="Cancel" severity="secondary" (onClick)="cancel()" />
+    <p-button label="Ok" (onClick)="submit()" [loading]="loading" />
+
+  </div>
+  <!-- <p-messages key="login" [hideTransitionOptions]="'0ms'" /> -->
+</div>

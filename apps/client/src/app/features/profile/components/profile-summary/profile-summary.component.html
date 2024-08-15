@@ -1,8 +1,21 @@
-<p>{{ userName }} {{ userSurname }}</p>
+<div class="flex h-full flex-nowrap gap-2 justify-content-center align-items-center">
+  <div class="">
+    <!-- <img src="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" alt="profile picture"
+      class="w-3rem h-3rem border-round-full object-center"> -->
 
-<p-speedDial [model]="items" radius="120" direction="down">
-  <ng-template pTemplate="button">
-    <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle"
-      class="cursor-pointer	" />
-  </ng-template>
-</p-speedDial>
+    <img src="https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.jpg" alt="profile picture"
+      class="w-3rem h-3rem border-round-full object-center">
+
+  </div>
+  <div class="mr-2">
+    <p class="font-semibold	m-1">{{ userName }}</p>
+    <p class="text-700 m-1"> {{ userSurname }}</p>
+  </div>
+  <div class="">
+    <p-button icon="pi pi-cog" [rounded]="true" [text]="true" severity="secondary" (onClick)="op.toggle($event)" />
+    <p-overlayPanel #op>
+      <p-button label="Logout" [rounded]="true" severity="secondary" text="true" icon="pi pi-sign-out"
+        (onClick)="this.logout()" />
+    </p-overlayPanel>
+  </div>
+</div>

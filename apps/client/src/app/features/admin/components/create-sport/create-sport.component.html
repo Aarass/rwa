@@ -1,0 +1,32 @@
+<div class="block h-full overflow-hidden flex flex-column">
+  @if (count != null && count == 0) {
+  <p class="flex-grow-0 text-center">Here will be shown sports</p>
+  }
+  <div class="p-4 w-full flex justify-content-center flex-wrap gap-4 nice-scrollbar overflow-auto">
+    @if (count != null) {
+    @if (count == 0) {
+    <p-skeleton width="18rem" height="8rem"></p-skeleton>
+    <p-skeleton width="18rem" height="8rem"></p-skeleton>
+    <p-skeleton width="18rem" height="8rem"></p-skeleton>
+    <p-skeleton width="18rem" height="8rem"></p-skeleton>
+    } @else {
+    @for (sport of sports; track sport.id) {
+    <p-card>
+      <div class="sport sport-card-dim">
+        <div class="flex align-items-center">
+          <img [src]="sport.iconUrl" alt="sport image">
+          <p class="ml-4">{{ sport.name }}</p>
+        </div>
+        <p-button icon="pi pi-trash" severity="danger" />
+      </div>
+    </p-card>
+    }
+    }
+    <p-card>
+      <div class="sport-card-dim flex justify-content-center align-items-center">
+        <p-button icon=" pi pi-plus" rounded="true" severity="secondary"></p-button>
+      </div>
+    </p-card>
+    }
+  </div>
+</div>

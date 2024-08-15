@@ -1,0 +1,16 @@
+<div class="flex align-items-center justify-content-center w-full">
+  <div class="flex align-items-center justify-content-start overflow-auto mx-8 max-w-full nice-scrollbar">
+    @for (ups of upses; track ups.id) {
+    <app-ups-list-item [ups]="ups" class="m-4"></app-ups-list-item>
+    }
+    @if (sportsLeft) {
+    <app-ups-list-item [ups]="null" class="m-4 cursor-pointer " (click)="openUpsDialog()"></app-ups-list-item>
+    }
+  </div>
+</div>
+@if (upses.length == 0) {
+<!-- <p>Here will be shown yours sports</p> -->
+<p>Click on "+" to add sports you play</p>
+}
+
+<p-confirmDialog />

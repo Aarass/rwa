@@ -16,3 +16,32 @@ body {
   color: var(--text-color);
   font-family: "Inter var", sans-serif;
 }
+
+
+
+.nice-scrollbar::-webkit-scrollbar {
+  height: .5rem;
+  width: .5rem;
+}
+
+.nice-scrollbar::-webkit-scrollbar-track {
+  display: none;
+}
+
+.nice-scrollbar::-webkit-scrollbar-thumb {
+  background: #3B82F6;
+  border-radius: 99px;
+}
+
+.border-round-full {
+  border-radius: 99px;
+}
+
+.object-center {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.w-unset {
+  width: unset !important;
+}

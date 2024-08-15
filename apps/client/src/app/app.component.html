@@ -1,20 +1,45 @@
-<p-menubar>
-  <ng-template pTemplate="start" class="ml-8">
-    <span class="ml-5"></span>
-    <img class="h-4rem cursor-pointer	" src="placeholder-logo.png" alt="logo" routerLink="/">
-  </ng-template>
-  <ng-template pTemplate="end">
-    <div class="flex align-items-center gap-2" *ngIf="authStatus != null">
-      @if (authStatus == 1) {
-      <!-- @if (1) { -->
-      <app-profile-summary></app-profile-summary>
-      } @else {
-      <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
-      <p-button (onClick)="goToSingUpPage()" label="Sign Up" outlined="true" />
-      }
-      <span class="mr-5"></span>
+<div class="flex flex-column h-screen">
+  <p-menubar class="flex-grow-0">
+    <ng-template pTemplate="start" class="ml-8">
+      <span class="ml-5"></span>
+      <img class="h-4rem cursor-pointer	" src="placeholder-logo.png" alt="logo" routerLink="/">
+    </ng-template>
+    <ng-template pTemplate="end">
+      <div class="flex align-items-center gap-2" *ngIf="authStatus != null">
+        @if (authStatus == 0) {
+        <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
+        <p-button (onClick)="goToSingUpPage()" label="Sign Up" outlined="true" />
+        } @else {
+        <p-button label="Home" icon="pi pi-home" severity="secondary" routerLink="" text="true" />
+        <p-button label="Profile" icon="pi pi-home" severity="secondary" routerLink="/profile" text="true" />
+        }
+        <span class="mr-5"></span>
+      </div>
+    </ng-template>
+  </p-menubar>
+  <div class="flex-grow-1 overflow-hidden w-full">
+    <div class="flex h-full flex-nowrap">
+      <div class="h-full">
+        @if (authStatus != 0) {
+        <div class="p-card p-component p-4 w-full h-full flex flex-column justify-content-between">
+          <div class="flex flex-column row-gap-2">
+            @if(isAdmin) {
+            <p-button label="Dashboard" icon="pi pi-chart-bar" severity="secondary" styleClass="w-full text-left"
+              routerLink="/dashboard" />
+            } @else {
+            <p-button label="My Appointments" icon="pi pi-book" severity="secondary" styleClass="w-full text-left" />
+            <p-button label="My Sports" icon="pi pi-globe" severity="secondary" styleClass="w-full text-left" />
+            }
+          </div>
+          <app-profile-summary></app-profile-summary>
+        </div>
+        }
+      </div>
+      <div class="p-3 w-full">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- <div class="w-3"></div> -->
     </div>
-  </ng-template>
-</p-menubar>
-<router-outlet></router-outlet>
-<p-toast key="global" position="bottom-left"></p-toast>
+  </div>
+  <p-toast key="global" position="bottom-right"></p-toast>
+</div>

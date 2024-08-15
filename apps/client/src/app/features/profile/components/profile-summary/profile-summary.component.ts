@@ -1,18 +1,19 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AvatarModule } from 'primeng/avatar';
-import { Store } from '@ngrx/store';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
+import { AvatarModule } from 'primeng/avatar';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { SpeedDialModule } from 'primeng/speeddial';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { logout } from '../../../auth/store/auth.actions';
 import { authFeature } from '../../../auth/store/auth.feature';
 
 @Component({
   selector: 'app-profile-summary',
   standalone: true,
-  imports: [CommonModule, AvatarModule, SpeedDialModule],
+  imports: [CommonModule, AvatarModule, SpeedDialModule, OverlayPanelModule],
   templateUrl: './profile-summary.component.html',
   styleUrl: './profile-summary.component.scss',
 })
