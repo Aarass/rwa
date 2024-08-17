@@ -1,0 +1,25 @@
+@if(images != null) {
+<div class="w-full h-full flex justify-content-center align-items-center">
+  @if (images.length == 0) {
+  <p>No images to show</p>
+  } @else {
+  <p-galleria [value]="images" [showItemNavigators]="true" [circular]="true" [numVisible]="5"
+    [containerStyle]="{ 'max-width': '1000px' }" [responsiveOptions]="responsiveOptions">
+    <ng-template pTemplate="caption" let-item>
+      <div class="w-full flex justify-content-center">
+        <p-button icon="pi pi-trash" [rounded]="true" [raised]="true" severity="danger" (onClick)="delete(item)" />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="item" let-item>
+      <img [src]="item.src" class="block object-center" width="700px" height="400px" />
+    </ng-template>
+    <ng-template pTemplate="thumbnail" let-item>
+      <div class="grid grid-nogutter justify-content-center">
+        <img [src]="item.src" style="display: block;" class="block object-center w-4rem h-4rem" />
+      </div>
+    </ng-template>
+  </p-galleria>
+  }
+</div>
+}

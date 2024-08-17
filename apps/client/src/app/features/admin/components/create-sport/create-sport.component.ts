@@ -1,28 +1,60 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { surfaceFeature } from '../../../surface/store/surface.feature';
-import { filter, Subject, switchMap, takeUntil } from 'rxjs';
-import { SkeletonModule } from 'primeng/skeleton';
-import { sportFeature } from '../../../sport/store/sport.feature';
 import { SportDto } from '@rwa/shared';
-import { CardModule } from 'primeng/card';
+import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { FileUploadModule } from 'primeng/fileupload';
+import { InputTextModule } from 'primeng/inputtext';
+import { SkeletonModule } from 'primeng/skeleton';
+import {
+  filter,
+  firstValueFrom,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { ImageService } from '../../../image/services/image/image.service';
+import { createSport, deleteSport } from '../../../sport/store/sport.actions';
+import { sportFeature } from '../../../sport/store/sport.feature';
 
 @Component({
   selector: 'app-create-sport',
   standalone: true,
-  imports: [CommonModule, SkeletonModule, CardModule, ButtonModule],
+  imports: [
+    CommonModule,
+    SkeletonModule,
+    CardModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    InputTextModule,
+    FileUploadModule,
+    FormsModule,
+  ],
   templateUrl: './create-sport.component.html',
   styleUrl: './create-sport.component.scss',
 })
-export class CreateSportComponent implements OnInit {
+export class CreateSportComponent implements OnInit, OnDestroy {
   death = new Subject<void>();
+
+  image: File | null = null;
+  src: string = '';
+
+  sportName: string = '';
 
   count: number | null = null;
   sports: SportDto[] = [];
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private confirmationService: ConfirmationService,
+    private imageService: ImageService
+  ) {}
 
   ngOnInit(): void {
     this.store
@@ -44,5 +76,60 @@ export class CreateSportComponent implements OnInit {
       .subscribe((sports) => {
         this.sports = sports;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.death.next();
+    this.death.complete();
+  }
+
+  onChange(event: any) {
+    // console.log(event.target.files);
+    const file = event.target.files[0];
+    if (file != undefined) {
+      this.image = file;
+      this.src = URL.createObjectURL(this.image!);
+    }
+  }
+
+  clearImage() {
+    this.image = null;
+    this.src = '';
+  }
+
+  async createSport() {
+    if (this.image == null || this.sportName.length == 0) {
+      return;
+    }
+
+    const { name: imageName } = await firstValueFrom(
+      this.imageService.uploadImage(this.image)
+    );
+
+    this.store.dispatch(
+      createSport({
+        data: {
+          name: this.sportName,
+          iconUrl: `http://localhost:3000/images/${imageName}`,
+          imageUrl: `http://localhost:3000/images/${imageName}`,
+        },
+      })
+    );
+
+    this.clearImage();
+    this.sportName = '';
+  }
+
+  deleteSport(id: number) {
+    this.confirmationService.confirm({
+      header: 'Delete Confirmation',
+      message: 'Are you sure you want to delete this item?',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text p-button-text',
+      dismissableMask: true,
+      accept: () => {
+        this.store.dispatch(deleteSport({ id }));
+      },
+    });
   }
 }

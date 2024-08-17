@@ -1,32 +1,48 @@
-<div class="block h-full overflow-hidden flex flex-column">
-  @if (count != null && count == 0) {
-  <p class="flex-grow-0 text-center">Here will be shown sports</p>
-  }
-  <div class="p-4 w-full flex justify-content-center flex-wrap gap-4 nice-scrollbar overflow-auto">
-    @if (count != null) {
-    @if (count == 0) {
-    <p-skeleton width="18rem" height="8rem"></p-skeleton>
-    <p-skeleton width="18rem" height="8rem"></p-skeleton>
-    <p-skeleton width="18rem" height="8rem"></p-skeleton>
-    <p-skeleton width="18rem" height="8rem"></p-skeleton>
-    } @else {
-    @for (sport of sports; track sport.id) {
-    <p-card>
-      <div class="sport sport-card-dim">
-        <div class="flex align-items-center">
-          <img [src]="sport.iconUrl" alt="sport image">
-          <p class="ml-4">{{ sport.name }}</p>
-        </div>
-        <p-button icon="pi pi-trash" severity="danger" />
+<div class="flex flex-column justify-content-center align-items-center h-full">
+  <div class="flex-grow-1 overflow-auto">
+    <div class="block h-full overflow-hidden flex flex-column relative">
+      @if (count != null && count == 0) {
+      <p class="flex-grow-0 text-center">Here will be shown sports</p>
+      }
+      <div class="p-4 w-full flex justify-content-center flex-wrap gap-4 nice-scrollbar overflow-auto">
+        @if (count != null) {
+        @for (sport of sports; track sport.id) {
+        <p-card>
+          <div class="sport sport-card-dim">
+            <div class="flex align-items-center">
+              <img [src]="sport.iconUrl" alt="sport image">
+              <p class="ml-4">{{ sport.name }}</p>
+            </div>
+            <p-button icon="pi pi-trash" severity="danger" (onClick)="deleteSport(sport.id)" />
+          </div>
+        </p-card>
+        }
+        }
       </div>
-    </p-card>
-    }
-    }
-    <p-card>
-      <div class="sport-card-dim flex justify-content-center align-items-center">
-        <p-button icon=" pi pi-plus" rounded="true" severity="secondary"></p-button>
-      </div>
-    </p-card>
-    }
+    </div>
   </div>
-</div>
+  <div class="flex-grow-0 mb-4">
+    <p-card class="create-sport-card">
+      <div class="create-sport-container">
+        @if (image == null) {
+        <div class="img-wrapper">
+          <label for="image-upload" class="upload"></label>
+          <input id="image-upload" class="hidden" type="file" (change)="onChange($event)" accept="image/*">
+        </div>
+        } @else {
+        <div class="img-wrapper">
+          <img [src]="src" class="img" (click)="clearImage()">
+          <!-- <p-button icon="pi pi-times" rounded="true" text="true" severity="danger" class="deselect-image-btn"
+            size="small" (onClick)="clear()" /> -->
+
+        </div>
+        }
+        <input id="name" type="text" pInputText #name placeholder="Sport name" (keydown.enter)="createSport()"
+          [(ngModel)]="sportName" />
+        <!-- <p-button icon="pi pi-plus" rounded="true" /> -->
+        <button type="button" pButton label="Add" icon="pi pi-angle-right" iconPos="right"
+          (click)="createSport()"></button>
+      </div>
+    </p-card>
+  </div>
+  <p-confirmDialog />

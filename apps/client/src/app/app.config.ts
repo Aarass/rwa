@@ -30,12 +30,16 @@ import { UpsEffects } from './features/ups/store/ups.effects';
 import { MyDialogService } from './features/global/services/my-dialog/my-dialog.service';
 import { surfaceFeature } from './features/surface/store/surface.feature';
 import { SurfaceEffects } from './features/surface/store/surface.effects';
+import { ImageService } from './features/image/services/image/image.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes),
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: MyHttpInterceptor, multi: true },
+    {
+      provide: ImageService,
+    },
     {
       provide: UpsService,
     },
@@ -73,7 +77,7 @@ export const appConfig: ApplicationConfig = {
       maxAge: 25,
       logOnly: !isDevMode(),
       autoPause: true,
-      trace: false,
+      trace: true,
       traceLimit: 75,
       connectInZone: true,
     }),

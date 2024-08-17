@@ -13,7 +13,9 @@ import {
   EMPTY,
   exhaustMap,
   Observable,
+  Subject,
   take,
+  takeUntil,
   takeWhile,
   tap,
   throwError,
@@ -32,12 +34,12 @@ export class MyHttpInterceptor implements HttpInterceptor {
       return handler.handle(request);
     }
 
-    let shouldRetry = true;
+    let finished = new Subject<void>();
 
     return this.store
       .select(authFeature.selectAccessTokenWithDecodedPayload)
       .pipe(
-        takeWhile(() => shouldRetry),
+        takeUntil(finished),
         take(2),
         exhaustMap((data) => {
           const { accessToken, payload } = data;
@@ -55,7 +57,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
               })
             )
             .pipe(
-              tap(() => (shouldRetry = false)),
+              tap(() => finished.next()),
               catchError((err: HttpErrorResponse) => {
                 if (err.status == 401) {
                   if (payload != null && checkIfJwtExpired(payload.exp)) {

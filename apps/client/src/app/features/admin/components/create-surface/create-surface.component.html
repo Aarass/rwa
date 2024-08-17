@@ -1,43 +1,24 @@
+@if (surfaces != null) {
+@if (surfaces.length == 0) {
+<p class="text-center">Here will be shown surfaces</p>
+} @else {
 <div class="w-full h-full flex flex-column justify-content-center align-items-center">
-
-  @if (count != null && count == 0) {
-  <p class="text-center">Here will be shown surfaces</p>
-  }
-  <div class="max-h-25rem overflow-auto nice-scrollbar px-4 w-25rem">
-    @if (count != null){
-    @if (count == 0) {
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width=" 100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    <p-skeleton width="100%" styleClass="mb-2" height="2rem" />
-    } @else {
-
-    }
+  <div
+    class="flex flex-column justify-content-center align-items-center max-h-25rem overflow-auto nice-scrollbar px-4 w-25rem">
+    @for (surface of surfaces; track surface.id) {
+    <div class="flex align-items-center item">
+      <p style="width: 20ch;">{{ surface.name }}</p>
+      <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+        (onClick)="deleteSurface(surface.id)" />
+    </div>
     }
   </div>
   <p-inputGroup class="w-unset" styleClass="w-unset mt-4">
-    <input type="text" pInputText placeholder="Surface" [(ngModel)]="name" (keydown.enter)="createSurface()" />
+    <input type="text" pInputText placeholder="Surface" [(ngModel)]="newSurfaceName"
+      (keydown.enter)="createSurface()" />
     <button type="button" pButton label="Add" icon="pi pi-angle-right" iconPos="right"
       (click)="createSurface()"></button>
   </p-inputGroup>
 </div>
+}
+}

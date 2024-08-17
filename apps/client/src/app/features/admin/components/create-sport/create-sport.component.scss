@@ -1,11 +1,11 @@
+$sport-height: 4rem;
+
 .sport-card-dim {
-  height: 4rem;
+  height: $sport-height;
   width: 15rem;
 }
 
 .sport {
-  height: 5rem;
-
   position: relative;
 
   display: flex;
@@ -19,8 +19,8 @@
 
 
   img {
-    width: 5rem;
-    height: 5rem;
+    height: $sport-height;
+    width: $sport-height;
     object-fit: cover;
     object-position: center center;
   }
@@ -37,4 +37,52 @@
   //   justify-content: start;
   //   align-items: center;
   // }
+}
+
+// .create-sport-card {
+//   position: absolute;
+//   bottom: 10rem;
+//   left: 50%;
+//   transform: translateX(-50%)
+// }
+
+.create-sport-container {
+  height: $sport-height;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  .img-wrapper {
+    height: $sport-height;
+    width: $sport-height;
+    position: relative;
+    border: 1px solid #aaaaaa;
+
+    .upload,
+    .img {
+      height: 100%;
+      width: 100%;
+    }
+
+    .upload {
+      display: block;
+      background-image: url("https://t4.ftcdn.net/jpg/04/81/13/43/360_F_481134373_0W4kg2yKeBRHNEklk4F9UXtGHdub3tYk.jpg");
+      background-size: cover;
+      background-position: center center;
+      cursor: pointer;
+    }
+
+    .img {
+      object-fit: cover;
+      object-position: center center;
+      cursor: url("http://localhost:4200/cursor-delete.png"), auto;
+    }
+
+    .deselect-image-btn {
+      position: absolute;
+      z-index: 99;
+      top: -1.5rem;
+      right: -1.5rem;
+    }
+  }
 }

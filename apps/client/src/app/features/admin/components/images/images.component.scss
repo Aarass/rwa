@@ -1,0 +1,11 @@
+::ng-deep {
+  .p-galleria-caption {
+    background-color: transparent !important;
+
+    >*,
+    >*>* {
+      display: block;
+      width: 100%;
+    }
+  }
+}

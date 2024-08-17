@@ -9,6 +9,11 @@ import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { surfaceFeature } from '../../../surface/store/surface.feature';
 import { SurfaceDto } from '@rwa/shared';
 import { FormsModule } from '@angular/forms';
+import { InputTextModule } from 'primeng/inputtext';
+import {
+  createSurface,
+  deleteSurface,
+} from '../../../surface/store/surface.actions';
 
 @Component({
   selector: 'app-create-surface',
@@ -17,6 +22,7 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     InputGroupModule,
     InputGroupAddonModule,
+    InputTextModule,
     ButtonModule,
     SkeletonModule,
     FormsModule,
@@ -26,40 +32,31 @@ import { FormsModule } from '@angular/forms';
 })
 export class CreateSurfaceComponent implements OnInit, OnDestroy {
   death = new Subject<void>();
-  count: number | null = null;
-  surfaces: SurfaceDto[] = [];
-  name: string = '';
+
+  surfaces: SurfaceDto[] | null = null;
+
+  newSurfaceName: string = '';
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.store
-      .select(surfaceFeature.selectIsLoaded)
-      .pipe(
-        filter((loaded) => loaded == true),
-        take(1),
-        switchMap(() => {
-          return this.store
-            .select(surfaceFeature.selectCount)
-            .pipe(takeUntil(this.death));
-        })
-      )
-      .subscribe((count) => {
-        this.count = count;
-      });
-
-    this.store
       .select(surfaceFeature.selectAll)
       .pipe(takeUntil(this.death))
       .subscribe((surfaces) => (this.surfaces = surfaces));
-  }
-  createSurface() {
-    alert(this.name);
-    this.name = '';
   }
 
   ngOnDestroy(): void {
     this.death.next();
     this.death.complete();
+  }
+
+  createSurface() {
+    this.store.dispatch(createSurface({ data: { name: this.newSurfaceName } }));
+    this.newSurfaceName = '';
+  }
+
+  deleteSurface(id: number) {
+    this.store.dispatch(deleteSurface({ id }));
   }
 }

@@ -19,29 +19,32 @@ import { diskStorage, Multer } from 'multer';
 import { Response } from 'express';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Roles(['admin'])
-  @Post('upload/:name')
+  @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
         destination: './uploads/',
         filename: (req, file, callback) => {
-          const name = req.params['name'];
-          if (name != undefined) {
-            callback(null, name);
+          const segments = file.originalname.split('.');
+          if (segments.length < 2) {
+            callback(new BadRequestException('Invalid image name'), '');
           } else {
-            callback(new BadRequestException('No image name provided'), '');
+            callback(null, uuidv4().concat('.', segments[segments.length - 1]));
           }
         },
       }),
     })
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {}
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return { name: file.filename };
+  }
 
   @Public()
   @Get(':name')

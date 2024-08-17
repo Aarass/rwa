@@ -1,7 +1,12 @@
 import { createEntityAdapter } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { SportDto } from '@rwa/shared';
-import { loadAllSportsSuccess } from './sport.actions';
+import {
+  createSportSuccess,
+  deleteSport,
+  deleteSportSuccess,
+  loadAllSportsSuccess,
+} from './sport.actions';
 
 const adapter = createEntityAdapter<SportDto>();
 
@@ -16,6 +21,12 @@ export const sportFeature = createFeature({
         ...adapter.addMany(action.sports, state),
         isLoaded: true,
       };
+    }),
+    on(createSportSuccess, (state, action) => {
+      return adapter.addOne(action.data, state);
+    }),
+    on(deleteSportSuccess, (state, action) => {
+      return adapter.removeOne(action.id, state);
     })
   ),
   extraSelectors: ({ selectSportState }) => {
