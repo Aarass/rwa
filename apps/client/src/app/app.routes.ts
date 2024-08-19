@@ -1,11 +1,15 @@
 import { inject } from '@angular/core';
-import { GuardResult, Route } from '@angular/router';
+import { Route } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { firstValueFrom, map, Observable, tap } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ImagesComponent } from './features/admin/components/images/images.component';
+import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
+import { AppointmentListComponent } from './features/appointment/components/appointment-list/appointment-list.component';
+import { MyAppointmentsListComponent } from './features/appointment/components/my-appointments-list/my-appointments-list.component';
 import { RegisterComponent } from './features/auth/components/register/register.component';
 import { authFeature } from './features/auth/store/auth.feature';
+import { AuthStatus } from './features/auth/store/auth.state';
 import { HomeComponent } from './features/home/components/home/home.component';
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
 export const appRoutes: Route[] = [
@@ -16,6 +20,20 @@ export const appRoutes: Route[] = [
   {
     path: 'profile',
     component: ProfileComponent,
+    canActivate: [ifIsLoggedIn],
+  },
+  {
+    path: 'appointments',
+    component: AppointmentListComponent,
+  },
+  {
+    path: 'appointment-form',
+    component: AppointmentFormComponent,
+    canActivate: [ifIsLoggedIn],
+  },
+  {
+    path: 'my-appointments',
+    component: MyAppointmentsListComponent,
     canActivate: [ifIsLoggedIn],
   },
   {
@@ -37,9 +55,10 @@ export const appRoutes: Route[] = [
 
 function ifIsLoggedIn(): Observable<boolean> {
   const store = inject(Store);
-  return store
-    .select(authFeature.selectAccessToken)
-    .pipe(map((val) => val != null));
+  return store.select(authFeature.selectStatus).pipe(
+    filter((val) => val != null),
+    map((val) => val == AuthStatus.LoggedIn)
+  );
 }
 
 function ifIsNotLoggedIn(): Observable<boolean> {

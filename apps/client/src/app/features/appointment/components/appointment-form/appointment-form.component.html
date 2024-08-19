@@ -1,0 +1,107 @@
+<div class="p-4 h-full flex flex-column justify-content-center align-items-center gap-4">
+  <div [formGroup]="formGroup" class="form">
+    <p-floatLabel class="full">
+      <p-autoComplete [suggestions]="suggestions" optionLabel="description" [formControl]="formGroup.controls.location"
+        (completeMethod)=" getLocationSuggestions($event)" styleClass="w-full" inputStyleClass="w-full" required
+        inputId="location" />
+      <label for="location">Location</label>
+    </p-floatLabel>
+
+    <p-floatLabel>
+      <p-dropdown [options]="sports" [formControl]="formGroup.controls.selectedSport" optionLabel="name" inputId="sport"
+        styleClass="w-full" required />
+      <label for="sport">Sport</label>
+    </p-floatLabel>
+
+    <div class="flex justify-content-center">
+      <p-selectButton [formControl]="formGroup.controls.environment"
+        [options]=" [{label: 'Outdoor' , value: 0}, {label: 'Indoor' , value: 1}]" optionLabel="label"
+        optionValue="value" required />
+    </div>
+
+    <p-floatLabel>
+      <p-dropdown [options]="surfaces" [formControl]="formGroup.controls.selectedSurface" optionLabel="name"
+        inputId="surface" placeholder="Select a Surface" styleClass="w-full" required />
+      <label for="surface">Surface</label>
+    </p-floatLabel>
+
+
+    <p-floatLabel>
+      <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
+        [formControl]="formGroup.controls.startTime" required>
+        <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+          <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+        </ng-template>
+      </p-calendar>
+      <label for="start-time">Start time</label>
+    </p-floatLabel>
+
+
+    <p-floatLabel>
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="total-players" [min]="0" styleClass="w-full"
+        inputStyleClass="w-6" class="w-6" [formControl]="formGroup.controls.durationHours" required
+        [suffix]="formGroup.controls.durationHours.value! > 1 ? ' hours' : ' hour'" />
+      <label for="date">Duration</label>
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="total-players" [min]="0" styleClass="w-full"
+        inputStyleClass="w-full" class="w-6" [formControl]="formGroup.controls.durationMinutes"
+        [suffix]="formGroup.controls.durationMinutes.value! > 1 ? ' minutes' : ' minute'" required />
+    </p-floatLabel>
+
+    <p-floatLabel>
+      <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.date"
+        required />
+      <label for="date">Date</label>
+    </p-floatLabel>
+
+    <div class="full flex justify-content-evenly">
+      <div class="half flex justify-content-center align-items-center">
+        <div class="mb-4">
+          <p class="mr-4 label">Age range</p>
+          <div class="relative">
+            <p class="p-label-left">{{ formGroup.controls.age.value![0] }}</p>
+            <p-slider [formControl]="formGroup.controls.age" [range]="true" styleClass="w-14rem" min="0" max="100" />
+            <p class="p-label-right">{{ formGroup.controls.age.value![1] }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="half flex justify-content-center align-items-center">
+        <div class="mb-4">
+          <p class="mr-4 label">Skill range</p>
+          <div class="relative">
+            <p class="p-label-left">{{ formGroup.controls.skill.value![0] }}</p>
+            <p-slider [formControl]="formGroup.controls.skill" [range]="true" styleClass="w-14rem" min="1" max="5"
+              step="1" />
+            <p class="p-label-right">{{ formGroup.controls.skill.value![1] }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <p-floatLabel class="w-full">
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="total-players" [min]="0" styleClass="w-full"
+        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.totalPlayers" required />
+      <label for="total-players">Total players</label>
+    </p-floatLabel>
+
+    <p-floatLabel class="w-full">
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="missing-players" [min]="0" styleClass="w-full"
+        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.missingPlayers" required />
+      <label for="missing-players">Missing players</label>
+    </p-floatLabel>
+
+    <p-floatLabel class="w-full">
+      <p-inputNumber mode="currency" inputId="price-per-player" currency="EUR" locale="de-DE" styleClass="w-full"
+        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.pricePerPlayer" required />
+      <label for="price-per-player">Price per player</label>
+    </p-floatLabel>
+
+    <p-floatLabel>
+      <textarea id="info" rows="5" cols="30" pInputTextarea [formControl]="formGroup.controls.additionalInformation"
+        class="nice-scrollbar"></textarea>
+      <label for="info">Additional Informations (optional)</label>
+    </p-floatLabel>
+  </div>
+  <p-button [label]="id == null ? 'Create' : 'Update'" (onClick)="submit()" />
+</div>

@@ -2,11 +2,43 @@ import { z } from 'zod';
 import { appointmentFiltersSchema } from './AppointmentFilters';
 import { appointmentsOrderingSchema } from './AppointmentsOrdering';
 import { geoPointSchema } from './Point';
+import { SportDto } from './Sport';
+import { SurfaceDto } from './Surface';
+import { UserDto } from './User';
+import { ParticipationDto } from './Participation';
+import { LocationDto } from './Location';
+
+export interface AppointmentDto {
+  id: number;
+  locationId: string;
+  location: LocationDto;
+  environment: Environment;
+  date: string;
+  startTime: string;
+  duration: IntervalDto;
+  totalPlayers: number;
+  missingPlayers: number;
+  minSkillLevel: number;
+  maxSkillLevel: number;
+  minAge: number;
+  maxAge: number;
+  pricePerPlayer: number;
+  additionalInformation: string;
+  canceled: boolean;
+  sportId: number;
+  sport: SportDto;
+  surfaceId: number;
+  surface: SurfaceDto;
+  organizerId: number;
+  organizer: UserDto;
+  participants: ParticipationDto[];
+}
 
 export const createAppointmentSchema = z.object({
   locationId: z.string(),
   date: z.string().date(),
   startTime: z.string(),
+  environment: z.number().min(0).max(1),
   duration: z.string(),
   totalPlayers: z.number(),
   missingPlayers: z.number(),
@@ -27,6 +59,7 @@ export const updateAppointmentSchema = z
     locationId: z.string(),
     date: z.string().date(),
     startTime: z.string(),
+    environment: z.number().min(0).max(1),
     duration: z.string(),
     totalPlayers: z.number(),
     missingPlayers: z.number(),
@@ -53,24 +86,40 @@ export const findAppointmentsSchema = z
 
 export type FindAppointmentsDto = z.infer<typeof findAppointmentsSchema>;
 
-// export const createAppointmentSchema = z
-//   .object({
-//     location: z.string(),
-//     date: z.string().date(),
-//     startTime: z.string(),
-//     duration: z.string(),
-//     totalPlayers: z.number(),
-//     missingPlayers: z.number(),
-//     minSkillLevel: z.number(),
-//     maxSkillLevel: z.number(),
-//     minAge: z.number(),
-//     maxAge: z.number(),
-//     pricePerPlayer: z.number(),
-//     additionalInformation: z.string(),
-//     canceled: z.boolean(),
-//     surfaceId: z.number(),
-//     sportId: z.number(),
-//     organizerId: z.number(),
-//     participants: z.number().array(),
-//   })
-//   .required();
+interface IntervalDto {
+  hours: number;
+  minutes: number;
+}
+
+export function toPostgresString(instance: IntervalDto) {
+  let postgresString = '';
+
+  if (instance.hours) {
+    if (postgresString.length) {
+      postgresString += ' ';
+    }
+
+    postgresString +=
+      instance.hours === 1
+        ? instance.hours + ' hour'
+        : instance.hours + ' hours';
+  }
+
+  if (instance.minutes) {
+    if (postgresString.length) {
+      postgresString += ' ';
+    }
+
+    postgresString +=
+      instance.minutes === 1
+        ? instance.minutes + ' minute'
+        : instance.minutes + ' minutes';
+  }
+
+  return postgresString === '' ? '0' : postgresString;
+}
+
+export enum Environment {
+  Outdoor,
+  Indoor,
+}

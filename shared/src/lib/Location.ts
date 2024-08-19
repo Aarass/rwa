@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+export interface LocationDto {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+}
+
 export const createLocationSchema = z
   .object({
     locationId: z.string(),

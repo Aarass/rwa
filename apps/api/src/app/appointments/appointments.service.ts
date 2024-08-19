@@ -37,6 +37,7 @@ export class AppointmentsService {
       return await this.appointmentRepository.findOneBy({ id: wid.id });
     } catch (err: any) {
       if (err.code != undefined && err.code == 23503) {
+        console.log(err);
         throw new BadRequestException(`Referenced object does not exist`);
       }
       console.error(err);
@@ -77,6 +78,8 @@ export class AppointmentsService {
 
     let query = this.appointmentRepository
       .createQueryBuilder('appointment')
+      .leftJoinAndSelect('appointment.sport', 'sport')
+      .leftJoinAndSelect('appointment.surface', 'surface')
       .leftJoinAndSelect('appointment.location', 'location')
       .leftJoinAndSelect('appointment.participants', 'participants')
       .setParameters({

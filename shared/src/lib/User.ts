@@ -1,4 +1,18 @@
 import { z } from 'zod';
+import { Role } from '..';
+
+export interface UserDto {
+  id: number;
+  username: string;
+  roles: Role[];
+  name: string;
+  surname: string;
+  phoneNumber: string;
+  birthDate: string;
+  locationId: string;
+  location: Location;
+  biography: string | null;
+}
 
 export const createUserSchema = z
   .object({

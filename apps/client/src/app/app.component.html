@@ -29,8 +29,12 @@
             <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
               routerLink="/images" />
             } @else {
-            <p-button label="My Appointments" icon="pi pi-book" severity="secondary" styleClass="w-full text-left" />
-            <p-button label="My Sports" icon="pi pi-globe" severity="secondary" styleClass="w-full text-left" />
+            <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
+              styleClass="w-full text-left white-space-nowrap" routerLink="my-appointments" />
+            <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
+              styleClass="w-full text-left white-space-nowrap" />
+            <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
+              styleClass="w-full text-left white-space-nowrap" />
             }
           </div>
           <app-profile-summary></app-profile-summary>

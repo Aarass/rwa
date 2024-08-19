@@ -1,0 +1,44 @@
+.form {
+  width: 60%;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(6, 1fr);
+
+  >* {
+    grid-column: span 2;
+  }
+
+  .full {
+    grid-column: 1 / -1;
+
+  }
+
+  .half {
+    grid-column: span 3;
+  }
+
+  :nth-last-child(1) {
+    grid-column: 2 / 6;
+  }
+
+  .p-label-left {
+    left: 0;
+    transform: translateX(-50%);
+  }
+
+  .p-label-right {
+    transform: translateX(50%);
+    right: 0;
+  }
+
+  .p-label-left,
+  .p-label-right {
+    position: absolute;
+  }
+
+  textarea {
+    resize: none;
+    width: 100%;
+  }
+
+}

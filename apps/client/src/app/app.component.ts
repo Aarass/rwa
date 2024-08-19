@@ -25,6 +25,7 @@ import { SidebarComponent } from './features/sidebar/components/sidebar/sidebar.
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
 import { loadMyUpses } from './features/ups/store/ups.actions';
+import { loadMyAppointments } from './features/appointment/store/appointment.actions';
 
 @Component({
   standalone: true,
@@ -100,6 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.dispatch(refresh());
     this.store.dispatch(loadAllSports());
     this.store.dispatch(loadAllSurfaces());
+    this.store.dispatch(loadMyAppointments());
   }
 
   ngOnDestroy(): void {

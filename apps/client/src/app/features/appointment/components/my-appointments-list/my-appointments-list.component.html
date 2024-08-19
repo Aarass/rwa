@@ -1,0 +1,5 @@
+@for (appointment of appointments$ | async; track appointment.id) {
+<app-appointment [appointment]="appointment"></app-appointment>
+<p-button icon="pi pi-pencil" [rounded]="true" routerLink="../appointment-form" [queryParams]="{id: appointment.id}" />
+}
+<p-button icon="pi pi-plus" [rounded]="true" routerLink="../appointment-form" />

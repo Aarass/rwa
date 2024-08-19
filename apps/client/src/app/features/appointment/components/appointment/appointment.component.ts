@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AppointmentDto } from '@rwa/shared';
 
 @Component({
   selector: 'app-appointment',
@@ -8,4 +9,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.scss',
 })
-export class AppointmentComponent {}
+export class AppointmentComponent {
+  @Input()
+  appointment!: AppointmentDto;
+}

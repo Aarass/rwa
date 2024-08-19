@@ -22,6 +22,9 @@ export class Appointment {
   @ManyToOne(() => Location, (location) => location.appointments)
   location: Location;
 
+  @Column()
+  environment: number;
+
   @Column({ type: 'date' })
   date: string;
 
@@ -61,7 +64,7 @@ export class Appointment {
   @Column('int', { name: 'sportId', nullable: false })
   sportId: number;
 
-  @ManyToOne(() => Surface, { nullable: false })
+  @ManyToOne(() => Sport, { nullable: false })
   sport: Sport;
 
   @Column('int', { name: 'surfaceId', nullable: false })

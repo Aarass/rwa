@@ -31,6 +31,9 @@ import { MyDialogService } from './features/global/services/my-dialog/my-dialog.
 import { surfaceFeature } from './features/surface/store/surface.feature';
 import { SurfaceEffects } from './features/surface/store/surface.effects';
 import { ImageService } from './features/image/services/image/image.service';
+import { LocationService } from './features/location/services/location/location.service';
+import { appointmentFeature } from './features/appointment/store/appointment.feature';
+import { AppointmentEffects } from './features/appointment/store/appointment.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,6 +45,9 @@ export const appConfig: ApplicationConfig = {
     },
     {
       provide: UpsService,
+    },
+    {
+      provide: LocationService,
     },
     {
       provide: SportService,
@@ -66,12 +72,14 @@ export const appConfig: ApplicationConfig = {
     provideState(sportFeature),
     provideState(surfaceFeature),
     provideState(upsFeature),
+    provideState(appointmentFeature),
     provideEffects([
       GlobalEffects,
       AuthEffects,
       SportEffects,
       SurfaceEffects,
       UpsEffects,
+      AppointmentEffects,
     ]),
     provideStoreDevtools({
       maxAge: 25,

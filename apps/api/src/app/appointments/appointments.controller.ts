@@ -110,6 +110,7 @@ export class AppointmentsController {
     }
 
     await this.appointmentService.update(id, updateAppointmentDto);
+    return await this.appointmentService.findOne(id);
   }
 
   // Korisnik ce moci samo da otkaze termin, ne i da ga u potpunosti obrise

@@ -14,15 +14,16 @@
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password name="register-password" id="register-password" [feedback]="false" formControlName="password"
-                inputStyleClass="w-full" styleClass="w-full" required="true" autocomplete="new-password" />
+              <p-password name="register-password" inputId="register-password" [feedback]="false"
+                formControlName="password" inputStyleClass="w-full" styleClass="w-full" required="true"
+                autocomplete="new-password" />
               <label for="register-password">Password</label>
             </span>
           </div>
 
           <div class="flex align-items-center gap-3 mb-4">
             <span class="p-float-label">
-              <p-password name="register-confirm-password" id="register-confirm-password" [feedback]="false"
+              <p-password name="register-confirm-password" inputId="register-confirm-password" [feedback]="false"
                 formControlName="confirmPassword" inputStyleClass="w-full" styleClass="w-full" required="true"
                 autocomplete="off" />
               <label for="register-confirm-password">Confirm Password</label>
@@ -72,7 +73,7 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4 w-full">
             <p-floatLabel class="w-full">
-              <p-calendar id="birthdate" formControlName="birthDate" [inputStyle]="{'width':'100%'}"
+              <p-calendar inputId="birthdate" formControlName="birthDate" [inputStyle]="{'width':'100%'}"
                 [style]="{'width':'100%'}" required="true" />
               <label for="birthdate">Birth date</label>
             </p-floatLabel>
@@ -81,7 +82,7 @@
 
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <p-autoComplete id="location" [suggestions]="suggestions" optionLabel="description"
+              <p-autoComplete inputId="location" [suggestions]="suggestions" optionLabel="description"
                 formControlName="location" (completeMethod)=" getLocationSuggestions($event)" styleClass="w-full"
                 inputStyleClass="w-full" required="true" />
               <label for="location">Location</label>
