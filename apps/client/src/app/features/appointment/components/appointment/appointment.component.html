@@ -1,1 +1,52 @@
-<p>{{ appointment.id }}</p>
+<div class="card flex justify-content-center">
+  <p-card [style]="{ width: '25rem' }">
+    <ng-template pTemplate="header">
+      <div class="w-full h-full relative">
+        <img alt="Card" [src]="appointment.sport.imageUrl" class="object-center w-full h-full" />
+        <div class="overlay">
+          <h1 class="ml-4 mb-0 text-300 font-lighter">{{ appointment.sport.name }}</h1>
+          <h2 class="ml-4 mt-2 text-white">{{ appointment.date }} {{ appointment.startTime }}</h2>
+        </div>
+
+        <div class="absolute top-0 right-0 m-1 flex flex-nowrap align-items-center cursor-pointer" routerLink="">
+          <!-- <p>{{ appointment.organizer.name }}</p> -->
+          <p class="m-0 text-white">Aleksandar Prokopovic</p>
+          <span class="pi pi-crown m-2 text-white "></span>
+        </div>
+
+      </div>
+    </ng-template>
+    <div class="flex align-items-center mt-2">
+      <span class="pi pi-clock mr-2"></span>
+      <p class="m-0">{{ getFormatedDuration() }}</p>
+    </div>
+    <div class="flex align-items-center mt-2">
+      <span class="pi pi-map-marker mr-2"></span>
+      <p class="m-0">{{ appointment.location.name }}</p>
+    </div>
+    <div class="flex align-items-center mt-2">
+      <span class="pi pi-users mr-2"></span>
+      <p class="m-0">{{ appointment.missingPlayers - appointment.participants.length }} / {{ appointment.totalPlayers }}
+      </p>
+    </div>
+    <div class="flex align-items-center mt-2">
+      <span class="pi pi-tag mr-2"></span>
+      <p class="m-0">{{ appointment.pricePerPlayer }}€ per player</p>
+    </div>
+    <div class="flex align-items-center mt-2">
+      <span class="pi pi-money-bill mr-2"></span>
+      <p class="m-0">{{ appointment.surface.name }} - {{ appointment.environment == 0 ? 'Outdoors' : 'Indoors' }}</p>
+    </div>
+    <ng-template pTemplate="footer">
+      <div class="flex gap-3 mt-1">
+        @if (showActionButtons) {
+        <p-button label="Edit" severity="secondary" class="w-full" styleClass="w-full" routerLink="../appointment-form"
+          [queryParams]="{id: appointment.id}" />
+        <p-button label="Delete" severity="danger" class="w-full" styleClass="w-full" />
+        } @else {
+        <p-button label="Join" severity="primary" class="w-full" styleClass="w-full" />
+        }
+      </div>
+    </ng-template>
+  </p-card>
+</div>

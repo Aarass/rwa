@@ -8,11 +8,18 @@ import { Observable } from 'rxjs';
 import { AppointmentService } from '../../services/appointment/appointment.service';
 import { appointmentFeature } from '../../store/appointment.feature';
 import { AppointmentComponent } from '../appointment/appointment.component';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-my-appointments-list',
   standalone: true,
-  imports: [CommonModule, AppointmentComponent, ButtonModule, RouterModule],
+  imports: [
+    CommonModule,
+    AppointmentComponent,
+    ButtonModule,
+    RouterModule,
+    CardModule,
+  ],
   templateUrl: './my-appointments-list.component.html',
   styleUrl: './my-appointments-list.component.scss',
 })
