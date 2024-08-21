@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Route } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ImagesComponent } from './features/admin/components/images/images.component';
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
@@ -67,8 +67,13 @@ function ifIsNotLoggedIn(): Observable<boolean> {
 
 function ifIsAdmin(): Observable<boolean> {
   const store = inject(Store);
-  return store.select(authFeature.selectDecodedPayload).pipe(
-    map((payload) => {
+
+  return store.select(authFeature.selectAuthState).pipe(
+    filter((state) => {
+      return state.status != null;
+    }),
+    map((state) => {
+      const payload = state.decodedPayload;
       if (payload == null) {
         return false;
       }

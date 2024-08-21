@@ -1,4 +1,10 @@
-import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
+import {
+  createFeature,
+  createReducer,
+  createSelector,
+  on,
+  Store,
+} from '@ngrx/store';
 import { AccessTokenPayload } from '@rwa/shared';
 import {
   login,
@@ -12,6 +18,7 @@ import {
   registerSuccess,
 } from './auth.actions';
 import { AuthState, AuthStatus } from './auth.state';
+import { filter, map } from 'rxjs';
 
 const initialState: AuthState = {
   status: null,
@@ -87,6 +94,15 @@ export const authFeature = createFeature({
     ),
   }),
 });
+
+export const selectPayload = (store: Store) => {
+  return store.select(authFeature.selectAuthState).pipe(
+    filter((state) => {
+      return state.status != null;
+    }),
+    map((state) => state.decodedPayload)
+  );
+};
 
 function decodeJwt(accessToken: string): AccessTokenPayload | null {
   var base64Url = accessToken.split('.')[1];

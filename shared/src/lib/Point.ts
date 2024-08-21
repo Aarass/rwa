@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 export const geoPointSchema = z
   .object({
-    lat: z.number(),
-    lng: z.number(),
+    lat: z.string(),
+    lng: z.string(),
   })
   .required();
 

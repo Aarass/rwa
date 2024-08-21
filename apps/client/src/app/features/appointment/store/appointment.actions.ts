@@ -41,3 +41,14 @@ export const loadMyAppointmentsSuccess = createAction(
   '[Appointment] Load My Appointments Success',
   props<{ data: AppointmentDto[] }>()
 );
+
+// My
+// ---------------------------------------------------------------------------------------
+// All
+
+export const loadAppointments = createAction('[Appointment] Load Appointments');
+
+export const loadAppointmentsSuccess = createAction(
+  '[Appointment] Load Appointments Success',
+  props<{ data: AppointmentDto[] }>()
+);

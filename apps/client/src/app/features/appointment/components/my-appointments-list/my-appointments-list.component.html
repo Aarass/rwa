@@ -1,8 +1,8 @@
 <div class="w-full h-full overflow-auto nice-scrollbar">
   <div class="flex justify-content-center align-items-center w-full relative">
-    <div class="offset-flex ">
+    <div class="offset-flex">
       @for (appointment of appointments$ | async; track appointment.id) {
-      <app-appointment [appointment]="appointment" [showActionButtons]="true"></app-appointment>
+      <app-appointment [appointment]="appointment" [viewerId]="userId | async"></app-appointment>
       }
     </div>
     <div class="controls bg-white p-card border-noround-top">

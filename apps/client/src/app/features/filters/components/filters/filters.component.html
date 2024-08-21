@@ -1,0 +1,83 @@
+<div class="p-4 h-full flex flex-column justify-content-center align-items-center gap-4">
+  <div [formGroup]="formGroup" class="flex flex-column gap-4">
+
+    <p-floatLabel *ngIf="sports$ | async as sports">
+      <p-dropdown [options]="sports" [formControl]="formGroup.controls.selectedSport" optionLabel="name" inputId="sport"
+        styleClass="w-full" />
+      <label for="sport">Sport</label>
+    </p-floatLabel>
+
+    <p-floatLabel>
+      <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.minDate"
+        styleClass="w-full" />
+      <label for="date">Min Date</label>
+    </p-floatLabel>
+
+    <div class="flex gap-2">
+
+      <p-floatLabel>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
+          [formControl]="formGroup.controls.startTime" [inputStyle]="{'width': '14ch'}">
+          <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+            <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+          </ng-template>
+        </p-calendar>
+        <label for="start-time">After time</label>
+      </p-floatLabel>
+
+      <p-floatLabel>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="end-time"
+          [formControl]="formGroup.controls.startTime" class="w-6" [inputStyle]="{'width': '14ch'}">
+          <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+            <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+          </ng-template>
+        </p-calendar>
+        <label for="end-time">Before time</label>
+      </p-floatLabel>
+    </div>
+
+    <p-floatLabel class="w-full">
+      <p-inputNumber mode="currency" inputId="price-per-player" currency="EUR" locale="de-DE" styleClass="w-full"
+        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.maxPricePerPlayer" />
+      <label for="price-per-player">Max price per player</label>
+    </p-floatLabel>
+
+    <div class="relative mb-2">
+      <p class="mr-4 label">Max distance</p>
+      <p-slider [formControl]="formGroup.controls.maxDistance" max="500" step="5" min="5" />
+      <p class="p-label" *ngIf="formGroup.controls.maxDistance.value">{{ formGroup.controls.maxDistance.value }}
+        km</p>
+    </div>
+
+
+    <p-floatLabel>
+      <p-dropdown [formControl]="formGroup.controls.sorting" [options]="sorting" optionLabel="label" optionValue="value"
+        inputId="sorting" styleClass="w-full">
+        <ng-template let-selectedOption pTemplate="selectedItem">
+          <div class="flex align-items-center gap-2" *ngIf="selectedOption">
+            <div>
+              <p class="m-0"> {{ selectedOption.label }} ({{ selectedOption.dirName }})</p>
+            </div>
+          </div>
+        </ng-template>
+        <ng-template let-option pTemplate="item">
+          <div class="flex align-items-center gap-2">
+            <div class="w-full flex justify-content-between">
+              <p class="m-0"> {{ option.label }}</p>
+              <p class="m-0"> {{ option.icon }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <label for=" sorting">Sort by</label>
+    </p-floatLabel>
+
+
+    <div class="flex gap-3 mt-1">
+      <p-button label="Reset" severity="danger" class="w-full" styleClass="w-full" [outlined]="true"
+        (onClick)="clear()" />
+      <p-button label="Apply" severity="primary" class="w-full" styleClass="w-full" [outlined]="true"
+        (onClick)="applyFilters()" />
+    </div>
+  </div>
+</div>

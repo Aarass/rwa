@@ -4,6 +4,7 @@ import {
   AppointmentFilters,
   AppointmentsOrdering,
   CreateAppointmentDto,
+  FindAppointmentsDto,
   UpdateAppointmentDto,
 } from '@rwa/shared';
 import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
@@ -45,36 +46,34 @@ export class AppointmentsService {
     }
   }
 
-  async findAll(
-    filters: AppointmentFilters,
-    ordering?: AppointmentsOrdering,
-    userLocation?: GeoPointDto
-  ) {
-    if (filters.skip == undefined) {
+  async findAll(criteria: FindAppointmentsDto) {
+    let { filters, ordering, userLocation } = criteria;
+
+    if (filters.skip == null) {
       filters.skip = 0;
     }
 
-    if (filters.take == undefined) {
+    if (filters.take == null) {
       filters.take = 10;
     }
 
-    const nulledFilters: {
-      [K in keyof AppointmentFilters]-?: AppointmentFilters[K] | null;
-    } = {
-      sportId: filters.sportId ?? null,
-      age: filters.age ?? null,
-      skill: filters.skill ?? null,
-      minDate: filters.minDate ?? null,
-      maxDate: filters.maxDate ?? null,
-      minTime: filters.minTime ?? null,
-      maxTime: filters.maxTime ?? null,
-      maxPrice: filters.maxPrice ?? null,
-      maxDistance: filters.maxDistance ?? null,
-      organizerId: filters.organizerId ?? null,
-      canceled: filters.canceled ?? null,
-      skip: filters.skip ?? null,
-      take: filters.take ?? null,
-    };
+    // const nulledFilters: {
+    //   [K in keyof AppointmentFilters]-?: AppointmentFilters[K] | null;
+    // } = {
+    //   sportId: filters.sportId ?? null,
+    //   age: filters.age ?? null,
+    //   skill: filters.skill ?? null,
+    //   minDate: filters.minDate ?? null,
+    //   maxDate: filters.maxDate ?? null,
+    //   minTime: filters.minTime ?? null,
+    //   maxTime: filters.maxTime ?? null,
+    //   maxPrice: filters.maxPrice ?? null,
+    //   maxDistance: filters.maxDistance ?? null,
+    //   organizerId: filters.organizerId ?? null,
+    //   canceled: filters.canceled ?? null,
+    //   skip: filters.skip ?? null,
+    //   take: filters.take ?? null,
+    // };
 
     let query = this.appointmentRepository
       .createQueryBuilder('appointment')
@@ -83,7 +82,7 @@ export class AppointmentsService {
       .leftJoinAndSelect('appointment.location', 'location')
       .leftJoinAndSelect('appointment.participants', 'participants')
       .setParameters({
-        ...nulledFilters,
+        ...filters,
       })
       .where(
         `appointment.sportId = COALESCE(:sportId, appointment.sportId) AND 
@@ -103,10 +102,10 @@ export class AppointmentsService {
       .take(filters.take);
 
     if (
-      nulledFilters.maxDistance != null ||
-      (ordering != undefined && ordering.by == 'distance')
+      filters.maxDistance != null ||
+      (ordering != null && ordering.by == 'distance')
     ) {
-      if (userLocation == undefined) {
+      if (userLocation == null) {
         throw new BadRequestException(
           `User must pass its location to filter or sort by distance`
         );
@@ -115,13 +114,13 @@ export class AppointmentsService {
       query.setParameters(userLocation);
     }
 
-    if (nulledFilters.maxDistance != null) {
+    if (filters.maxDistance != null) {
       query = query.andWhere(
         `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= (:maxDistance * 0.621371192)`
       );
     }
 
-    if (ordering != undefined) {
+    if (ordering != null) {
       switch (ordering.by) {
         case 'distance':
           query = query

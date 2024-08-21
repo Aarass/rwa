@@ -1,4 +1,26 @@
-<p>appointment-list works!</p>
-
-<p-button label="Create Appointment" icon="pi pi-plus" severity="secondary"
-  styleClass="w-full text-left white-space-nowrap" routerLink="create-appointment" />
+<div class="w-full h-full overflow-auto nice-scrollbar">
+  <div class="flex justify-content-center align-items-center w-full relative">
+    <div class="offset-flex" *ngIf="viewerId$ | async as viewerId;">
+      @for (appointment of appointments$ | async; track appointment.id) {
+      <app-appointment [appointment]="appointment" [viewerId]="viewerId"></app-appointment>
+      }
+      <div class="flex justify-content-center align-items-center w-full relative" *ngIf="canLoadMore()">
+        <p-button label="Load more" [text]="true" [raised]="true" [rounded]="true" icon="pi pi-chevron-circle-down"
+          [plain]="true" [loading]="loading" (onClick)="loadMore()" />
+      </div>
+    </div>
+    <div class=" controls bg-white p-card border-noround-top">
+      <div class="flex justify-content-center align-items-center h-full gap-4">
+        <p-button icon="pi pi-filter" [rounded]="true" severity="secondary" (onClick)="op.toggle($event)">
+          <p-overlayPanel #op>
+            <app-filters></app-filters>
+          </p-overlayPanel>
+        </p-button>
+        <p-button icon="pi pi-bell" [rounded]="true" severity="secondary" />
+        <p-button icon="pi pi-plus" [rounded]="true" severity="secondary" routerLink="../appointment-form" />
+        <p-button icon="pi pi-box" [rounded]="true" severity="secondary" />
+      </div>
+    </div>
+  </div>
+  <p-scrollTop target="parent" styleClass="bg-primary" [threshold]="100" icon="pi pi-angle-up" />
+</div>

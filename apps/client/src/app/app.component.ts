@@ -18,14 +18,17 @@ import { ToastModule } from 'primeng/toast';
 import { filter, firstValueFrom, Subject, take, takeUntil } from 'rxjs';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { refresh } from './features/auth/store/auth.actions';
-import { authFeature } from './features/auth/store/auth.feature';
+import { authFeature, selectPayload } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
 import { SidebarComponent } from './features/sidebar/components/sidebar/sidebar.component';
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
 import { loadMyUpses } from './features/ups/store/ups.actions';
-import { loadMyAppointments } from './features/appointment/store/appointment.actions';
+import {
+  loadAppointments,
+  loadMyAppointments,
+} from './features/appointment/store/appointment.actions';
 
 @Component({
   standalone: true,
@@ -102,6 +105,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.dispatch(loadAllSports());
     this.store.dispatch(loadAllSurfaces());
     this.store.dispatch(loadMyAppointments());
+    this.store.dispatch(loadAppointments());
   }
 
   ngOnDestroy(): void {
@@ -135,5 +139,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
   goToSingUpPage() {
     this.router.navigate(['/signup']);
+  }
+
+  showMyAppointments() {
+    selectPayload(this.store)
+      .pipe(take(1))
+      .subscribe((payload) => {
+        if (payload == null) {
+          console.error('payload null');
+          return;
+        }
+        this.router.navigateByUrl(`appointments?userId=${payload.user.id}`);
+      });
   }
 }

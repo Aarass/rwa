@@ -19,6 +19,10 @@ body {
 
 
 
+.p-dropdown-items-wrapper {
+  @extend .nice-scrollbar;
+}
+
 .nice-scrollbar::-webkit-scrollbar {
   height: .5rem;
   width: .5rem;

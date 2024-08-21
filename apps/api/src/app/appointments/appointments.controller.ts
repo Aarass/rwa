@@ -65,11 +65,7 @@ export class AppointmentsController {
     @Body(new ZodValidationPipe(findAppointmentsSchema))
     criteria: FindAppointmentsDto
   ) {
-    return await this.appointmentService.findAll(
-      criteria.filters ?? {},
-      criteria.ordering,
-      criteria.userLocation
-    );
+    return await this.appointmentService.findAll(criteria);
   }
 
   @Public()

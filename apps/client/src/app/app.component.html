@@ -29,10 +29,12 @@
             <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
               routerLink="/images" />
             } @else {
+            <p-button label="All Appointments" icon="pi pi-list" severity="secondary"
+              styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
             <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" routerLink="my-appointments" />
+              styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" />
             <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" />
+              styleClass="w-full text-left white-space-nowrap" routerLink="" />
             <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
               styleClass="w-full text-left white-space-nowrap" />
             }
@@ -44,7 +46,6 @@
       <div class="w-full">
         <router-outlet></router-outlet>
       </div>
-      <!-- <div class="w-3"></div> -->
     </div>
   </div>
   <p-toast key="global" position="bottom-right"></p-toast>

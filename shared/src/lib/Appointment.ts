@@ -76,13 +76,11 @@ export const updateAppointmentSchema = z
 
 export type UpdateAppointmentDto = z.infer<typeof updateAppointmentSchema>;
 
-export const findAppointmentsSchema = z
-  .object({
-    filters: appointmentFiltersSchema,
-    ordering: appointmentsOrderingSchema,
-    userLocation: geoPointSchema,
-  })
-  .partial();
+export const findAppointmentsSchema = z.object({
+  filters: appointmentFiltersSchema,
+  ordering: appointmentsOrderingSchema.nullable(),
+  userLocation: geoPointSchema.nullable(),
+});
 
 export type FindAppointmentsDto = z.infer<typeof findAppointmentsSchema>;
 

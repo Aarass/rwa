@@ -18,6 +18,7 @@ export class UserService {
       where: {
         id,
       },
+      relations: ['location'],
     });
 
     return user;

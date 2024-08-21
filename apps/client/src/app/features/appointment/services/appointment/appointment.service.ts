@@ -3,12 +3,16 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   AppointmentDto,
+  AppointmentsOrdering,
   CreateAppointmentDto,
   FindAppointmentsDto,
   UpdateAppointmentDto,
+  UserDto,
 } from '@rwa/shared';
 import { authFeature } from '../../../auth/store/auth.feature';
-import { exhaustMap, filter, map, take } from 'rxjs';
+import { exhaustMap, filter, map, Observable, of, take } from 'rxjs';
+import { PaginationInfo } from '../../store/appointment.feature';
+import { UserConfigurableFilters } from '../../../filters/interfaces/filters';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +34,47 @@ export class AppointmentService {
     );
   }
 
+  getFilteredAppointments(
+    userFilters: UserConfigurableFilters,
+    paginationInfo: PaginationInfo,
+    ordering: AppointmentsOrdering | null,
+    user: UserDto | null
+  ) {
+    let userAge = null;
+
+    if (user) {
+      console.log(new Date(user.birthDate));
+      var ageDifMs = Date.now() - new Date(user.birthDate).getTime();
+      var ageDate = new Date(ageDifMs);
+      userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+    }
+
+    const findOptions: FindAppointmentsDto = {
+      filters: {
+        ...userFilters,
+        age: userAge,
+        canceled: false,
+        minDate:
+          userFilters.minDate ??
+          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0],
+        skip: paginationInfo.pageSize * paginationInfo.loadedPages,
+        take: paginationInfo.pageSize,
+        organizerId: null,
+        maxDate: null,
+        skill: null,
+      },
+      ordering: ordering ?? null,
+      userLocation: user?.location ?? null,
+    };
+
+    return this.http.post<AppointmentDto[]>(
+      'http://localhost:3000/appointments/search',
+      findOptions
+    );
+  }
+
   getMyAppointments() {
     return this.store.select(authFeature.selectDecodedPayload).pipe(
       filter((val) => val != null),
@@ -38,7 +83,21 @@ export class AppointmentService {
         const findOptions: FindAppointmentsDto = {
           filters: {
             organizerId: payload!.user.id,
+            sportId: null,
+            age: null,
+            skill: null,
+            minDate: null,
+            maxDate: null,
+            minTime: null,
+            maxTime: null,
+            maxPrice: null,
+            maxDistance: null,
+            canceled: null,
+            skip: null,
+            take: null,
           },
+          ordering: null,
+          userLocation: null,
         };
 
         return this.http.post<AppointmentDto[]>(

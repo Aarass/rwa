@@ -17,9 +17,18 @@ export class AppointmentComponent {
   appointment!: AppointmentDto;
 
   @Input()
-  showActionButtons!: boolean;
+  viewerId!: number | null;
 
   getFormatedDuration() {
     return '3 hours 30 minutes';
+  }
+
+  isViewerJoined() {
+    if (this.viewerId == null) {
+      return false;
+    }
+    return this.appointment.participants
+      .map((p) => p.userId)
+      .includes(this.viewerId);
   }
 }

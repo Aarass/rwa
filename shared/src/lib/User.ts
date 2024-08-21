@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Role } from '..';
+import { LocationDto, Role } from '..';
 
 export interface UserDto {
   id: number;
@@ -10,7 +10,7 @@ export interface UserDto {
   phoneNumber: string;
   birthDate: string;
   locationId: string;
-  location: Location;
+  location: LocationDto;
   biography: string | null;
 }
 

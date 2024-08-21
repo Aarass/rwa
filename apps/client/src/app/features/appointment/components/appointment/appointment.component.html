@@ -5,7 +5,11 @@
         <img alt="Card" [src]="appointment.sport.imageUrl" class="object-center w-full h-full" />
         <div class="overlay">
           <h1 class="ml-4 mb-0 text-300 font-lighter">{{ appointment.sport.name }}</h1>
-          <h2 class="ml-4 mt-2 text-white">{{ appointment.date }} {{ appointment.startTime }}</h2>
+          <!-- <h2 class="ml-4 mt-2 text-white">{{ appointment.date }} {{ appointment.startTime }}</h2> -->
+          <div class="flex justify-content-between w-full">
+            <h2 class="ml-4 mt-2 text-white">{{ appointment.date }}</h2>
+            <h2 class="mr-4 mt-2 text-white">{{ appointment.startTime }}</h2>
+          </div>
         </div>
 
         <div class="absolute top-0 right-0 m-1 flex flex-nowrap align-items-center cursor-pointer" routerLink="">
@@ -39,12 +43,12 @@
     </div>
     <ng-template pTemplate="footer">
       <div class="flex gap-3 mt-1">
-        @if (showActionButtons) {
+        @if (appointment.organizerId == viewerId) {
         <p-button label="Edit" severity="secondary" class="w-full" styleClass="w-full" routerLink="../appointment-form"
           [queryParams]="{id: appointment.id}" />
         <p-button label="Delete" severity="danger" class="w-full" styleClass="w-full" />
         } @else {
-        <p-button label="Join" severity="primary" class="w-full" styleClass="w-full" />
+        <p-button label="Join" severity="primary" class="w-full" styleClass="w-full" [disabled]="isViewerJoined()" />
         }
       </div>
     </ng-template>

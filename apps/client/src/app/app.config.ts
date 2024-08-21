@@ -34,6 +34,7 @@ import { ImageService } from './features/image/services/image/image.service';
 import { LocationService } from './features/location/services/location/location.service';
 import { appointmentFeature } from './features/appointment/store/appointment.feature';
 import { AppointmentEffects } from './features/appointment/store/appointment.effects';
+import { filtersFeature } from './features/filters/store/filters.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -73,6 +74,7 @@ export const appConfig: ApplicationConfig = {
     provideState(surfaceFeature),
     provideState(upsFeature),
     provideState(appointmentFeature),
+    provideState(filtersFeature),
     provideEffects([
       GlobalEffects,
       AuthEffects,

@@ -3,8 +3,8 @@ import { z } from 'zod';
 export interface LocationDto {
   id: string;
   name: string;
-  lat: number;
-  lng: number;
+  lat: string;
+  lng: string;
 }
 
 export const createLocationSchema = z

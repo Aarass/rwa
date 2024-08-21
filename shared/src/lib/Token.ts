@@ -1,3 +1,5 @@
+import { LocationDto } from './Location';
+
 export type Role = 'user' | 'admin';
 export interface RefreshTokenPayload {
   sub: number;
@@ -19,6 +21,7 @@ export interface AccessTokenPayload {
     phoneNumber: string;
     birthDate: string;
     locationId: string;
+    location: LocationDto;
     biography: string;
   };
   iat: number;
