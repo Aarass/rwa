@@ -15,7 +15,15 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
 import { ToastModule } from 'primeng/toast';
-import { filter, firstValueFrom, Subject, take, takeUntil } from 'rxjs';
+import {
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  Subject,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { refresh } from './features/auth/store/auth.actions';
 import { authFeature, selectPayload } from './features/auth/store/auth.feature';
@@ -29,10 +37,17 @@ import {
   loadAppointments,
   loadMyAppointments,
 } from './features/appointment/store/appointment.actions';
+import { AvatarGroupModule } from 'primeng/avatargroup';
+import { SidebarModule } from 'primeng/sidebar';
+import { ParticipationsSidebarService } from './features/participation/services/participations-sidebar/participations-sidebar.service';
+import { ParticipantsComponent } from './features/appointment/components/participants/participants.component';
+import { AppointmentDto } from '@rwa/shared';
 
 @Component({
   standalone: true,
   imports: [
+    AvatarGroupModule,
+    SidebarModule,
     ProfileSummaryComponent,
     RouterModule,
     MenubarModule,
@@ -46,6 +61,7 @@ import {
     ToastModule,
     SidebarComponent,
     CardModule,
+    ParticipantsComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -57,13 +73,19 @@ export class AppComponent implements OnInit, OnDestroy {
   authStatus: AuthStatus | null = null;
   isAdmin: boolean = false;
   singInDialogRef: DynamicDialogRef<LoginComponent> | null = null;
+  participationsSidebarVisible: boolean = false;
 
   constructor(
     private primengConfig: PrimeNGConfig,
     private router: Router,
     private store: Store,
-    private dialogService: DialogService
-  ) {}
+    private dialogService: DialogService,
+    public participationSidebarService: ParticipationsSidebarService
+  ) {
+    participationSidebarService.visible$.subscribe(
+      (val) => (this.participationsSidebarVisible = val)
+    );
+  }
 
   ngOnInit() {
     this.primengConfig.ripple = true;

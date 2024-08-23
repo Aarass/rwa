@@ -8,10 +8,11 @@ import {
   UpdateAppointmentDto,
 } from '@rwa/shared';
 import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
-import { Appointment, Participation } from '@rwa/entities';
+import { Appointment, Participation, UserPlaysSport } from '@rwa/entities';
 import { LocationsService } from '../locations/locations.service';
 import { GeoPointDto } from 'shared/src/lib/Point';
 import { assert } from 'console';
+import { filter } from 'rxjs';
 
 @Injectable()
 export class AppointmentsService {
@@ -81,6 +82,8 @@ export class AppointmentsService {
       .leftJoinAndSelect('appointment.surface', 'surface')
       .leftJoinAndSelect('appointment.location', 'location')
       .leftJoinAndSelect('appointment.participants', 'participants')
+      .leftJoinAndSelect('participants.user', 'user')
+      .leftJoinAndSelect('user.location', 'userLocation')
       .setParameters({
         ...filters,
       })
@@ -88,8 +91,6 @@ export class AppointmentsService {
         `appointment.sportId = COALESCE(:sportId, appointment.sportId) AND 
          appointment.minAge <= COALESCE(:age, appointment.minAge) AND 
          appointment.maxAge >= COALESCE(:age, appointment.maxAge) AND 
-         appointment.minSkillLevel <= COALESCE(:skill, appointment.minSkillLevel) AND 
-         appointment.maxSkillLevel >= COALESCE(:skill, appointment.maxSkillLevel) AND 
          appointment.date >= COALESCE(:minDate, appointment.date) AND 
          appointment.date <= COALESCE(:maxDate, appointment.date) AND 
          appointment.startTime >= COALESCE(:minTime, appointment.startTime) AND 
@@ -100,6 +101,20 @@ export class AppointmentsService {
       )
       .skip(filters.skip)
       .take(filters.take);
+
+    if (filters.userId != null) {
+      query = query.andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('ups.selfRatedSkillLevel')
+          .from(UserPlaysSport, 'ups')
+          .where(`ups.userId = :userId AND ups.sportId = appointment.sportId`)
+          .setParameter('userId', filters.userId)
+          .getQuery();
+
+        return `(${subQuery} BETWEEN appointment.minSkillLevel AND appointment.maxSkillLevel) = true`;
+      });
+    }
 
     if (
       filters.maxDistance != null ||
@@ -116,7 +131,7 @@ export class AppointmentsService {
 
     if (filters.maxDistance != null) {
       query = query.andWhere(
-        `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= (:maxDistance * 0.621371192)`
+        `SQRT(POW(69.1 * (location.lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2)) <= (:maxDistance * 0.621371192)`
       );
     }
 
@@ -125,7 +140,7 @@ export class AppointmentsService {
         case 'distance':
           query = query
             .addSelect(
-              `SQRT(POW(69.1 * (lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2))`,
+              `SQRT(POW(69.1 * (location.lat::float -  :lat::float), 2) + POW(69.1 * (:lng::float - location.lng::float) * COS(location.lat::float / 57.3), 2))`,
               'distance'
             )
             .orderBy('distance', ordering.direction);
@@ -144,7 +159,7 @@ export class AppointmentsService {
       }
     }
 
-    return await query.getMany();
+    return await query.printSql().getMany();
   }
 
   async findOne(id: number) {

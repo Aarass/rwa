@@ -7,11 +7,14 @@ import { ImagesComponent } from './features/admin/components/images/images.compo
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
 import { AppointmentListComponent } from './features/appointment/components/appointment-list/appointment-list.component';
 import { MyAppointmentsListComponent } from './features/appointment/components/my-appointments-list/my-appointments-list.component';
+import { ParticipationListComponent } from './features/participation/components/participation-list/participation-list.component';
 import { RegisterComponent } from './features/auth/components/register/register.component';
 import { authFeature } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
 import { HomeComponent } from './features/home/components/home/home.component';
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
+import { UpsListComponent } from './features/ups/components/ups-list/ups-list.component';
+import { UserInfoComponent } from './features/user/components/user-info/user-info.component';
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -34,6 +37,20 @@ export const appRoutes: Route[] = [
   {
     path: 'my-appointments',
     component: MyAppointmentsListComponent,
+    canActivate: [ifIsLoggedIn],
+  },
+  {
+    path: 'my-participations',
+    component: ParticipationListComponent,
+    canActivate: [ifIsLoggedIn],
+  },
+  {
+    path: 'user',
+    component: UserInfoComponent,
+  },
+  {
+    path: 'my-sports',
+    component: UpsListComponent,
     canActivate: [ifIsLoggedIn],
   },
   {

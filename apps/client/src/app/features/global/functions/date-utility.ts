@@ -1,5 +1,5 @@
 export function dateStringFromDate(date: Date) {
-  return date.toISOString().split('T')[0];
+  return date.toDateString().substring(4);
 }
 
 export function timeStringFromDate(date: Date) {

@@ -9,7 +9,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
@@ -35,6 +35,8 @@ import { LocationService } from './features/location/services/location/location.
 import { appointmentFeature } from './features/appointment/store/appointment.feature';
 import { AppointmentEffects } from './features/appointment/store/appointment.effects';
 import { filtersFeature } from './features/filters/store/filters.feature';
+import { ParticipationEffects } from './features/participation/store/participation.effects';
+import { participationFeature } from './features/participation/store/participation.feature';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -75,6 +77,7 @@ export const appConfig: ApplicationConfig = {
     provideState(upsFeature),
     provideState(appointmentFeature),
     provideState(filtersFeature),
+    provideState(participationFeature),
     provideEffects([
       GlobalEffects,
       AuthEffects,
@@ -82,6 +85,7 @@ export const appConfig: ApplicationConfig = {
       SurfaceEffects,
       UpsEffects,
       AppointmentEffects,
+      ParticipationEffects,
     ]),
     provideStoreDevtools({
       maxAge: 25,

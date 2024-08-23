@@ -1,16 +1,25 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { UserConfigurableFilters } from '../interfaces/filters';
 import { filtersChanged } from './filter.actions';
+import { AppointmentsOrdering } from '@rwa/shared';
 
-const initialState = {
+const initialState: {
+  filters: UserConfigurableFilters;
+  ordering: AppointmentsOrdering | null;
+} = {
   filters: {
     maxDistance: null,
     maxPrice: null,
     maxTime: null,
     minDate: null,
+    maxDate: null,
     minTime: null,
     sportId: null,
-  } as UserConfigurableFilters,
+  },
+  ordering: {
+    by: 'date',
+    direction: 'ASC',
+  },
 };
 
 export const filtersFeature = createFeature({
@@ -19,7 +28,7 @@ export const filtersFeature = createFeature({
     initialState,
     on(filtersChanged, (state, action) => {
       return {
-        filters: action.data,
+        ...action.data,
       };
     })
   ),

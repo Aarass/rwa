@@ -7,11 +7,12 @@ import { ConfigService } from '../../../global/services/config/config.service';
 import { Store } from '@ngrx/store';
 import { sportFeature } from '../../../sport/store/sport.feature';
 import { upsFeature } from '../../../ups/store/ups.feature';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ButtonModule],
+  imports: [CommonModule, ButtonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

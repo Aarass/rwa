@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppointmentDto } from '@rwa/shared';
@@ -7,12 +7,20 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { ScrollTopModule } from 'primeng/scrolltop';
-import { combineLatest, map, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  combineLatest,
+  map,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { selectPayload } from '../../../auth/store/auth.feature';
 import { FiltersComponent } from '../../../filters/components/filters/filters.component';
+import { loadAppointments } from '../../store/appointment.actions';
 import { appointmentFeature } from '../../store/appointment.feature';
 import { AppointmentComponent } from '../appointment/appointment.component';
-import { loadAppointments } from '../../store/appointment.actions';
 
 @Component({
   selector: 'app-appointment-list',
@@ -30,14 +38,23 @@ import { loadAppointments } from '../../store/appointment.actions';
   templateUrl: './appointment-list.component.html',
   styleUrl: './appointment-list.component.scss',
 })
-export class AppointmentListComponent {
-  appointments$: Observable<AppointmentDto[]>;
-  viewerId$: Observable<number | null>;
-  queriedUserId$: Observable<number | null>;
+export class AppointmentListComponent implements OnDestroy {
+  death = new Subject<void>();
 
+  queriedUserId$: Observable<number | null>;
+  appointments$: Observable<AppointmentDto[]>;
+
+  viewerId: number | null = null;
   loading: boolean = false;
 
   constructor(private store: Store, private route: ActivatedRoute) {
+    this.store
+      .select(appointmentFeature.selectIsLoading)
+      .pipe(takeUntil(this.death))
+      .subscribe((val) => {
+        this.loading = val.val;
+      });
+
     this.queriedUserId$ = this.route.queryParamMap.pipe(
       map((map) => {
         const id = map.get('userId');
@@ -52,15 +69,15 @@ export class AppointmentListComponent {
       })
     );
 
-    this.viewerId$ = selectPayload(this.store).pipe(
+    const viewerId$ = selectPayload(this.store).pipe(
       map((payload) => (payload == null ? null : payload.user.id))
     );
 
-    this.appointments$ = combineLatest([
-      this.queriedUserId$,
-      this.viewerId$,
-    ]).pipe(
-      tap((val) => console.log(val)),
+    viewerId$.pipe(takeUntil(this.death)).subscribe((viewerId) => {
+      this.viewerId = viewerId;
+    });
+
+    this.appointments$ = combineLatest([this.queriedUserId$, viewerId$]).pipe(
       switchMap((val) => {
         const [queriedUserId, viewerId] = val;
 
@@ -77,9 +94,13 @@ export class AppointmentListComponent {
         }
 
         return of([]);
-      }),
-      tap(() => (this.loading = false))
+      })
     );
+  }
+
+  ngOnDestroy(): void {
+    this.death.next();
+    this.death.complete();
   }
 
   canLoadMore(): boolean {

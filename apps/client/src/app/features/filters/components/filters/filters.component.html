@@ -3,42 +3,54 @@
 
     <p-floatLabel *ngIf="sports$ | async as sports">
       <p-dropdown [options]="sports" [formControl]="formGroup.controls.selectedSport" optionLabel="name" inputId="sport"
-        styleClass="w-full" />
+        styleClass="w-full" [showClear]="true" />
       <label for="sport">Sport</label>
     </p-floatLabel>
 
-    <p-floatLabel>
-      <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.minDate"
-        styleClass="w-full" />
-      <label for="date">Min Date</label>
-    </p-floatLabel>
+
+    <div class="flex gap-2">
+      <p-floatLabel>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.minDate"
+          [style]="{'width': '17ch'}" [showButtonBar]="true" />
+        <label for="date">Min Date</label>
+      </p-floatLabel>
+
+      <p-floatLabel>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.maxDate"
+          [style]="{'width': '13ch'}" [showButtonBar]="true" />
+        <label for="date">Max Date</label>
+      </p-floatLabel>
+    </div>
 
     <div class="flex gap-2">
 
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
-          [formControl]="formGroup.controls.startTime" [inputStyle]="{'width': '14ch'}">
+          [formControl]="formGroup.controls.startTime" [inputStyle]="{'width': '13ch'}" [showButtonBar]="true"
+          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
           </ng-template>
         </p-calendar>
-        <label for="start-time">After time</label>
+        <label for="start-time">Min time</label>
       </p-floatLabel>
 
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="end-time"
-          [formControl]="formGroup.controls.startTime" class="w-6" [inputStyle]="{'width': '14ch'}">
+          [formControl]="formGroup.controls.endTime" [inputStyle]="{'width': '17ch'}" [showButtonBar]="true"
+          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
           </ng-template>
         </p-calendar>
-        <label for="end-time">Before time</label>
+        <label for="end-time">Max time</label>
       </p-floatLabel>
     </div>
 
     <p-floatLabel class="w-full">
       <p-inputNumber mode="currency" inputId="price-per-player" currency="EUR" locale="de-DE" styleClass="w-full"
-        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.maxPricePerPlayer" />
+        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.maxPricePerPlayer"
+        [showButtons]="true" />
       <label for="price-per-player">Max price per player</label>
     </p-floatLabel>
 
@@ -52,7 +64,7 @@
 
     <p-floatLabel>
       <p-dropdown [formControl]="formGroup.controls.sorting" [options]="sorting" optionLabel="label" optionValue="value"
-        inputId="sorting" styleClass="w-full">
+        inputId="sorting" styleClass="w-full" [showClear]="true">
         <ng-template let-selectedOption pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selectedOption">
             <div>
@@ -74,7 +86,7 @@
 
 
     <div class="flex gap-3 mt-1">
-      <p-button label="Reset" severity="danger" class="w-full" styleClass="w-full" [outlined]="true"
+      <p-button label="Clear all" severity="danger" class="w-full" styleClass="w-full" [outlined]="true"
         (onClick)="clear()" />
       <p-button label="Apply" severity="primary" class="w-full" styleClass="w-full" [outlined]="true"
         (onClick)="applyFilters()" />

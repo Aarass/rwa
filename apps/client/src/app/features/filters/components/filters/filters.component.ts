@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppointmentsOrdering, SportDto } from '@rwa/shared';
@@ -33,6 +33,9 @@ import { filtersChanged } from '../../store/filter.actions';
   styleUrl: './filters.component.scss',
 })
 export class FiltersComponent implements OnInit {
+  @Output()
+  onClose = new EventEmitter<void>();
+
   sorting: {
     label: string;
     value: AppointmentsOrdering;
@@ -98,6 +101,7 @@ export class FiltersComponent implements OnInit {
   formGroup = new FormGroup({
     selectedSport: new FormControl<SportDto | null>(null),
     minDate: new FormControl<Date | null>(null),
+    maxDate: new FormControl<Date | null>(null),
     startTime: new FormControl<Date | null>(null),
     endTime: new FormControl<Date | null>(null),
     maxPricePerPlayer: new FormControl<number | null>(null),
@@ -114,6 +118,7 @@ export class FiltersComponent implements OnInit {
   clear() {
     this.formGroup.setValue({
       minDate: null,
+      maxDate: null,
       maxDistance: null,
       maxPricePerPlayer: null,
       selectedSport: null,
@@ -136,10 +141,21 @@ export class FiltersComponent implements OnInit {
       minDate: this.formGroup.controls.minDate.value
         ? dateStringFromDate(this.formGroup.controls.minDate.value)
         : null,
+      maxDate: this.formGroup.controls.maxDate.value
+        ? dateStringFromDate(this.formGroup.controls.maxDate.value)
+        : null,
       sportId: this.formGroup.controls.selectedSport.value?.id ?? null,
     };
 
-    this.store.dispatch(filtersChanged({ data: filters }));
+    this.onClose.emit();
+    this.store.dispatch(
+      filtersChanged({
+        data: {
+          filters,
+          ordering: this.formGroup.controls.sorting.value,
+        },
+      })
+    );
   }
 
   ngOnInit(): void {}

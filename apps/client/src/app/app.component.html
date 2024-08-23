@@ -34,9 +34,9 @@
             <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
               styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" />
             <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" routerLink="" />
+              styleClass="w-full text-left white-space-nowrap" routerLink="my-participations" />
             <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" />
+              styleClass="w-full text-left white-space-nowrap" routerLink="my-sports" />
             }
           </div>
           <app-profile-summary></app-profile-summary>
@@ -48,5 +48,13 @@
       </div>
     </div>
   </div>
+
   <p-toast key="global" position="bottom-right"></p-toast>
+
+  <p-sidebar [(visible)]="participationSidebarService.visible" position="right" styleClass="w-30rem">
+    <ng-template pTemplate="header">
+      <h1 class="font-lighter m-0">Participants</h1>
+    </ng-template>
+    <app-participants></app-participants>
+  </p-sidebar>
 </div>

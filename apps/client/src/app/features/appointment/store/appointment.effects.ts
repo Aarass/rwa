@@ -17,6 +17,7 @@ import {
   createAppointment,
   createAppointmentSuccess,
   loadAppointments,
+  loadAppointmentsFail,
   loadAppointmentsSuccess,
   loadMyAppointments,
   loadMyAppointmentsSuccess,
@@ -90,17 +91,18 @@ export class AppointmentEffects {
       exhaustMap((action) => {
         return combineLatest([
           this.store.select(filtersFeature.selectFilters),
+          this.store.select(filtersFeature.selectOrdering),
           this.store.select(appointmentFeature.selectPaginationInfo),
           selectPayload(this.store),
         ]).pipe(
           take(1),
           exhaustMap((tuple) => {
-            const [filters, paginationInfo, tokenPayload] = tuple;
+            const [filters, ordering, paginationInfo, tokenPayload] = tuple;
             return this.appointmentService
               .getFilteredAppointments(
                 filters,
                 paginationInfo,
-                null,
+                ordering,
                 tokenPayload == null ? null : tokenPayload.user
               )
               .pipe(
@@ -113,10 +115,11 @@ export class AppointmentEffects {
                     });
                   }
                   return loadAppointmentsSuccess({ data: appointments });
+                }),
+                catchError((err: HttpErrorResponse) => {
+                  loadAppointmentsFail();
+                  return throwError(() => err);
                 })
-                // catchError((err: HttpErrorResponse) => {
-                //   return throwError(() => err);
-                // })
               );
           })
         );

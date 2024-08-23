@@ -43,7 +43,6 @@ export class AppointmentService {
     let userAge = null;
 
     if (user) {
-      console.log(new Date(user.birthDate));
       var ageDifMs = Date.now() - new Date(user.birthDate).getTime();
       var ageDate = new Date(ageDifMs);
       userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
@@ -54,18 +53,12 @@ export class AppointmentService {
         ...userFilters,
         age: userAge,
         canceled: false,
-        minDate:
-          userFilters.minDate ??
-          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-            .toISOString()
-            .split('T')[0],
+        organizerId: null,
+        userId: user?.id ?? null,
         skip: paginationInfo.pageSize * paginationInfo.loadedPages,
         take: paginationInfo.pageSize,
-        organizerId: null,
-        maxDate: null,
-        skill: null,
       },
-      ordering: ordering ?? null,
+      ordering: ordering,
       userLocation: user?.location ?? null,
     };
 
@@ -85,7 +78,7 @@ export class AppointmentService {
             organizerId: payload!.user.id,
             sportId: null,
             age: null,
-            skill: null,
+            userId: null,
             minDate: null,
             maxDate: null,
             minTime: null,

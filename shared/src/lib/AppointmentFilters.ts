@@ -3,9 +3,10 @@ import { z } from 'zod';
 export const appointmentFiltersSchema = z.object({
   sportId: z.number().nullable(),
   age: z.number().min(0).max(100).nullable(),
-  skill: z.number().min(0).max(5).nullable(),
-  minDate: z.string().date().nullable(),
-  maxDate: z.string().date().nullable(),
+  // skill: z.number().min(0).max(5).nullable(),
+  userId: z.number().nullable(),
+  minDate: z.string().nullable(),
+  maxDate: z.string().nullable(),
   minTime: z.string().time().nullable(),
   maxTime: z.string().time().nullable(),
   maxPrice: z.number().nullable(),

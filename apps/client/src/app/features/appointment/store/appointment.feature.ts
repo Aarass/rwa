@@ -4,10 +4,16 @@ import { AppointmentDto } from '@rwa/shared';
 import { filtersChanged } from '../../filters/store/filter.actions';
 import {
   createAppointmentSuccess,
+  loadAppointmentsFail,
   loadAppointmentsSuccess,
   loadMyAppointmentsSuccess,
   updateAppointmentSuccess,
 } from './appointment.actions';
+import {
+  joinAppointmentSuccess,
+  leaveAppointment,
+  rejectParticipation,
+} from '../../participation/store/participation.actions';
 
 const myAppointmentsAdapter = createEntityAdapter<AppointmentDto>();
 const allAppointmentsAdapter = createEntityAdapter<AppointmentDto>();
@@ -26,6 +32,10 @@ export const appointmentFeature = createFeature({
         pageSize: 5,
         loadedPages: 0,
       },
+      isLoading: {
+        val: false,
+        shaker: 0,
+      },
     },
     on(loadMyAppointmentsSuccess, (state, action) => {
       return {
@@ -34,6 +44,10 @@ export const appointmentFeature = createFeature({
           action.data,
           state.myAppointments
         ),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
       };
     }),
     on(createAppointmentSuccess, (state, action) => {
@@ -43,6 +57,10 @@ export const appointmentFeature = createFeature({
           action.data,
           state.myAppointments
         ),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
       };
     }),
     on(updateAppointmentSuccess, (state, action) => {
@@ -53,6 +71,10 @@ export const appointmentFeature = createFeature({
           { id, changes },
           state.myAppointments
         ),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
       };
     }),
     on(filtersChanged, (state, action) => {
@@ -76,6 +98,103 @@ export const appointmentFeature = createFeature({
         },
         allAppointments: allAppointmentsAdapter.addMany(
           action.data,
+          state.allAppointments
+        ),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
+      };
+    }),
+    on(loadAppointmentsFail, (state, action) => {
+      return {
+        ...state,
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
+      };
+    }),
+    on(joinAppointmentSuccess, (state, action) => {
+      const appointment =
+        state.allAppointments.entities[action.data.appointmentId];
+
+      if (appointment == undefined) {
+        throw `Can't find appointment`;
+      }
+
+      return {
+        ...state,
+        allAppointments: allAppointmentsAdapter.updateOne(
+          {
+            id: appointment.id,
+            changes: {
+              participants: [...appointment.participants, action.data],
+            },
+          },
+          state.allAppointments
+        ),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
+      };
+    }),
+    on(leaveAppointment, (state, action) => {
+      const appointment =
+        state.allAppointments.entities[action.data.appointmentId];
+
+      if (appointment == undefined) {
+        throw `Can't find appointment`;
+      }
+
+      return {
+        ...state,
+        allAppointments: allAppointmentsAdapter.updateOne(
+          {
+            id: appointment.id,
+            changes: {
+              participants: appointment.participants.filter(
+                (participation) =>
+                  participation.id != action.data.participationId
+              ),
+            },
+          },
+          state.allAppointments
+        ),
+      };
+    }),
+    on(rejectParticipation, (state, action) => {
+      const appointment =
+        state.allAppointments.entities[action.data.appointmentId];
+
+      if (appointment == undefined) {
+        throw `Can't find appointment`;
+      }
+
+      const participationIndex = appointment.participants.findIndex(
+        (participation) => participation.id == action.data.participationId
+      );
+
+      if (participationIndex == -1) {
+        `Can't find participation`;
+      }
+
+      const participants = [...appointment.participants];
+      participants[participationIndex] = {
+        ...participants[participationIndex],
+        approved: false,
+      };
+
+      return {
+        ...state,
+        allAppointments: allAppointmentsAdapter.updateOne(
+          {
+            id: appointment.id,
+            changes: {
+              participants: participants,
+            },
+          },
           state.allAppointments
         ),
       };

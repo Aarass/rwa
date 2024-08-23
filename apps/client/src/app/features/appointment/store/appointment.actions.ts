@@ -52,3 +52,6 @@ export const loadAppointmentsSuccess = createAction(
   '[Appointment] Load Appointments Success',
   props<{ data: AppointmentDto[] }>()
 );
+export const loadAppointmentsFail = createAction(
+  '[Appointment] Load Appointments Fail'
+);

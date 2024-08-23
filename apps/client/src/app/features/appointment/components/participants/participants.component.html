@@ -1,0 +1,45 @@
+<div *ngIf="appointment$ | async as appointment">
+  <p-accordion class="w-full">
+    @for (participation of appointment.participants; track participation.id) {
+    <p-accordionTab [cache]="false">
+      <ng-template pTemplate="header">
+        <div class="w-full flex justify-content-between align-items-center">
+          <div class="flex align-items-center">
+            <p-button icon="pi pi-user" [rounded]="true" [outlined]="true" [text]="true" severity="secondary" />
+            <p>&nbsp;&nbsp;</p>
+            <p>{{ participation.user.name }}</p>
+            <p>&nbsp;</p>
+            <p>{{ participation.user.surname }}</p>
+          </div>
+        </div>
+      </ng-template>
+      <div class="flex justify-content-between align-items-end">
+        <div>
+          <div class="flex gap-4">
+            <div class="flex align-items-center">
+              <i class="pi pi-hashtag"></i>
+              <p>&nbsp;{{ participation.user.username }} </p>
+            </div>
+            <div class="flex align-items-center">
+              <i class="pi pi-calendar"></i>
+              <p>&nbsp;{{ participation.user.birthDate }} </p>
+            </div>
+          </div>
+          <div class="flex align-items-center">
+            <i class="pi pi-map"></i>
+            <p>&nbsp;{{ participation.user.location.name }} </p>
+          </div>
+        </div>
+        @if (viewerId && viewerId == appointment.organizerId) {
+        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
+          (click)="reject(participation, appointment)" />
+        }
+      </div>
+    </p-accordionTab>
+    }
+  </p-accordion>
+  <p-divider styleClass="mt-0" />
+
+  <p-tag *ngIf=" appointment.totalPlayers - appointment.missingPlayers as offlinePlayers " [value]="'+' + offlinePlayers
+  + ' offline participants'" class="inline-flex justify-content-end w-full" />
+</div>

@@ -106,6 +106,11 @@ export class ParticipationsController {
     return await this.participationsService.findAll();
   }
 
+  @Get('user/me')
+  async findMy(@ExtractUser() user: User) {
+    return await this.participationsService.findMy(user.id);
+  }
+
   @Public()
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -167,4 +172,25 @@ export class ParticipationsController {
 
     await this.participationsService.remove(id);
   }
+
+  // @Delete('appointment/:appointmentId')
+  // async removeByAppointmentId(
+  //   @ExtractUser() user: User,
+  //   @Param('appointmentId', ParseIntPipe) appointmentId: number
+  // ) {
+  //   const participation = await this.participationsService.findOneWithoutId(
+  //     appointmentId,
+  //     user.id
+  //   );
+
+  //   if (participation == null) {
+  //     throw new NotFoundException('Participation not found');
+  //   }
+
+  //   if (participation.userId != user.id) {
+  //     throw new ForbiddenException(`Can't delete others participation`);
+  //   }
+
+  //   await this.participationsService.remove(participation.id);
+  // }
 }
