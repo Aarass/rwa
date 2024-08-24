@@ -18,10 +18,16 @@ import {
   loadAllSports,
   loadAllSportsSuccess,
 } from './sport.actions';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MessageService } from 'primeng/api';
 
 @Injectable()
 export class SportEffects {
-  constructor(private actions$: Actions, private sportService: SportService) {}
+  constructor(
+    private actions$: Actions,
+    private sportService: SportService,
+    private messageService: MessageService
+  ) {}
 
   loadAllSports$ = createEffect(() => {
     return this.actions$.pipe(
@@ -62,6 +68,14 @@ export class SportEffects {
         return this.sportService.deleteSport(action.id).pipe(
           map(() => {
             return deleteSportSuccess({ id: action.id });
+          }),
+          catchError((err: HttpErrorResponse) => {
+            this.messageService.add({
+              key: 'global',
+              severity: 'error',
+              summary: err.error.message,
+            });
+            return throwError(() => err);
           })
         );
       })

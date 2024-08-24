@@ -9,6 +9,7 @@ import {
   deleteUps,
   loadMyUpses,
   loadMyUpsesSuccess,
+  updateUps,
 } from './ups.actions';
 
 @Injectable()
@@ -44,6 +45,18 @@ export class UpsEffects {
       })
     );
   });
+
+  updateUpd = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(updateUps),
+        exhaustMap((action) => {
+          return this.upsService.updateUps(action.data.id, action.data.changes);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   deleteUps = createEffect(
     () => {

@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -15,7 +16,12 @@ import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { UpsService } from './ups.service';
-import { CreateUpsDto, createUpsSchema } from '@rwa/shared';
+import {
+  CreateUpsDto,
+  createUpsSchema,
+  UpdateUpsDto,
+  updateUpsSchema,
+} from '@rwa/shared';
 
 @Controller('ups')
 export class UpsController {
@@ -39,6 +45,16 @@ export class UpsController {
     upsDto: CreateUpsDto
   ) {
     return await this.upsService.addSportToUser(user.id, upsDto);
+  }
+
+  @Patch(':id')
+  async updateSelfRating(
+    @ExtractUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(updateUpsSchema))
+    updateDto: UpdateUpsDto
+  ) {
+    return await this.upsService.updateUps(id, updateDto);
   }
 
   @Delete(':id')

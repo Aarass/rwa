@@ -1,0 +1,13 @@
+.inset-shadow {
+  position: relative;
+  padding: 100px 0;
+
+  &::after {
+    pointer-events: none;
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 1%, rgba(255, 255, 255, 0) 99%, rgba(255, 255, 255, 1) 100%);
+  }
+}

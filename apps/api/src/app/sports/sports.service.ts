@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSportDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
@@ -23,6 +23,16 @@ export class SportsService {
   }
 
   async remove(id: number) {
-    return await this.sportRepository.delete({ id });
+    try {
+      return await this.sportRepository.delete({ id });
+    } catch (err: any) {
+      if (err.code == 23503) {
+        throw new ForbiddenException(
+          'This sport is already used in some appointment'
+        );
+      } else {
+        throw err;
+      }
+    }
   }
 }

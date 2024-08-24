@@ -1,13 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { UpsDto } from '@rwa/shared';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { RatingModule } from 'primeng/rating';
-import { deleteUps } from '../../store/ups.actions';
+import { RatingModule, RatingRateEvent } from 'primeng/rating';
+import { deleteUps, updateUps } from '../../store/ups.actions';
 
 @Component({
   selector: 'app-ups-list-item',
@@ -16,17 +22,21 @@ import { deleteUps } from '../../store/ups.actions';
   templateUrl: './ups-list-item.component.html',
   styleUrl: './ups-list-item.component.scss',
 })
-export class UpsListItemComponent implements OnInit {
+export class UpsListItemComponent implements OnChanges {
   @Input()
   ups: UpsDto | null | undefined;
+
+  rating: number | null = null;
 
   constructor(
     private store: Store,
     private confirmationService: ConfirmationService
   ) {}
 
-  ngOnInit(): void {
-    console.log(this.ups);
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.ups != undefined && this.ups != null) {
+      this.rating = this.ups.selfRatedSkillLevel;
+    }
   }
 
   delete() {
@@ -42,5 +52,25 @@ export class UpsListItemComponent implements OnInit {
         }
       },
     });
+  }
+
+  onRate(event: RatingRateEvent) {
+    if (this.ups == undefined || this.ups == null)
+      throw `This should not happen`;
+
+    const { value } = event;
+
+    if (value != this.ups.selfRatedSkillLevel) {
+      this.store.dispatch(
+        updateUps({
+          data: {
+            id: this.ups.id,
+            changes: {
+              selfRatedSkillLevel: value,
+            },
+          },
+        })
+      );
+    }
   }
 }

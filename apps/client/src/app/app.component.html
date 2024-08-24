@@ -17,35 +17,33 @@
       </div>
     </ng-template>
   </p-menubar>
-  <div class="flex-grow-1 overflow-hidden w-full">
-    <div class="flex h-full flex-nowrap">
-      <div class="h-full">
-        @if (authStatus != 0) {
-        <div class="p-card p-component p-4 w-full h-full flex flex-column justify-content-between">
-          <div class="flex flex-column row-gap-2">
-            @if(isAdmin) {
-            <p-button label="Dashboard" icon="pi pi-chart-bar" severity="secondary" styleClass="w-full text-left"
-              routerLink="/dashboard" />
-            <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
-              routerLink="/images" />
-            } @else {
-            <p-button label="All Appointments" icon="pi pi-list" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
-            <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" />
-            <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" routerLink="my-participations" />
-            <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
-              styleClass="w-full text-left white-space-nowrap" routerLink="my-sports" />
-            }
-          </div>
-          <app-profile-summary></app-profile-summary>
+  <div class="flex-grow-1 overflow-hidden flex">
+    <div class="h-full flex-grow-0">
+      @if (authStatus != 0) {
+      <div class="p-card p-component p-4 w-15rem h-full flex flex-column justify-content-between">
+        <div class="flex flex-column row-gap-2">
+          @if(isAdmin) {
+          <p-button label="Dashboard" icon="pi pi-chart-bar" severity="secondary" styleClass="w-full text-left"
+            routerLink="/dashboard" />
+          <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
+            routerLink="/images" />
+          } @else {
+          <p-button label="All Appointments" icon="pi pi-list" severity="secondary"
+            styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
+          <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
+            styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" />
+          <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
+            styleClass="w-full text-left white-space-nowrap" routerLink="my-participations" />
+          <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
+            styleClass="w-full text-left white-space-nowrap" routerLink="my-sports" />
+          }
         </div>
-        }
+        <app-profile-summary></app-profile-summary>
       </div>
-      <div class="w-full">
-        <router-outlet></router-outlet>
-      </div>
+      }
+    </div>
+    <div class="h-full flex-grow-0 overflow-hidden">
+      <router-outlet></router-outlet>
     </div>
   </div>
 

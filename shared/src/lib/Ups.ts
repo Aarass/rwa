@@ -15,3 +15,11 @@ export const createUpsSchema = z
   .required();
 
 export type CreateUpsDto = z.infer<typeof createUpsSchema>;
+
+export const updateUpsSchema = z
+  .object({
+    selfRatedSkillLevel: z.number().min(1).max(5),
+  })
+  .required();
+
+export type UpdateUpsDto = z.infer<typeof updateUpsSchema>;

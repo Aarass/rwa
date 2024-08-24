@@ -8,7 +8,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SliderModule } from 'primeng/slider';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
   dateStringFromDate,
   timeStringFromDate,
@@ -16,6 +16,7 @@ import {
 import { sportFeature } from '../../../sport/store/sport.feature';
 import { UserConfigurableFilters } from '../../interfaces/filters';
 import { filtersChanged } from '../../store/filter.actions';
+import { upsFeature } from '../../../ups/store/ups.feature';
 
 @Component({
   selector: 'app-filters',
@@ -112,7 +113,10 @@ export class FiltersComponent implements OnInit {
   sports$: Observable<SportDto[]>;
 
   constructor(private store: Store) {
-    this.sports$ = this.store.select(sportFeature.selectAllSports);
+    // this.sports$ = this.store.select(sportFeature.selectAllSports);
+    this.sports$ = this.store
+      .select(upsFeature.selectMyUpses)
+      .pipe(map((upses) => upses.map((ups) => ups.sport)));
   }
 
   clear() {

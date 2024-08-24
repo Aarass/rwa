@@ -42,13 +42,15 @@ import { RatingModule } from 'primeng/rating';
   styleUrl: './create-ups.component.scss',
 })
 export class CreateUpsComponent implements OnInit, OnDestroy, Closable {
-  @Output()
-  close = new EventEmitter<void>();
   death = new Subject<void>();
 
-  loading = false;
+  @Output()
+  close = new EventEmitter<void>();
+
+  isLoading = false;
 
   sports: SportDto[] = [];
+
   formGroup = new FormGroup({
     selectedSportControl: new FormControl<SportDto | null>(null, [
       Validators.required,
@@ -64,6 +66,16 @@ export class CreateUpsComponent implements OnInit, OnDestroy, Closable {
       .pipe(takeUntil(this.death))
       .subscribe((sports) => {
         this.sports = sports;
+      });
+
+    this.store
+      .select(upsFeature.selectIsLoading)
+      .pipe(takeUntil(this.death))
+      .subscribe((newIsLoading) => {
+        if (this.isLoading && newIsLoading == false) {
+          this.isLoading = false;
+          this.close.emit();
+        }
       });
   }
 
@@ -87,7 +99,7 @@ export class CreateUpsComponent implements OnInit, OnDestroy, Closable {
     // });
     // return;
 
-    this.loading = true;
+    this.isLoading = true;
 
     this.store.dispatch(
       createUps({

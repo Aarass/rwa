@@ -1,20 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { exhaustMap, map } from 'rxjs';
+import { catchError, exhaustMap, map, throwError } from 'rxjs';
 import { SurfaceService } from '../services/surface/surface.service';
 import {
   createSurface,
   createSurfaceSuccess,
   deleteSurface,
+  deleteSurfaceSuccess,
   loadAllSurfaces,
   loadAllSurfacesSuccess,
 } from './surface.actions';
+import { MessageService } from 'primeng/api';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class SurfaceEffects {
   constructor(
     private actions$: Actions,
-    private surfaceService: SurfaceService
+    private surfaceService: SurfaceService,
+    private messageService: MessageService
   ) {}
 
   loadSurfaces$ = createEffect(() => {
@@ -43,15 +47,24 @@ export class SurfaceEffects {
     );
   });
 
-  deleteSurface$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(deleteSurface),
-        exhaustMap((action) => {
-          return this.surfaceService.deleteSurface(action.id).pipe();
-        })
-      );
-    },
-    { dispatch: false }
-  );
+  deleteSurface$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(deleteSurface),
+      exhaustMap((action) => {
+        return this.surfaceService.deleteSurface(action.id).pipe(
+          map(() => {
+            return deleteSurfaceSuccess({ id: action.id });
+          }),
+          catchError((err: HttpErrorResponse) => {
+            this.messageService.add({
+              key: 'global',
+              severity: 'error',
+              summary: err.error.message,
+            });
+            return throwError(() => err);
+          })
+        );
+      })
+    );
+  });
 }

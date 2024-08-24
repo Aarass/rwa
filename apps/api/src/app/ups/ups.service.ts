@@ -53,7 +53,11 @@ export class UpsService {
     });
 
     try {
-      return await this.userPlaysSportRepository.save(ups);
+      await this.userPlaysSportRepository.save(ups);
+      return await this.userPlaysSportRepository.findOne({
+        where: { id: ups.id },
+        relations: ['sport'],
+      });
     } catch (err: any) {
       if (err.code != undefined) {
         if (err.code == 23505) {
@@ -62,6 +66,10 @@ export class UpsService {
       }
       return err;
     }
+  }
+
+  async updateUps(id: number, updateDto: { selfRatedSkillLevel: number }) {
+    return await this.userPlaysSportRepository.update(id, updateDto);
   }
 
   async removeSportFromUser(upsId: number) {

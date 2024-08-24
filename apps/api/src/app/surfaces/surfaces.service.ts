@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSurfaceDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
@@ -22,6 +22,16 @@ export class SurfacesService {
   }
 
   async remove(id: number) {
-    return await this.surfaceRepository.delete({ id });
+    try {
+      return await this.surfaceRepository.delete({ id });
+    } catch (err: any) {
+      if (err.code == 23503) {
+        throw new ForbiddenException(
+          'This surface is already used in some appointment'
+        );
+      } else {
+        throw err;
+      }
+    }
   }
 }

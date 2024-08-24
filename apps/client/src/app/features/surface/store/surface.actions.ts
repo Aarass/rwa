@@ -20,3 +20,8 @@ export const deleteSurface = createAction(
   '[Surface] Delete Surface',
   props<{ id: number }>()
 );
+
+export const deleteSurfaceSuccess = createAction(
+  '[Surface] Delete Surface Success',
+  props<{ id: number }>()
+);

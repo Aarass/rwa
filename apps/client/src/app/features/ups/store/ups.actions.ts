@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { CreateUpsDto, UpsDto } from '@rwa/shared';
+import { CreateUpsDto, UpdateUpsDto, UpsDto } from '@rwa/shared';
 
 export const loadMyUpses = createAction('[Ups] Load My Upses');
 export const loadMyUpsesSuccess = createAction(
@@ -21,4 +21,14 @@ export const createUpsFail = createAction('[Ups] Create Ups Fail');
 export const deleteUps = createAction(
   '[Ups] Delete Ups',
   props<{ id: number }>()
+);
+
+export const updateUps = createAction(
+  '[Ups] Update Ups',
+  props<{
+    data: {
+      id: number;
+      changes: UpdateUpsDto;
+    };
+  }>()
 );

@@ -3,10 +3,9 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { SurfaceDto } from '@rwa/shared';
 import {
   createSurfaceSuccess,
-  deleteSurface,
+  deleteSurfaceSuccess,
   loadAllSurfacesSuccess,
 } from './surface.actions';
-import { boolean } from 'zod';
 
 const adapter = createEntityAdapter<SurfaceDto>();
 
@@ -25,7 +24,7 @@ export const surfaceFeature = createFeature({
     on(createSurfaceSuccess, (state, action) => {
       return adapter.addOne(action.data, state);
     }),
-    on(deleteSurface, (state, action) => {
+    on(deleteSurfaceSuccess, (state, action) => {
       return adapter.removeOne(action.id, state);
     })
   ),
