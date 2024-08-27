@@ -1,20 +1,12 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
-import { AvatarModule } from 'primeng/avatar';
-import { AvatarGroupModule } from 'primeng/avatargroup';
+import { Component, Input, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  AccessTokenPayload,
   AppointmentDto,
-  appointmentsOrderingSchema,
   ParticipationDto,
+  toPostgresString,
 } from '@rwa/shared';
 import { CardModule } from 'primeng/card';
-import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -23,37 +15,66 @@ import {
   leaveAppointment,
   showParticipants,
 } from '../../../participation/store/participation.actions';
-import { ParticipationsSidebarService } from '../../../participation/services/participations-sidebar/participations-sidebar.service';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { DialogModule } from 'primeng/dialog';
+import { selectPayload } from '../../../auth/store/auth.feature';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-appointment',
   standalone: true,
-  imports: [CommonModule, CardModule, ButtonModule, RouterModule, AvatarModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    RouterModule,
+    OverlayPanelModule,
+    DialogModule,
+  ],
   templateUrl: './appointment.component.html',
   styleUrl: './appointment.component.scss',
 })
 export class AppointmentComponent implements OnChanges {
   @Input()
   appointment!: AppointmentDto;
-  @Input()
-  viewerId!: number | null;
 
-  isHovering: boolean = false;
-  isJoined: boolean = false;
+  viewerId: number | null = null;
+
+  additionalInfoVisible = false;
+
+  isHovering = false;
+  isJoined = false;
+  isRejected = false;
+
   participation: ParticipationDto | undefined;
 
-  constructor(private store: Store) {}
+  constructor(private store: Store) {
+    selectPayload(this.store)
+      .pipe(map((payload) => payload?.user.id ?? null))
+      .subscribe((val) => {
+        this.viewerId = val;
+        this.check();
+      });
+  }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
+    this.check();
+  }
+
+  private check() {
     if (this.viewerId == null) {
-      console.log();
       this.isJoined = false;
-    } else {
+    } else if (this.appointment) {
       this.participation = this.appointment.participants.find(
         (participation) => participation.userId == this.viewerId
       );
       if (this.participation) {
         this.isJoined = true;
+        if (this.participation.approved) {
+          this.isRejected = false;
+        } else {
+          this.isRejected = true;
+        }
       } else {
         this.isJoined = false;
       }
@@ -61,7 +82,7 @@ export class AppointmentComponent implements OnChanges {
   }
 
   getFormatedDuration() {
-    return '3 hours 30 minutes';
+    return toPostgresString(this.appointment.duration);
   }
 
   getJoinedCount() {
@@ -85,11 +106,12 @@ export class AppointmentComponent implements OnChanges {
     }
 
     if (this.isJoined) {
+      if (this.participation == undefined) throw `This should not happen`;
       this.store.dispatch(
         leaveAppointment({
           data: {
             appointmentId: this.appointment.id,
-            participationId: this.participation!.id,
+            participationId: this.participation.id,
             userId: this.viewerId,
           },
         })
@@ -102,8 +124,13 @@ export class AppointmentComponent implements OnChanges {
       );
     }
   }
+
   showParticipants() {
     this.store.dispatch(showParticipants({ data: this.appointment }));
+  }
+
+  toggleAdditionalInfo() {
+    this.additionalInfoVisible = !this.additionalInfoVisible;
   }
 
   print(appointment: any) {

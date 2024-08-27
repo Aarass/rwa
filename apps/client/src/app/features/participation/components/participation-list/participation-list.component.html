@@ -1,3 +1,5 @@
-@for (participation of participations$ | async; track participation.id) {
-<p>{{ participation.id }}</p>
-}
+<div class="p-4 flex flex-column gap-4">
+  @for (participation of participations$ | async; track participation.id) {
+  <app-participation [participation]="participation"></app-participation>
+  }
+</div>

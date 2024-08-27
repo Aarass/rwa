@@ -49,9 +49,9 @@ export class ParticipationsController {
       throw new ForbiddenException(`Can't register for a canceled appointment`);
     }
 
-    if (appointment.missingPlayers == appointment.participants.length) {
-      throw new ForbiddenException('Appointment is full');
-    }
+    // if (appointment.missingPlayers == appointment.participants.length) {
+    //   throw new ForbiddenException('Appointment is full');
+    // }
 
     const userAge = Math.abs(
       new Date(

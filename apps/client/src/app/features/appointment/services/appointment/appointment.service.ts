@@ -43,8 +43,8 @@ export class AppointmentService {
     let userAge = null;
 
     if (user) {
-      var ageDifMs = Date.now() - new Date(user.birthDate).getTime();
-      var ageDate = new Date(ageDifMs);
+      const ageDifMs = Date.now() - new Date(user.birthDate).getTime();
+      const ageDate = new Date(ageDifMs);
       userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
@@ -54,7 +54,7 @@ export class AppointmentService {
         age: userAge,
         canceled: false,
         organizerId: null,
-        userId: user?.id ?? null,
+        userId: userFilters.filterByUpses ? user?.id ?? null : null,
         skip: paginationInfo.pageSize * paginationInfo.loadedPages,
         take: paginationInfo.pageSize,
       },
@@ -65,6 +65,12 @@ export class AppointmentService {
     return this.http.post<AppointmentDto[]>(
       'http://localhost:3000/appointments/search',
       findOptions
+    );
+  }
+
+  getAppointment(id: number) {
+    return this.http.get<AppointmentDto>(
+      `http://localhost:3000/appointments/${id}`
     );
   }
 

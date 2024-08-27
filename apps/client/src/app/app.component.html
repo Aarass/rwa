@@ -2,7 +2,7 @@
   <p-menubar class="flex-grow-0">
     <ng-template pTemplate="start" class="ml-8">
       <span class="ml-5"></span>
-      <img class="h-4rem cursor-pointer	" src="placeholder-logo.png" alt="logo" routerLink="/">
+      <img class="h-4rem cursor-pointer" src="placeholder-logo.png" alt="logo" routerLink="/" />
     </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2" *ngIf="authStatus != null">
@@ -28,10 +28,10 @@
           <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
             routerLink="/images" />
           } @else {
-          <p-button label="All Appointments" icon="pi pi-list" severity="secondary"
+          <p-button label="Appointments" icon="pi pi-list" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
-          <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
-            styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" />
+          <!-- <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
+            styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" /> -->
           <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="my-participations" />
           <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
@@ -42,7 +42,7 @@
       </div>
       }
     </div>
-    <div class="h-full flex-grow-0 overflow-hidden">
+    <div class="h-full flex-grow-1 overflow-hidden">
       <router-outlet></router-outlet>
     </div>
   </div>

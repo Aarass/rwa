@@ -30,7 +30,7 @@ export class ParticipationsService {
   async findMy(userId: number) {
     return await this.participationRepository.find({
       where: { userId },
-      // relations: ['appointment'],
+      relations: ['appointment', 'appointment.sport'],
     });
   }
 

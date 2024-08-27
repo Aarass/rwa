@@ -4,9 +4,11 @@ import { AppointmentDto } from '@rwa/shared';
 import { filtersChanged } from '../../filters/store/filter.actions';
 import {
   createAppointmentSuccess,
+  loadAppointments,
   loadAppointmentsFail,
   loadAppointmentsSuccess,
   loadMyAppointmentsSuccess,
+  reloadAppointments,
   updateAppointmentSuccess,
 } from './appointment.actions';
 import {
@@ -71,6 +73,10 @@ export const appointmentFeature = createFeature({
           { id, changes },
           state.myAppointments
         ),
+        allAppointments: allAppointmentsAdapter.updateOne(
+          { id, changes },
+          state.myAppointments
+        ),
         isLoading: {
           val: false,
           shaker: Math.random(),
@@ -78,6 +84,18 @@ export const appointmentFeature = createFeature({
       };
     }),
     on(filtersChanged, (state, action) => {
+      return {
+        ...state,
+        paginationInfo: {
+          ...state.paginationInfo,
+          loadedPages: 0,
+        },
+        allAppointments: allAppointmentsAdapter.removeAll(
+          state.allAppointments
+        ),
+      };
+    }),
+    on(reloadAppointments, (state, action) => {
       return {
         ...state,
         paginationInfo: {

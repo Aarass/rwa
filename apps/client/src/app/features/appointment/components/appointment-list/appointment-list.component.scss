@@ -1,9 +1,8 @@
-.offset-flex {
-  // display: flex;
-  // flex-wrap: wrap;
-  // gap: 20px;
-  // justify-content: flex-start;
+#container {
+  container: cards / inline-size;
+}
 
+.offset-flex {
   display: grid;
   grid-template-columns: repeat(4, 25rem);
   gap: 2rem;
@@ -38,7 +37,8 @@
   transform: translateX(-50%);
 }
 
-@media only screen and (max-width: 1692px) {
+// @media only screen and (max-width: 1692px) {
+@container cards (width < 110rem) {
   .controls {
     left: 50%;
   }
@@ -76,7 +76,10 @@
   }
 }
 
-@media only screen and (max-width: 1322px) {
+
+
+// @media only screen and (max-width: 1322px) {
+@container cards (width < 83rem) {
   .controls {
     left: calc(50% + 13.5rem);
   }
@@ -108,7 +111,8 @@
   }
 }
 
-@media only screen and (max-width: 952px) {
+// @media only screen and (max-width: 952px) {
+@container cards (width < 56rem) {
   .controls {
     left: 50%;
   }

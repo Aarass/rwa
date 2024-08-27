@@ -47,6 +47,9 @@ export const loadMyAppointmentsSuccess = createAction(
 // All
 
 export const loadAppointments = createAction('[Appointment] Load Appointments');
+export const reloadAppointments = createAction(
+  '[Appointment] Reload Appointments'
+);
 
 export const loadAppointmentsSuccess = createAction(
   '[Appointment] Load Appointments Success',

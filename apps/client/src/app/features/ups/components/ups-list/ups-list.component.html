@@ -1,11 +1,14 @@
 <div class="h-full flex flex-column justify-content-center p-8">
-  <div class="inset-shadow">
-    <div class="flex p-4 gap-4 align-items-center overflow-auto nice-scrollbar ">
+  <div class="inset-shadow mb-8">
+    <div class="flex p-4 gap-4 align-items-center overflow-auto nice-scrollbar">
       @for (ups of upses; track ups.id) {
-      <app-ups-list-item [ups]=" ups"></app-ups-list-item>
-      }
-      @if (sportsLeft) {
-      <app-ups-list-item [ups]="null" class="cursor-pointer " (click)="openUpsDialog()"></app-ups-list-item>
+      <app-ups-list-item [ups]="ups"></app-ups-list-item>
+      } @if (sportsLeft) {
+      <app-ups-list-item
+        [ups]="null"
+        class="cursor-pointer"
+        (click)="openUpsDialog()"
+      ></app-ups-list-item>
       }
     </div>
   </div>

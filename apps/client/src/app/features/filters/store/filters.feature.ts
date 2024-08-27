@@ -15,6 +15,7 @@ const initialState: {
     maxDate: null,
     minTime: null,
     sportId: null,
+    filterByUpses: true,
   },
   ordering: {
     by: 'date',

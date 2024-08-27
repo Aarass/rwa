@@ -21,6 +21,7 @@ import {
   loadAppointmentsSuccess,
   loadMyAppointments,
   loadMyAppointmentsSuccess,
+  reloadAppointments,
   updateAppointment,
   updateAppointmentSuccess,
 } from './appointment.actions';
@@ -87,7 +88,7 @@ export class AppointmentEffects {
 
   load$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(loadAppointments, filtersChanged),
+      ofType(loadAppointments, reloadAppointments, filtersChanged),
       exhaustMap((action) => {
         return combineLatest([
           this.store.select(filtersFeature.selectFilters),

@@ -88,8 +88,7 @@ export class AppointmentsService {
         ...filters,
       })
       .where(
-        `appointment.sportId = COALESCE(:sportId, appointment.sportId) AND 
-         appointment.minAge <= COALESCE(:age, appointment.minAge) AND 
+        `appointment.minAge <= COALESCE(:age, appointment.minAge) AND 
          appointment.maxAge >= COALESCE(:age, appointment.maxAge) AND 
          appointment.date >= COALESCE(:minDate, appointment.date) AND 
          appointment.date <= COALESCE(:maxDate, appointment.date) AND 
@@ -114,12 +113,13 @@ export class AppointmentsService {
 
         return `(${subQuery} BETWEEN appointment.minSkillLevel AND appointment.maxSkillLevel) = true`;
       });
+    } else {
+      query = query.andWhere(
+        `appointment.sportId = COALESCE(:sportId, appointment.sportId)`
+      );
     }
 
-    if (
-      filters.maxDistance != null ||
-      (ordering != null && ordering.by == 'distance')
-    ) {
+    if (filters.maxDistance != null || ordering?.by == 'distance') {
       if (userLocation == null) {
         throw new BadRequestException(
           `User must pass its location to filter or sort by distance`
@@ -159,13 +159,20 @@ export class AppointmentsService {
       }
     }
 
-    return await query.printSql().getMany();
+    return await query.getMany();
   }
 
   async findOne(id: number) {
     return await this.appointmentRepository.findOne({
       where: { id },
-      relations: ['participants'],
+      relations: [
+        'participants',
+        'participants.user',
+        'participants.user.location',
+        'sport',
+        'surface',
+        'location',
+      ],
     });
   }
 

@@ -1,9 +1,9 @@
 <div class="w-full h-full overflow-auto nice-scrollbar">
-  <div class="flex justify-content-center align-items-center w-full relative">
+  <div class="flex justify-content-center align-items-center w-full relative" id="container">
     <div class="offset-flex">
 
       @for (appointment of appointments$ | async; track appointment.id) {
-      <app-appointment [appointment]="appointment" [viewerId]="viewerId"></app-appointment>
+      <app-appointment [appointment]="appointment"></app-appointment>
       }
       <div class="flex justify-content-center align-items-center w-full relative" *ngIf="canLoadMore()">
         <p-button label="Load more" [text]="true" [raised]="true" [rounded]="true" icon="pi pi-chevron-circle-down"
@@ -17,7 +17,7 @@
             <app-filters (onClose)="op.toggle({})"></app-filters>
           </p-overlayPanel>
         </p-button>
-        <p-button icon="pi pi-bell" [rounded]="true" severity="secondary" />
+        <p-button icon="pi pi-refresh" [rounded]="true" severity="secondary" (onClick)="refresh()" />
         <p-button icon="pi pi-plus" [rounded]="true" severity="secondary" routerLink="../appointment-form" />
         <p-button icon="pi pi-box" [rounded]="true" severity="secondary" />
       </div>

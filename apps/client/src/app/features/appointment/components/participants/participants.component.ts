@@ -12,6 +12,7 @@ import { lastValueFrom, map, Observable, tap } from 'rxjs';
 import { rejectParticipation } from '../../../participation/store/participation.actions';
 import { participationFeature } from '../../../participation/store/participation.feature';
 import { selectPayload } from '../../../auth/store/auth.feature';
+import { InplaceModule } from 'primeng/inplace';
 
 @Component({
   selector: 'app-participants',
@@ -23,6 +24,7 @@ import { selectPayload } from '../../../auth/store/auth.feature';
     TagModule,
     AccordionModule,
     DividerModule,
+    InplaceModule,
   ],
   templateUrl: './participants.component.html',
   styleUrl: './participants.component.scss',
@@ -43,6 +45,14 @@ export class ParticipantsComponent {
 
   showUser(userId: number) {
     this.router.navigateByUrl(`user?id=${userId}`);
+  }
+
+  getApprovedUsers(appointment: AppointmentDto) {
+    return appointment.participants.filter((p) => p.approved);
+  }
+
+  getRejectedUsers(appointment: AppointmentDto) {
+    return appointment.participants.filter((p) => !p.approved);
   }
 
   async reject(participation: ParticipationDto, appointment: AppointmentDto) {

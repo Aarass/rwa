@@ -18,9 +18,13 @@ import {
 } from 'rxjs';
 import { selectPayload } from '../../../auth/store/auth.feature';
 import { FiltersComponent } from '../../../filters/components/filters/filters.component';
-import { loadAppointments } from '../../store/appointment.actions';
+import {
+  loadAppointments,
+  reloadAppointments,
+} from '../../store/appointment.actions';
 import { appointmentFeature } from '../../store/appointment.feature';
 import { AppointmentComponent } from '../appointment/appointment.component';
+import { filtersChanged } from '../../../filters/store/filter.actions';
 
 @Component({
   selector: 'app-appointment-list',
@@ -44,7 +48,6 @@ export class AppointmentListComponent implements OnDestroy {
   queriedUserId$: Observable<number | null>;
   appointments$: Observable<AppointmentDto[]>;
 
-  viewerId: number | null = null;
   loading: boolean = false;
 
   constructor(private store: Store, private route: ActivatedRoute) {
@@ -73,9 +76,10 @@ export class AppointmentListComponent implements OnDestroy {
       map((payload) => (payload == null ? null : payload.user.id))
     );
 
-    viewerId$.pipe(takeUntil(this.death)).subscribe((viewerId) => {
-      this.viewerId = viewerId;
-    });
+    // viewerId$.pipe(takeUntil(this.death)).subscribe((viewerId) => {
+    //   alert(viewerId);
+    //   this.viewerId = viewerId;
+    // });
 
     this.appointments$ = combineLatest([this.queriedUserId$, viewerId$]).pipe(
       switchMap((val) => {
@@ -105,6 +109,10 @@ export class AppointmentListComponent implements OnDestroy {
 
   canLoadMore(): boolean {
     return true;
+  }
+
+  refresh() {
+    this.store.dispatch(reloadAppointments());
   }
 
   loadMore() {

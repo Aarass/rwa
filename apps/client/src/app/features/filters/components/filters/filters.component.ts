@@ -1,22 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppointmentsOrdering, SportDto } from '@rwa/shared';
 import { CalendarModule } from 'primeng/calendar';
+import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SliderModule } from 'primeng/slider';
-import { map, Observable } from 'rxjs';
+import { Observable, Subject, filter, map } from 'rxjs';
 import {
   dateStringFromDate,
   timeStringFromDate,
 } from '../../../global/functions/date-utility';
-import { sportFeature } from '../../../sport/store/sport.feature';
+import { upsFeature } from '../../../ups/store/ups.feature';
 import { UserConfigurableFilters } from '../../interfaces/filters';
 import { filtersChanged } from '../../store/filter.actions';
-import { upsFeature } from '../../../ups/store/ups.feature';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { sportFeature } from '../../../sport/store/sport.feature';
 
 @Component({
   selector: 'app-filters',
@@ -29,11 +31,15 @@ import { upsFeature } from '../../../ups/store/ups.feature';
     CalendarModule,
     InputNumberModule,
     SliderModule,
+    InputGroupModule,
+    CheckboxModule,
   ],
   templateUrl: './filters.component.html',
   styleUrl: './filters.component.scss',
 })
-export class FiltersComponent implements OnInit {
+export class FiltersComponent {
+  death = new Subject<void>();
+
   @Output()
   onClose = new EventEmitter<void>();
 
@@ -100,23 +106,33 @@ export class FiltersComponent implements OnInit {
   ];
 
   formGroup = new FormGroup({
-    selectedSport: new FormControl<SportDto | null>(null),
+    sportId: new FormControl<number | null>(null),
     minDate: new FormControl<Date | null>(null),
     maxDate: new FormControl<Date | null>(null),
     startTime: new FormControl<Date | null>(null),
     endTime: new FormControl<Date | null>(null),
     maxPricePerPlayer: new FormControl<number | null>(null),
     maxDistance: new FormControl<number | null>(null),
+    onlyJoinable: new FormControl<boolean>(true),
     sorting: new FormControl<AppointmentsOrdering | null>(null),
   });
 
-  sports$: Observable<SportDto[]>;
+  // sports$: Observable<SportDto[]>;
+  sportOptions: { name: string; sportId: number }[] = [];
 
   constructor(private store: Store) {
-    // this.sports$ = this.store.select(sportFeature.selectAllSports);
-    this.sports$ = this.store
-      .select(upsFeature.selectMyUpses)
-      .pipe(map((upses) => upses.map((ups) => ups.sport)));
+    this.store
+      .select(sportFeature.selectAllSports)
+      // this.store
+      //   .select(upsFeature.selectMyUpses)
+      //   .pipe(map((upses) => upses.map((ups) => ups.sport)))
+      .subscribe((sports) => {
+        this.sportOptions = [
+          { name: 'Joinable (Default)', sportId: -1 },
+          ...sports.map((sport) => ({ name: sport.name, sportId: sport.id })),
+          { name: 'All sports', sportId: -2 },
+        ];
+      });
   }
 
   clear() {
@@ -125,14 +141,31 @@ export class FiltersComponent implements OnInit {
       maxDate: null,
       maxDistance: null,
       maxPricePerPlayer: null,
-      selectedSport: null,
+      sportId: null,
       sorting: null,
       startTime: null,
       endTime: null,
+      onlyJoinable: true,
     });
   }
 
   applyFilters() {
+    let sportId, filterByUpses;
+    if (this.formGroup.controls.sportId.value == -1) {
+      sportId = null;
+      filterByUpses = true;
+    } else if (this.formGroup.controls.sportId.value == -2) {
+      sportId = null;
+      filterByUpses = false;
+    } else {
+      sportId = this.formGroup.controls.sportId.value;
+      if (sportId == null) {
+        filterByUpses = true;
+      } else {
+        filterByUpses = false;
+      }
+    }
+
     const filters: UserConfigurableFilters = {
       maxDistance: this.formGroup.controls.maxDistance.value,
       maxPrice: this.formGroup.controls.maxPricePerPlayer.value,
@@ -148,10 +181,10 @@ export class FiltersComponent implements OnInit {
       maxDate: this.formGroup.controls.maxDate.value
         ? dateStringFromDate(this.formGroup.controls.maxDate.value)
         : null,
-      sportId: this.formGroup.controls.selectedSport.value?.id ?? null,
+      sportId,
+      filterByUpses,
     };
 
-    this.onClose.emit();
     this.store.dispatch(
       filtersChanged({
         data: {
@@ -160,7 +193,6 @@ export class FiltersComponent implements OnInit {
         },
       })
     );
+    this.onClose.emit();
   }
-
-  ngOnInit(): void {}
 }

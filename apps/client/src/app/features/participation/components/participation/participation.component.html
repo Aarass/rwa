@@ -1,1 +1,11 @@
-<p>participation works!</p>
+<div class="p-card px-3" [ngClass]="{'disabled': participation.approved == false}">
+  <div class="flex relative gap-4" (click)="openAppointment()">
+    <div class="badge" *ngIf="!participation.userHasSeenChanges">
+      <i class="pi pi-bell" pBadge value="2"></i>
+    </div>
+
+    <p>{{ participation.appointment.sport.name }}</p>
+    <p>{{ participation.appointment.date }}</p>
+    <p>{{ participation.appointment.startTime }}</p>
+  </div>
+</div>

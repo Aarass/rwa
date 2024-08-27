@@ -2,7 +2,7 @@
   <div class="flex justify-content-center align-items-center w-full relative">
     <div class="offset-flex">
       @for (appointment of appointments$ | async; track appointment.id) {
-      <app-appointment [appointment]="appointment" [viewerId]="userId | async"></app-appointment>
+      <app-appointment [appointment]="appointment"></app-appointment>
       }
     </div>
     <div class="controls bg-white p-card border-noround-top">

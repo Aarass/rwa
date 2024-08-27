@@ -15,6 +15,7 @@ import { HomeComponent } from './features/home/components/home/home.component';
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
 import { UpsListComponent } from './features/ups/components/ups-list/ups-list.component';
 import { UserInfoComponent } from './features/user/components/user-info/user-info.component';
+import { SingleAppointmentComponent } from './features/appointment/components/single-appointment/single-appointment.component';
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -24,6 +25,10 @@ export const appRoutes: Route[] = [
     path: 'profile',
     component: ProfileComponent,
     canActivate: [ifIsLoggedIn],
+  },
+  {
+    path: 'appointment',
+    component: SingleAppointmentComponent,
   },
   {
     path: 'appointments',

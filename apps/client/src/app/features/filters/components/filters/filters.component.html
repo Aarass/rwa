@@ -1,32 +1,30 @@
 <div class="p-4 h-full flex flex-column justify-content-center align-items-center gap-4">
   <div [formGroup]="formGroup" class="flex flex-column gap-4">
 
-    <p-floatLabel *ngIf="sports$ | async as sports">
-      <p-dropdown [options]="sports" [formControl]="formGroup.controls.selectedSport" optionLabel="name" inputId="sport"
-        styleClass="w-full" [showClear]="true" />
+    <p-floatLabel>
+      <p-dropdown [options]="sportOptions" [formControl]="formGroup.controls.sportId" optionLabel="name" inputId="sport"
+        styleClass="w-full" [showClear]="true" optionValue="sportId" />
       <label for="sport">Sport</label>
     </p-floatLabel>
-
 
     <div class="flex gap-2">
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.minDate"
-          [style]="{'width': '17ch'}" [showButtonBar]="true" />
+          [style]="{ width: '17ch' }" [showButtonBar]="true" />
         <label for="date">Min Date</label>
       </p-floatLabel>
 
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.maxDate"
-          [style]="{'width': '13ch'}" [showButtonBar]="true" />
+          [style]="{ width: '13ch' }" [showButtonBar]="true" />
         <label for="date">Max Date</label>
       </p-floatLabel>
     </div>
 
     <div class="flex gap-2">
-
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
-          [formControl]="formGroup.controls.startTime" [inputStyle]="{'width': '13ch'}" [showButtonBar]="true"
+          [formControl]="formGroup.controls.startTime" [inputStyle]="{ width: '13ch' }" [showButtonBar]="true"
           stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
@@ -37,7 +35,7 @@
 
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="end-time"
-          [formControl]="formGroup.controls.endTime" [inputStyle]="{'width': '17ch'}" [showButtonBar]="true"
+          [formControl]="formGroup.controls.endTime" [inputStyle]="{ width: '17ch' }" [showButtonBar]="true"
           stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
@@ -57,10 +55,10 @@
     <div class="relative mb-2">
       <p class="mr-4 label">Max distance</p>
       <p-slider [formControl]="formGroup.controls.maxDistance" max="500" step="5" min="5" />
-      <p class="p-label" *ngIf="formGroup.controls.maxDistance.value">{{ formGroup.controls.maxDistance.value }}
-        km</p>
+      <p class="p-label" *ngIf="formGroup.controls.maxDistance.value">
+        {{ formGroup.controls.maxDistance.value }} km
+      </p>
     </div>
-
 
     <p-floatLabel>
       <p-dropdown [formControl]="formGroup.controls.sorting" [options]="sorting" optionLabel="label" optionValue="value"
@@ -68,15 +66,17 @@
         <ng-template let-selectedOption pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selectedOption">
             <div>
-              <p class="m-0"> {{ selectedOption.label }} ({{ selectedOption.dirName }})</p>
+              <p class="m-0">
+                {{ selectedOption.label }} ({{ selectedOption.dirName }})
+              </p>
             </div>
           </div>
         </ng-template>
         <ng-template let-option pTemplate="item">
           <div class="flex align-items-center gap-2">
             <div class="w-full flex justify-content-between">
-              <p class="m-0"> {{ option.label }}</p>
-              <p class="m-0"> {{ option.icon }}</p>
+              <p class="m-0">{{ option.label }}</p>
+              <p class="m-0">{{ option.icon }}</p>
             </div>
           </div>
         </ng-template>
