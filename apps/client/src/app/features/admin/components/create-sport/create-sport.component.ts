@@ -6,7 +6,6 @@ import { SportDto } from '@rwa/shared';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -31,7 +30,6 @@ import { sportFeature } from '../../../sport/store/sport.feature';
     SkeletonModule,
     CardModule,
     ButtonModule,
-    ConfirmDialogModule,
     InputTextModule,
     FileUploadModule,
     FormsModule,

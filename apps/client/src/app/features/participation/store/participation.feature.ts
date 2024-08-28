@@ -15,10 +15,10 @@ export const participationFeature = createFeature({
   name: 'participation',
   reducer: createReducer(
     adapter.getInitialState({
-      selectedAppointment: null as AppointmentDto | null,
+      selectedAppointmentId: null as number | null,
     }),
     on(loadMyParticipationsSuccess, (state, action) => {
-      return adapter.addMany(action.data, state);
+      return adapter.addMany(action.data, adapter.removeAll(state));
     }),
     on(joinAppointmentSuccess, (state, action) => {
       return adapter.addOne(action.data, state);
@@ -40,7 +40,7 @@ export const participationFeature = createFeature({
     on(showParticipants, (state, action) => {
       return {
         ...state,
-        selectedAppointment: action.data,
+        selectedAppointmentId: action.data.id,
       };
     })
     // on(rejectParticipation, (state, action) => {
@@ -55,8 +55,15 @@ export const participationFeature = createFeature({
       return adapter.getSelectors().selectAll(state);
     });
 
+    const selectChangesCount = createSelector(selectAll, (participations) => {
+      return participations.filter(
+        (participation) => !participation.userHasSeenChanges
+      ).length;
+    });
+
     return {
       selectAll,
+      selectChangesCount,
     };
   },
 });

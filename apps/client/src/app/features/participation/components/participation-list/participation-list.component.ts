@@ -1,10 +1,9 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { participationFeature } from '../../store/participation.feature';
 import { Observable } from 'rxjs';
 import { ParticipationDto } from '../../../../../../../../shared/src';
-import { ParticipantsComponent } from '../../../appointment/components/participants/participants.component';
+import { participationFeature } from '../../store/participation.feature';
 import { ParticipationComponent } from '../participation/participation.component';
 
 @Component({

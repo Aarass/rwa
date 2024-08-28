@@ -5,9 +5,9 @@
       @for (appointment of appointments$ | async; track appointment.id) {
       <app-appointment [appointment]="appointment"></app-appointment>
       }
-      <div class="flex justify-content-center align-items-center w-full relative" *ngIf="canLoadMore()">
+      <div class="flex justify-content-center align-items-center w-full relative">
         <p-button label="Load more" [text]="true" [raised]="true" [rounded]="true" icon="pi pi-chevron-circle-down"
-          [plain]="true" [loading]="loading" (onClick)="loadMore()" />
+          [plain]="true" [loading]="loading" (onClick)="loadMoreAppointments()" />
       </div>
     </div>
     <div class=" controls bg-white p-card border-noround-top">
@@ -17,7 +17,7 @@
             <app-filters (onClose)="op.toggle({})"></app-filters>
           </p-overlayPanel>
         </p-button>
-        <p-button icon="pi pi-refresh" [rounded]="true" severity="secondary" (onClick)="refresh()" />
+        <p-button icon="pi pi-refresh" [rounded]="true" severity="secondary" (onClick)="reloadAppointments()" />
         <p-button icon="pi pi-plus" [rounded]="true" severity="secondary" routerLink="../appointment-form" />
         <p-button icon="pi pi-box" [rounded]="true" severity="secondary" />
       </div>

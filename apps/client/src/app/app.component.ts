@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { PrimeNGConfig } from 'primeng/api';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -14,34 +15,33 @@ import {
 import { InputTextModule } from 'primeng/inputtext';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
+import { SidebarModule } from 'primeng/sidebar';
 import { ToastModule } from 'primeng/toast';
 import {
   filter,
   firstValueFrom,
-  map,
   Observable,
   Subject,
   take,
   takeUntil,
 } from 'rxjs';
+import { ParticipantsComponent } from './features/appointment/components/participants/participants.component';
+import {
+  loadAppointments,
+  reloadAppointments,
+} from './features/appointment/store/appointment.actions';
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { refresh } from './features/auth/store/auth.actions';
 import { authFeature, selectPayload } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
+import { ParticipationsSidebarService } from './features/participation/services/participations-sidebar/participations-sidebar.service';
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
 import { SidebarComponent } from './features/sidebar/components/sidebar/sidebar.component';
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
 import { loadMyUpses } from './features/ups/store/ups.actions';
-import {
-  loadAppointments,
-  loadMyAppointments,
-} from './features/appointment/store/appointment.actions';
-import { AvatarGroupModule } from 'primeng/avatargroup';
-import { SidebarModule } from 'primeng/sidebar';
-import { ParticipationsSidebarService } from './features/participation/services/participations-sidebar/participations-sidebar.service';
-import { ParticipantsComponent } from './features/appointment/components/participants/participants.component';
-import { AppointmentDto } from '@rwa/shared';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { participationFeature } from './features/participation/store/participation.feature';
 
 @Component({
   standalone: true,
@@ -62,6 +62,7 @@ import { AppointmentDto } from '@rwa/shared';
     SidebarComponent,
     CardModule,
     ParticipantsComponent,
+    ConfirmDialogModule,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -74,6 +75,7 @@ export class AppComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   singInDialogRef: DynamicDialogRef<LoginComponent> | null = null;
   participationsSidebarVisible: boolean = false;
+  unseenChanges$: Observable<number>;
 
   constructor(
     private primengConfig: PrimeNGConfig,
@@ -84,6 +86,10 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {
     participationSidebarService.visible$.subscribe(
       (val) => (this.participationsSidebarVisible = val)
+    );
+
+    this.unseenChanges$ = this.store.select(
+      participationFeature.selectChangesCount
     );
   }
 
@@ -126,7 +132,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.dispatch(refresh());
     this.store.dispatch(loadAllSports());
     this.store.dispatch(loadAllSurfaces());
-    this.store.dispatch(loadMyAppointments());
     this.store.dispatch(loadAppointments());
   }
 

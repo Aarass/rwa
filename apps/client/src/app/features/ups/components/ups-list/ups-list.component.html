@@ -4,11 +4,7 @@
       @for (ups of upses; track ups.id) {
       <app-ups-list-item [ups]="ups"></app-ups-list-item>
       } @if (sportsLeft) {
-      <app-ups-list-item
-        [ups]="null"
-        class="cursor-pointer"
-        (click)="openUpsDialog()"
-      ></app-ups-list-item>
+      <app-ups-list-item [ups]="null" class="cursor-pointer" (click)="openUpsDialog()"></app-ups-list-item>
       }
     </div>
   </div>
@@ -16,6 +12,4 @@
   <!-- <p>Here will be shown yours sports</p> -->
   <p>Click on "+" to add sports you play</p>
   }
-
-  <p-confirmDialog />
 </div>

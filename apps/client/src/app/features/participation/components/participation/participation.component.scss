@@ -21,9 +21,11 @@
 
 .badge {
   position: absolute;
-  top: 0;
-  left: 10px;
+  top: 50%;
+  left: 20px;
   transform: translate(-50%, -50%);
+
+  color: white;
 }
 
 :host ::ng-deep {

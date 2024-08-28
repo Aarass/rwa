@@ -5,6 +5,7 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  InternalServerErrorException,
   NotFoundException,
   NotImplementedException,
   Param,
@@ -85,10 +86,14 @@ export class ParticipationsController {
     }
 
     try {
-      return await this.participationsService.create(
+      const participation = await this.participationsService.create(
         user.id,
         createParticipationDto
       );
+      if (participation == null) {
+        throw new InternalServerErrorException('Unexpected error');
+      }
+      return await this.participationsService.findOne(participation.id);
     } catch (err: any) {
       if (err.code != undefined && err.code == 23505) {
         console.error('unique_key_violation');

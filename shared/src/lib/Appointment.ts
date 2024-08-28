@@ -36,7 +36,7 @@ export interface AppointmentDto {
 
 export const createAppointmentSchema = z.object({
   locationId: z.string(),
-  date: z.string().date(),
+  date: z.string(), //.date(),
   startTime: z.string(),
   environment: z.number().min(0).max(1),
   duration: z.string(),
@@ -57,7 +57,7 @@ export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
 export const updateAppointmentSchema = z
   .object({
     locationId: z.string(),
-    date: z.string().date(),
+    date: z.string(), //.date(),
     startTime: z.string(),
     environment: z.number().min(0).max(1),
     duration: z.string(),
@@ -84,37 +84,9 @@ export const findAppointmentsSchema = z.object({
 
 export type FindAppointmentsDto = z.infer<typeof findAppointmentsSchema>;
 
-interface IntervalDto {
+export interface IntervalDto {
   hours: number;
   minutes: number;
-}
-
-export function toPostgresString(instance: IntervalDto) {
-  let postgresString = '';
-
-  if (instance.hours) {
-    if (postgresString.length) {
-      postgresString += ' ';
-    }
-
-    postgresString +=
-      instance.hours === 1
-        ? instance.hours + ' hour'
-        : instance.hours + ' hours';
-  }
-
-  if (instance.minutes) {
-    if (postgresString.length) {
-      postgresString += ' ';
-    }
-
-    postgresString +=
-      instance.minutes === 1
-        ? instance.minutes + ' minute'
-        : instance.minutes + ' minutes';
-  }
-
-  return postgresString === '' ? '0' : postgresString;
 }
 
 export enum Environment {

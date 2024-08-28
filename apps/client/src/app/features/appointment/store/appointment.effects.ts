@@ -1,37 +1,32 @@
 import { Location } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { MessageService } from 'primeng/api';
 import {
   catchError,
   combineLatest,
-  EMPTY,
   exhaustMap,
   map,
   take,
-  throttleTime,
   throwError,
-  withLatestFrom,
 } from 'rxjs';
+import { selectPayload } from '../../auth/store/auth.feature';
+import { filtersFeature } from '../../filters/store/filters.feature';
 import { AppointmentService } from '../services/appointment/appointment.service';
 import {
+  cancelAppointment,
   createAppointment,
   createAppointmentSuccess,
   loadAppointments,
   loadAppointmentsFail,
   loadAppointmentsSuccess,
-  loadMyAppointments,
-  loadMyAppointmentsSuccess,
   reloadAppointments,
   updateAppointment,
   updateAppointmentSuccess,
 } from './appointment.actions';
-import { Store } from '@ngrx/store';
 import { appointmentFeature } from './appointment.feature';
-import { authFeature, selectPayload } from '../../auth/store/auth.feature';
-import { filtersChanged } from '../../filters/store/filter.actions';
-import { filtersFeature } from '../../filters/store/filters.feature';
-import { MessageService } from 'primeng/api';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class AppointmentEffects {
@@ -43,18 +38,18 @@ export class AppointmentEffects {
     private router: Location
   ) {}
 
-  loadMyAppointments$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loadMyAppointments),
-      exhaustMap(() => {
-        return this.appointmentService.getMyAppointments().pipe(
-          map((data) => {
-            return loadMyAppointmentsSuccess({ data });
-          })
-        );
-      })
-    );
-  });
+  // loadMyAppointments$ = createEffect(() => {
+  //   return this.actions$.pipe(
+  //     ofType(loadMyAppointments),
+  //     exhaustMap(() => {
+  //       return this.appointmentService.getMyAppointments().pipe(
+  //         map((data) => {
+  //           return loadMyAppointmentsSuccess({ data });
+  //         })
+  //       );
+  //     })
+  //   );
+  // });
 
   create$ = createEffect(() => {
     return this.actions$.pipe(
@@ -86,10 +81,24 @@ export class AppointmentEffects {
     );
   });
 
+  cancel$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(cancelAppointment),
+        exhaustMap((action) => {
+          return this.appointmentService
+            .cancelAppointment(action.data.id)
+            .pipe();
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   load$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(loadAppointments, reloadAppointments, filtersChanged),
-      exhaustMap((action) => {
+      ofType(loadAppointments, reloadAppointments),
+      exhaustMap(() => {
         return combineLatest([
           this.store.select(filtersFeature.selectFilters),
           this.store.select(filtersFeature.selectOrdering),

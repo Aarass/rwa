@@ -13,6 +13,13 @@ export interface UserDto {
   location: LocationDto;
   biography: string | null;
 }
+export type UserInfo = {
+  user: UserDto;
+  stats: {
+    organizedAppointments: number;
+    participatedAppointments: number;
+  }[];
+};
 
 export const createUserSchema = z
   .object({

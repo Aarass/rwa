@@ -32,8 +32,12 @@
             styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
           <!-- <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" /> -->
+
           <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
-            styleClass="w-full text-left white-space-nowrap" routerLink="my-participations" />
+            styleClass="w-full text-left white-space-nowrap p-overlay-badge overflow-visible"
+            routerLink="my-participations">
+            <p-badge *ngIf="unseenChanges$ | async as count" [value]="count" severity="danger" />
+          </p-button>
           <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="my-sports" />
           }
@@ -56,3 +60,5 @@
     <app-participants></app-participants>
   </p-sidebar>
 </div>
+
+<p-confirmDialog />

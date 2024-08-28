@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { User } from '@rwa/entities';
+import { Appointment, Participation, User } from '@rwa/entities';
 import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
@@ -22,6 +22,12 @@ export class UserService {
     });
 
     return user;
+  }
+
+  async getUserStats(id: number) {
+    return await this.userRepository.query(
+      `SELECT (SELECT COUNT(*) FROM appointment WHERE appointment.canceled = false AND appointment."organizerId" = ${id}) as "organizedAppointments", (SELECT COUNT(*) FROM participation WHERE participation."userId" = ${id} AND participation.approved = true) as "participatedAppointments"`
+    );
   }
 
   async getUserByUsername(username: string) {

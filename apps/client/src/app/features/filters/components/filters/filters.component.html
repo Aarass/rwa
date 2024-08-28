@@ -1,6 +1,13 @@
 <div class="p-4 h-full flex flex-column justify-content-center align-items-center gap-4">
   <div [formGroup]="formGroup" class="flex flex-column gap-4">
 
+    <div class="w-full">
+      <p-selectButton
+        [options]="[{name: 'Canceled', value: true}, {name: 'Active', value: false}, {name: 'Either', value: null}]"
+        optionLabel="name" optionValue="value" [formControl]="formGroup.controls.canceled">
+      </p-selectButton>
+    </div>
+
     <p-floatLabel>
       <p-dropdown [options]="sportOptions" [formControl]="formGroup.controls.sportId" optionLabel="name" inputId="sport"
         styleClass="w-full" [showClear]="true" optionValue="sportId" />
@@ -9,15 +16,15 @@
 
     <div class="flex gap-2">
       <p-floatLabel>
-        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.minDate"
-          [style]="{ width: '17ch' }" [showButtonBar]="true" />
-        <label for="date">Min Date</label>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="min-date"
+          [formControl]="formGroup.controls.minDate" [style]="{ width: '17ch' }" [showButtonBar]="true" />
+        <label for="min-date">Min Date</label>
       </p-floatLabel>
 
       <p-floatLabel>
-        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="date" [formControl]="formGroup.controls.maxDate"
-          [style]="{ width: '13ch' }" [showButtonBar]="true" />
-        <label for="date">Max Date</label>
+        <p-calendar [iconDisplay]="'input'" [showIcon]="true" inputId="max-date"
+          [formControl]="formGroup.controls.maxDate" [style]="{ width: '13ch' }" [showButtonBar]="true" />
+        <label for="max-date">Max Date</label>
       </p-floatLabel>
     </div>
 
@@ -25,7 +32,7 @@
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
           [formControl]="formGroup.controls.startTime" [inputStyle]="{ width: '13ch' }" [showButtonBar]="true"
-          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
+          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1" (onShow)="firstTimeStartTime()">
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
           </ng-template>
@@ -36,7 +43,8 @@
       <p-floatLabel>
         <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="end-time"
           [formControl]="formGroup.controls.endTime" [inputStyle]="{ width: '17ch' }" [showButtonBar]="true"
-          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1">
+          stepMinute="10" todayButtonStyleClass="hidden" clearButtonStyleClass="flex-1" (onShow)="firstTimeEndTime()">
+
           <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
             <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
           </ng-template>
@@ -48,21 +56,89 @@
     <p-floatLabel class="w-full">
       <p-inputNumber mode="currency" inputId="price-per-player" currency="EUR" locale="de-DE" styleClass="w-full"
         inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.maxPricePerPlayer"
-        [showButtons]="true" />
+        [showButtons]="true" [showClear]="true" />
       <label for="price-per-player">Max price per player</label>
     </p-floatLabel>
 
     <div class="relative mb-2">
       <p class="mr-4 label">Max distance</p>
       <p-slider [formControl]="formGroup.controls.maxDistance" max="500" step="5" min="5" />
-      <p class="p-label" *ngIf="formGroup.controls.maxDistance.value">
-        {{ formGroup.controls.maxDistance.value }} km
-      </p>
+      <div *ngIf="formGroup.controls.maxDistance.value" class="p-label">
+        <p>
+          {{ formGroup.controls.maxDistance.value }} km
+        </p>
+        <i class="pi pi-times" (click)="clearDistance()"></i>
+      </div>
+    </div>
+
+    <!-- <div class="flex gap-2">
+      <p-checkbox [formControl]="formGroup.controls.onlyMine" [binary]="true" inputId="only-mine" />
+      <label for="only-mine">Show only mine appointments</label>
+    </div> -->
+
+
+    <div>
+      <p-toggleButton [formControl]="formGroup.controls.onlyMine" onLabel="Show only my appointments"
+        offLabel="Show only my appointments" styleClass="w-full" />
     </div>
 
     <p-floatLabel>
-      <p-dropdown [formControl]="formGroup.controls.sorting" [options]="sorting" optionLabel="label" optionValue="value"
-        inputId="sorting" styleClass="w-full" [showClear]="true">
+      <p-dropdown [formControl]="formGroup.controls.sorting" [options]="[
+    {
+      label: 'Distance',
+      icon: '↑',
+      dirName: 'Ascending',
+      value: {
+        by: 'distance',
+        direction: 'ASC',
+      },
+    },
+    {
+      label: 'Distance',
+      icon: '↓',
+      dirName: 'Descending',
+      value: {
+        by: 'distance',
+        direction: 'DESC',
+      },
+    },
+    {
+      label: 'Price',
+      icon: '↑',
+      dirName: 'Ascending',
+      value: {
+        by: 'price',
+        direction: 'ASC',
+      },
+    },
+    {
+      label: 'Price',
+      icon: '↓',
+      dirName: 'Descending',
+      value: {
+        by: 'price',
+        direction: 'DESC',
+      },
+    },
+    {
+      label: 'Date',
+      icon: '↑',
+      dirName: 'Ascending',
+      value: {
+        by: 'date',
+        direction: 'ASC',
+      },
+    },
+    {
+      label: 'Date',
+      icon: '↓',
+      dirName: 'Descending',
+      value: {
+        by: 'date',
+        direction: 'DESC',
+      },
+    },
+  ]" optionLabel="label" optionValue="value" inputId="sorting" styleClass="w-full" [showClear]="true">
         <ng-template let-selectedOption pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selectedOption">
             <div>
@@ -81,7 +157,7 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for=" sorting">Sort by</label>
+      <label for="sorting">Sort by</label>
     </p-floatLabel>
 
 

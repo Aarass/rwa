@@ -1,6 +1,6 @@
 <div *ngIf="appointment$ | async as appointment">
-  <p-accordion class="w-full">
-    @for (participation of getApprovedUsers(appointment); track participation.id) {
+  <p-accordion class="w-full" *ngIf="getApprovedUsers(appointment) as approved">
+    @for (participation of approved; track participation.id) {
     <p-accordionTab [cache]="false">
       <ng-template pTemplate="header">
         <div class="w-full flex justify-content-between align-items-center">

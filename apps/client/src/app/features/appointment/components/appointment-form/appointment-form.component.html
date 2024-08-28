@@ -28,7 +28,7 @@
 
     <p-floatLabel>
       <p-calendar [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true" inputId="start-time"
-        [formControl]="formGroup.controls.startTime" required>
+        [formControl]="formGroup.controls.startTime" required stepMinute="10">
         <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
           <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
         </ng-template>
@@ -38,11 +38,11 @@
 
 
     <p-floatLabel>
-      <p-inputNumber mode="decimal" [showButtons]="true" inputId="total-players" [min]="0" styleClass="w-full"
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="duration-hours" [min]="0" styleClass="w-full"
         inputStyleClass="w-6" class="w-6" [formControl]="formGroup.controls.durationHours" required
         [suffix]="formGroup.controls.durationHours.value! > 1 ? ' hours' : ' hour'" />
-      <label for="date">Duration</label>
-      <p-inputNumber mode="decimal" [showButtons]="true" inputId="total-players" [min]="0" styleClass="w-full"
+      <label for="duration-hours">Duration</label>
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="duration-minutes" [min]="0" styleClass="w-full"
         inputStyleClass="w-full" class="w-6" [formControl]="formGroup.controls.durationMinutes"
         [suffix]="formGroup.controls.durationMinutes.value! > 1 ? ' mins' : ' min'" required />
     </p-floatLabel>

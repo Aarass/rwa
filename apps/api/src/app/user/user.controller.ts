@@ -39,6 +39,15 @@ export class UserController {
     return await this.userService.getUserById(id);
   }
 
+  @Public()
+  @Get(':id/verbose')
+  async getUserWithStats(@Param('id', ParseIntPipe) id: number) {
+    return {
+      user: await this.userService.getUserById(id),
+      stats: await this.userService.getUserStats(id),
+    };
+  }
+
   @Roles(['admin'])
   @Post()
   async createUser(

@@ -16,6 +16,8 @@ const initialState: {
     minTime: null,
     sportId: null,
     filterByUpses: true,
+    onlyMine: false,
+    canceled: false,
   },
   ordering: {
     by: 'date',
@@ -29,6 +31,7 @@ export const filtersFeature = createFeature({
     initialState,
     on(filtersChanged, (state, action) => {
       return {
+        ...state,
         ...action.data,
       };
     })

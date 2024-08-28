@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateParticipationDto } from '@rwa/shared';
 import { Participation, User } from '@rwa/entities';
 import { Repository } from 'typeorm';
+import { date } from 'zod';
 
 @Injectable()
 export class ParticipationsService {
@@ -31,13 +32,19 @@ export class ParticipationsService {
     return await this.participationRepository.find({
       where: { userId },
       relations: ['appointment', 'appointment.sport'],
+      order: {
+        appointment: {
+          date: 'DESC',
+          startTime: 'DESC',
+        },
+      },
     });
   }
 
   async findOne(id: number) {
     return await this.participationRepository.findOne({
       where: { id },
-      relations: ['appointment', 'user'],
+      relations: ['appointment', 'user', 'appointment.sport'],
     });
   }
 
@@ -57,6 +64,7 @@ export class ParticipationsService {
   async reject(id: number) {
     await this.participationRepository.update(id, {
       approved: false,
+      userHasSeenChanges: false,
     });
   }
 

@@ -34,6 +34,13 @@ export class AppointmentService {
     );
   }
 
+  cancelAppointment(id: number) {
+    return this.http.post(
+      `http://localhost:3000/appointments/${id}/cancel`,
+      {}
+    );
+  }
+
   getFilteredAppointments(
     userFilters: UserConfigurableFilters,
     paginationInfo: PaginationInfo,
@@ -52,9 +59,12 @@ export class AppointmentService {
       filters: {
         ...userFilters,
         age: userAge,
-        canceled: false,
-        organizerId: null,
-        userId: userFilters.filterByUpses ? user?.id ?? null : null,
+        organizerId: userFilters.onlyMine ? user?.id ?? null : null,
+        userId: userFilters.onlyMine
+          ? null
+          : userFilters.filterByUpses
+          ? user?.id ?? null
+          : null,
         skip: paginationInfo.pageSize * paginationInfo.loadedPages,
         take: paginationInfo.pageSize,
       },
@@ -71,39 +81,6 @@ export class AppointmentService {
   getAppointment(id: number) {
     return this.http.get<AppointmentDto>(
       `http://localhost:3000/appointments/${id}`
-    );
-  }
-
-  getMyAppointments() {
-    return this.store.select(authFeature.selectDecodedPayload).pipe(
-      filter((val) => val != null),
-      take(1),
-      exhaustMap((payload) => {
-        const findOptions: FindAppointmentsDto = {
-          filters: {
-            organizerId: payload!.user.id,
-            sportId: null,
-            age: null,
-            userId: null,
-            minDate: null,
-            maxDate: null,
-            minTime: null,
-            maxTime: null,
-            maxPrice: null,
-            maxDistance: null,
-            canceled: null,
-            skip: null,
-            take: null,
-          },
-          ordering: null,
-          userLocation: null,
-        };
-
-        return this.http.post<AppointmentDto[]>(
-          'http://localhost:3000/appointments/search',
-          findOptions
-        );
-      })
     );
   }
 }

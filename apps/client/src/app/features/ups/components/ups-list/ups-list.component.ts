@@ -9,18 +9,11 @@ import { MyDialogService } from '../../../global/services/my-dialog/my-dialog.se
 import { upsFeature } from '../../store/ups.feature';
 import { CreateUpsComponent } from '../create-ups/create-ups.component';
 import { UpsListItemComponent } from '../ups-list-item/ups-list-item.component';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-ups-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    UpsListItemComponent,
-    ButtonModule,
-    CarouselModule,
-    ConfirmDialogModule,
-  ],
+  imports: [CommonModule, UpsListItemComponent, ButtonModule, CarouselModule],
   templateUrl: './ups-list.component.html',
   styleUrl: './ups-list.component.scss',
 })

@@ -27,24 +27,17 @@ export const updateAppointment = createAction(
   }>()
 );
 export const updateAppointmentSuccess = createAction(
-  '[Appointment] update Appointment Success',
+  '[Appointment] Update Appointment Success',
   props<{ data: AppointmentDto }>()
 );
 export const updateAppointmentFail = createAction(
-  '[Appointment] update Appointment Fail'
+  '[Appointment] Update Appointment Fail'
 );
 
-export const loadMyAppointments = createAction(
-  '[Appointment] Load My Appointments'
+export const cancelAppointment = createAction(
+  '[Appointment] Cancel Appointment',
+  props<{ data: AppointmentDto }>()
 );
-export const loadMyAppointmentsSuccess = createAction(
-  '[Appointment] Load My Appointments Success',
-  props<{ data: AppointmentDto[] }>()
-);
-
-// My
-// ---------------------------------------------------------------------------------------
-// All
 
 export const loadAppointments = createAction('[Appointment] Load Appointments');
 export const reloadAppointments = createAction(
@@ -57,4 +50,14 @@ export const loadAppointmentsSuccess = createAction(
 );
 export const loadAppointmentsFail = createAction(
   '[Appointment] Load Appointments Fail'
+);
+
+export const addAppointment = createAction(
+  '[Appoitment] Add Appointment',
+  props<{ data: AppointmentDto }>()
+);
+
+export const removeAppointment = createAction(
+  '[Appoitment] Remove Appointment',
+  props<{ id: number }>()
 );

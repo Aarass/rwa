@@ -1,1 +1,50 @@
-<p>user-info works!</p>
+<div class="p-4 h-full flex-center" *ngIf="info">
+  <div class="flex flex-column gap-4 align-items-center">
+    <div class="flex gap-4">
+      <div class="grow-0 w-10rem h-10rem">
+        <img class="w-full h-full object-center border-round-xl"
+          src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
+          alt="Users profile image">
+      </div>
+      <div>
+        <div class="flex align-items-center gap-1">
+          <i class="pi pi-id-card"></i>
+          <p>{{ info.user.name }} {{ info.user.surname }}</p>
+        </div>
+        <div class="flex gap-4">
+          <div class="flex align-items-center gap-1">
+            <i class="pi pi-hashtag"></i>
+            <p>{{ info.user.username }} </p>
+          </div>
+          <div class="flex align-items-center gap-1">
+            <i class="pi pi-calendar"></i>
+            <p>{{ info.user.birthDate }} </p>
+          </div>
+        </div>
+        <div class="flex align-items-center gap-1">
+          <i class="pi pi-map"></i>
+          <p>{{ info.user.location.name }} </p>
+        </div>
+        <div class="flex align-items-center gap-1" *ngIf="info.user.biography as bio">
+          <i class="pi pi-address-book"></i>
+          <p>{{ bio }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex-center flex-column gap-2 -mb-4">
+      <h2 class="m-0 text-3xl">(4.59)</h2>
+      <p class="m-0 -mt-2 text-sm text-300">41 ratings</p>
+      <p-rating [cancel]="false" />
+    </div>
+    <div class="flex gap-4">
+      <div class="flex flex-column align-items-center">
+        <p-knob [(ngModel)]="info.stats[0].organizedAppointments" [readonly]="true" max="10" />
+        <label>Organized Appointments</label>
+      </div>
+      <div class="flex flex-column align-items-center">
+        <p-knob [(ngModel)]="info.stats[0].participatedAppointments" [readonly]="true" max="10" />
+        <label>Participated Appointments</label>
+      </div>
+    </div>
+  </div>
+</div>

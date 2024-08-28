@@ -6,7 +6,6 @@ import { DashboardComponent } from './features/admin/components/dashboard/dashbo
 import { ImagesComponent } from './features/admin/components/images/images.component';
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
 import { AppointmentListComponent } from './features/appointment/components/appointment-list/appointment-list.component';
-import { MyAppointmentsListComponent } from './features/appointment/components/my-appointments-list/my-appointments-list.component';
 import { ParticipationListComponent } from './features/participation/components/participation-list/participation-list.component';
 import { RegisterComponent } from './features/auth/components/register/register.component';
 import { authFeature } from './features/auth/store/auth.feature';
@@ -37,11 +36,6 @@ export const appRoutes: Route[] = [
   {
     path: 'appointment-form',
     component: AppointmentFormComponent,
-    canActivate: [ifIsLoggedIn],
-  },
-  {
-    path: 'my-appointments',
-    component: MyAppointmentsListComponent,
     canActivate: [ifIsLoggedIn],
   },
   {

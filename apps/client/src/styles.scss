@@ -62,3 +62,13 @@ body {
 .ar169 {
   aspect-ratio: 16 / 9;
 }
+
+.ar-square {
+  aspect-ratio: 1 / 1;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

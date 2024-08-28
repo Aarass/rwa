@@ -1,5 +1,3 @@
-<div class="p-4 h-full flex justify-content-center align-items-center">
-  @if(appointment != null) {
+<div class="p-4 h-full flex justify-content-center align-items-center" *ngIf="appointment$ | async as appointment">
   <app-appointment [appointment]="appointment"></app-appointment>
-  }
 </div>

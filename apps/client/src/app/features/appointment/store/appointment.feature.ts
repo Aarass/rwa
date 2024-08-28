@@ -1,24 +1,23 @@
 import { createEntityAdapter } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { AppointmentDto } from '@rwa/shared';
-import { filtersChanged } from '../../filters/store/filter.actions';
-import {
-  createAppointmentSuccess,
-  loadAppointments,
-  loadAppointmentsFail,
-  loadAppointmentsSuccess,
-  loadMyAppointmentsSuccess,
-  reloadAppointments,
-  updateAppointmentSuccess,
-} from './appointment.actions';
 import {
   joinAppointmentSuccess,
   leaveAppointment,
   rejectParticipation,
 } from '../../participation/store/participation.actions';
+import {
+  addAppointment,
+  cancelAppointment,
+  createAppointmentSuccess,
+  loadAppointmentsFail,
+  loadAppointmentsSuccess,
+  reloadAppointments,
+  removeAppointment,
+  updateAppointmentSuccess,
+} from './appointment.actions';
 
-const myAppointmentsAdapter = createEntityAdapter<AppointmentDto>();
-const allAppointmentsAdapter = createEntityAdapter<AppointmentDto>();
+const adapter = createEntityAdapter<AppointmentDto>();
 export interface PaginationInfo {
   pageSize: number;
   loadedPages: number;
@@ -28,8 +27,7 @@ export const appointmentFeature = createFeature({
   name: 'appointment',
   reducer: createReducer(
     {
-      myAppointments: myAppointmentsAdapter.getInitialState(),
-      allAppointments: allAppointmentsAdapter.getInitialState(),
+      appointments: adapter.getInitialState(),
       paginationInfo: {
         pageSize: 5,
         loadedPages: 0,
@@ -39,25 +37,12 @@ export const appointmentFeature = createFeature({
         shaker: 0,
       },
     },
-    on(loadMyAppointmentsSuccess, (state, action) => {
-      return {
-        ...state,
-        myAppointments: myAppointmentsAdapter.addMany(
-          action.data,
-          state.myAppointments
-        ),
-        isLoading: {
-          val: false,
-          shaker: Math.random(),
-        },
-      };
-    }),
     on(createAppointmentSuccess, (state, action) => {
       return {
         ...state,
-        myAppointments: myAppointmentsAdapter.addOne(
-          action.data,
-          state.myAppointments
+        appointments: adapter.addOne(
+          { ...action.data, participants: [] },
+          state.appointments
         ),
         isLoading: {
           val: false,
@@ -69,29 +54,24 @@ export const appointmentFeature = createFeature({
       const { id, ...changes } = action.data;
       return {
         ...state,
-        myAppointments: myAppointmentsAdapter.updateOne(
-          { id, changes },
-          state.myAppointments
-        ),
-        allAppointments: allAppointmentsAdapter.updateOne(
-          { id, changes },
-          state.myAppointments
-        ),
+        appointments: adapter.updateOne({ id, changes }, state.appointments),
         isLoading: {
           val: false,
           shaker: Math.random(),
         },
       };
     }),
-    on(filtersChanged, (state, action) => {
+    on(cancelAppointment, (state, action) => {
       return {
         ...state,
-        paginationInfo: {
-          ...state.paginationInfo,
-          loadedPages: 0,
-        },
-        allAppointments: allAppointmentsAdapter.removeAll(
-          state.allAppointments
+        appointments: adapter.updateOne(
+          {
+            id: action.data.id,
+            changes: {
+              canceled: true,
+            },
+          },
+          state.appointments
         ),
       };
     }),
@@ -102,9 +82,7 @@ export const appointmentFeature = createFeature({
           ...state.paginationInfo,
           loadedPages: 0,
         },
-        allAppointments: allAppointmentsAdapter.removeAll(
-          state.allAppointments
-        ),
+        appointments: adapter.removeAll(state.appointments),
       };
     }),
     on(loadAppointmentsSuccess, (state, action) => {
@@ -114,10 +92,7 @@ export const appointmentFeature = createFeature({
           ...state.paginationInfo,
           loadedPages: state.paginationInfo.loadedPages + 1,
         },
-        allAppointments: allAppointmentsAdapter.addMany(
-          action.data,
-          state.allAppointments
-        ),
+        appointments: adapter.addMany(action.data, state.appointments),
         isLoading: {
           val: false,
           shaker: Math.random(),
@@ -135,7 +110,7 @@ export const appointmentFeature = createFeature({
     }),
     on(joinAppointmentSuccess, (state, action) => {
       const appointment =
-        state.allAppointments.entities[action.data.appointmentId];
+        state.appointments.entities[action.data.appointmentId];
 
       if (appointment == undefined) {
         throw `Can't find appointment`;
@@ -143,14 +118,14 @@ export const appointmentFeature = createFeature({
 
       return {
         ...state,
-        allAppointments: allAppointmentsAdapter.updateOne(
+        appointments: adapter.updateOne(
           {
             id: appointment.id,
             changes: {
               participants: [...appointment.participants, action.data],
             },
           },
-          state.allAppointments
+          state.appointments
         ),
         isLoading: {
           val: false,
@@ -160,7 +135,7 @@ export const appointmentFeature = createFeature({
     }),
     on(leaveAppointment, (state, action) => {
       const appointment =
-        state.allAppointments.entities[action.data.appointmentId];
+        state.appointments.entities[action.data.appointmentId];
 
       if (appointment == undefined) {
         throw `Can't find appointment`;
@@ -168,7 +143,7 @@ export const appointmentFeature = createFeature({
 
       return {
         ...state,
-        allAppointments: allAppointmentsAdapter.updateOne(
+        appointments: adapter.updateOne(
           {
             id: appointment.id,
             changes: {
@@ -178,13 +153,13 @@ export const appointmentFeature = createFeature({
               ),
             },
           },
-          state.allAppointments
+          state.appointments
         ),
       };
     }),
     on(rejectParticipation, (state, action) => {
       const appointment =
-        state.allAppointments.entities[action.data.appointmentId];
+        state.appointments.entities[action.data.appointmentId];
 
       if (appointment == undefined) {
         throw `Can't find appointment`;
@@ -206,43 +181,44 @@ export const appointmentFeature = createFeature({
 
       return {
         ...state,
-        allAppointments: allAppointmentsAdapter.updateOne(
+        appointments: adapter.updateOne(
           {
             id: appointment.id,
             changes: {
               participants: participants,
             },
           },
-          state.allAppointments
+          state.appointments
         ),
+      };
+    }),
+    on(addAppointment, (state, action) => {
+      return {
+        ...state,
+        appointments: adapter.addOne(action.data, state.appointments),
+      };
+    }),
+    on(removeAppointment, (state, action) => {
+      return {
+        ...state,
+        appointments: adapter.removeOne(action.id, state.appointments),
       };
     })
   ),
-  extraSelectors: ({ selectMyAppointments, selectAllAppointments }) => {
-    const selectAllMyAppointments = createSelector(
-      selectMyAppointments,
+  extraSelectors: ({ selectAppointments }) => {
+    const selectAllAppointments = createSelector(
+      selectAppointments,
       (state) => {
-        return myAppointmentsAdapter.getSelectors().selectAll(state);
-      }
-    );
-
-    const selectAllAllAppointments = createSelector(
-      selectAllAppointments,
-      (state) => {
-        return allAppointmentsAdapter.getSelectors().selectAll(state);
+        return adapter.getSelectors().selectAll(state);
       }
     );
 
     const selectAppointmentById = (id: number) => {
-      return createSelector(
-        selectMyAppointments,
-        (state) => state.entities[id]
-      );
+      return createSelector(selectAppointments, (state) => state.entities[id]);
     };
 
     return {
-      selectMyAppointments: selectAllMyAppointments,
-      selectAllAppointments: selectAllAllAppointments,
+      selectAllAppointments,
       selectAppointmentById,
     };
   },

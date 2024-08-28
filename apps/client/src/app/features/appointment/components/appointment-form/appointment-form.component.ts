@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DebugElement, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -9,7 +9,6 @@ import {
   LocationSuggestionDto,
   SportDto,
   SurfaceDto,
-  toPostgresString,
 } from '@rwa/shared';
 import {
   AutoCompleteCompleteEvent,
@@ -35,6 +34,15 @@ import {
   updateAppointment,
 } from '../../store/appointment.actions';
 import { appointmentFeature } from '../../store/appointment.feature';
+import { disableDebugTools } from '@angular/platform-browser';
+import {
+  dateDateFromPostgresString,
+  roundTime,
+  timeDateFromPostgresString,
+  toPostgresDateString,
+  toPostgresIntervalString,
+  toPostgresTimeString,
+} from '../../../global/functions/date-utility';
 
 @Component({
   selector: 'app-appointment-form',
@@ -69,7 +77,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
     skill: new FormControl<number[]>([1, 5]),
     date: new FormControl<Date>(new Date()),
     environment: new FormControl<Environment>(Environment.Outdoor),
-    startTime: new FormControl<Date>(new Date()),
+    startTime: new FormControl<Date>(roundTime(new Date())),
     durationHours: new FormControl<number>(1),
     durationMinutes: new FormControl<number>(0),
     totalPlayers: new FormControl<number>(1),
@@ -141,11 +149,12 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
           appointment.minSkillLevel,
           appointment.maxSkillLevel,
         ]);
-        this.formGroup.controls.date.setValue(new Date(appointment.date));
-        const startTime = new Date(
-          Date.parse(`01 Jan 1970 ${appointment.startTime}`)
+        this.formGroup.controls.date.setValue(
+          dateDateFromPostgresString(appointment.date)
         );
-        this.formGroup.controls.startTime.setValue(startTime);
+        this.formGroup.controls.startTime.setValue(
+          timeDateFromPostgresString(appointment.startTime)
+        );
         this.formGroup.controls.durationHours.setValue(
           appointment.duration.hours
         );
@@ -189,8 +198,8 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
     const dto: CreateAppointmentDto = {
       additionalInformation:
         this.formGroup.controls.additionalInformation.value!,
-      date: this.formGroup.controls.date.value!.toISOString().split('T')[0],
-      duration: toPostgresString({
+      date: toPostgresDateString(this.formGroup.controls.date.value!),
+      duration: toPostgresIntervalString({
         hours: this.formGroup.controls.durationHours.value!,
         minutes: this.formGroup.controls.durationMinutes.value!,
       }),
@@ -203,9 +212,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
       missingPlayers: this.formGroup.controls.missingPlayers.value!,
       pricePerPlayer: this.formGroup.controls.pricePerPlayer.value!,
       sportId: this.formGroup.controls.selectedSport.value!.id,
-      startTime: this.formGroup.controls.startTime
-        .value!.toTimeString()
-        .split(' ')[0],
+      startTime: toPostgresTimeString(this.formGroup.controls.startTime.value!),
       surfaceId: this.formGroup.controls.selectedSurface.value!.id,
       totalPlayers: this.formGroup.controls.totalPlayers.value!,
     };

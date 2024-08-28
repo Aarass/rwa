@@ -37,6 +37,7 @@ import { AppointmentEffects } from './features/appointment/store/appointment.eff
 import { filtersFeature } from './features/filters/store/filters.feature';
 import { ParticipationEffects } from './features/participation/store/participation.effects';
 import { participationFeature } from './features/participation/store/participation.feature';
+import { FilterEffects } from './features/filters/store/filter.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -85,6 +86,7 @@ export const appConfig: ApplicationConfig = {
       SurfaceEffects,
       UpsEffects,
       AppointmentEffects,
+      FilterEffects,
       ParticipationEffects,
     ]),
     provideStoreDevtools({

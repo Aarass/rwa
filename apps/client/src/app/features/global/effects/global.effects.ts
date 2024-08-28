@@ -7,8 +7,8 @@ import {
   logout,
   refreshSuccess,
 } from '../../auth/store/auth.actions';
-import { loadMyAppointments } from '../../appointment/store/appointment.actions';
 import { loadMyParticipations } from '../../participation/store/participation.actions';
+import { reloadAppointments } from '../../appointment/store/appointment.actions';
 
 @Injectable()
 export class GlobalEffects {
@@ -26,12 +26,17 @@ export class GlobalEffects {
     { dispatch: false }
   );
 
+  loadAppointments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loginSuccess, refreshSuccess),
+      map(() => reloadAppointments())
+    );
+  });
+
   loadMyParticipations$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loginSuccess, refreshSuccess),
-      map(() => {
-        return loadMyParticipations();
-      })
+      map(() => loadMyParticipations())
     );
   });
 }

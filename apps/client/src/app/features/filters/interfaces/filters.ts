@@ -9,10 +9,8 @@ export type UserConfigurableFilters = Pick<
   | 'maxTime'
   | 'maxPrice'
   | 'maxDistance'
+  | 'canceled'
 > & {
   filterByUpses: boolean;
+  onlyMine: boolean;
 };
-
-// type ReplaceUndefinedWithNull<T> = {
-//   [k in keyof T]-?: T[k] | null;
-// };

@@ -36,7 +36,10 @@ export class AppointmentsService {
 
     try {
       const wid = await this.appointmentRepository.save(appointment);
-      return await this.appointmentRepository.findOneBy({ id: wid.id });
+      return await this.appointmentRepository.findOne({
+        where: { id: wid.id },
+        relations: ['sport', 'surface', 'location'],
+      });
     } catch (err: any) {
       if (err.code != undefined && err.code == 23503) {
         console.log(err);
@@ -80,6 +83,7 @@ export class AppointmentsService {
       .createQueryBuilder('appointment')
       .leftJoinAndSelect('appointment.sport', 'sport')
       .leftJoinAndSelect('appointment.surface', 'surface')
+      .leftJoinAndSelect('appointment.organizer', 'organizer')
       .leftJoinAndSelect('appointment.location', 'location')
       .leftJoinAndSelect('appointment.participants', 'participants')
       .leftJoinAndSelect('participants.user', 'user')
@@ -166,6 +170,7 @@ export class AppointmentsService {
     return await this.appointmentRepository.findOne({
       where: { id },
       relations: [
+        'organizer',
         'participants',
         'participants.user',
         'participants.user.location',
@@ -185,6 +190,7 @@ export class AppointmentsService {
     await this.participationRepository.update(
       {
         appointmentId: id,
+        approved: true,
       },
       {
         userHasSeenChanges: false,
@@ -205,6 +211,7 @@ export class AppointmentsService {
     await this.participationRepository.update(
       {
         appointmentId: id,
+        approved: true,
       },
       {
         userHasSeenChanges: false,
