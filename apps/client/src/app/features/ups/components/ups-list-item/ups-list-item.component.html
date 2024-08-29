@@ -1,7 +1,7 @@
 @if (ups != undefined) {
 <p-card [header]="ups.sport.name" styleClass="block w-20rem">
   <ng-template pTemplate="header">
-    <img alt="Card" [src]="ups.sport.iconUrl" class="object-center w-full ar169" />
+    <img alt="Card" [src]="ups.sport.imageUrl" class="object-center w-full ar169" />
   </ng-template>
   <div class="flex justify-content-between align-items-end gap-3 mt-1">
     <p-rating [(ngModel)]="rating" [cancel]="false" (onRate)="onRate($event)" />

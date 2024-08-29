@@ -46,6 +46,12 @@ export class UserService {
     return users;
   }
 
+  async setUserProfileImage(userId: number, imageName: string | null) {
+    await this.userRepository.update(userId, {
+      imageName,
+    });
+  }
+
   async setUserRefreshToken(userId: number, refreshToken: string) {
     const user = await this.getUserById(userId);
 

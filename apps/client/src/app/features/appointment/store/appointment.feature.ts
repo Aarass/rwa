@@ -33,7 +33,7 @@ export const appointmentFeature = createFeature({
         loadedPages: 0,
       },
       isLoading: {
-        val: false,
+        val: true,
         shaker: 0,
       },
     },

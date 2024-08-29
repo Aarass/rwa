@@ -1,15 +1,34 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SpeedDialModule } from 'primeng/speeddial';
-import { MenuItem } from 'primeng/api';
+import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { UpsListComponent } from '../../../ups/components/ups-list/ups-list.component';
+import { SpeedDialModule } from 'primeng/speeddial';
+import { UserInfoComponent } from '../../../user/components/user-info/user-info.component';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { selectUser } from '../../../user/store/user.feature';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, SpeedDialModule, ButtonModule, UpsListComponent],
+  imports: [CommonModule, SpeedDialModule, ButtonModule, UserInfoComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
-export class ProfileComponent {}
+export class ProfileComponent {
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private store: Store
+  ) {
+    selectUser(this.store).subscribe((user) => {
+      if (!user) throw `Not logged in user should not have access to this page`;
+
+      const queryParams: Params = { id: user.id };
+      this.router.navigate([], {
+        relativeTo: this.activatedRoute,
+        queryParams,
+        queryParamsHandling: 'merge',
+      });
+    });
+  }
+}

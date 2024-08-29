@@ -8,6 +8,10 @@ import { UserDto, UserInfo } from '@rwa/shared';
 export class UserService {
   constructor(private http: HttpClient) {}
 
+  getUserById(id: number) {
+    return this.http.get<UserDto>(`http://localhost:3000/users/${id}`);
+  }
+
   getUserInfoById(id: number) {
     return this.http.get<UserInfo>(`http://localhost:3000/users/${id}/verbose`);
   }

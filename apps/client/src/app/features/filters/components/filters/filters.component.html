@@ -9,9 +9,9 @@
     </div>
 
     <p-floatLabel>
-      <p-dropdown [options]="sportOptions" [formControl]="formGroup.controls.sportId" optionLabel="name" inputId="sport"
+      <p-dropdown [options]="sportOptions" [formControl]="formGroup.controls.sportId" optionLabel="name"
         styleClass="w-full" [showClear]="true" optionValue="sportId" />
-      <label for="sport">Sport</label>
+      <label>Sport</label>
     </p-floatLabel>
 
     <div class="flex gap-2">
@@ -138,7 +138,7 @@
         direction: 'DESC',
       },
     },
-  ]" optionLabel="label" optionValue="value" inputId="sorting" styleClass="w-full" [showClear]="true">
+  ]" optionLabel="label" optionValue="value" styleClass="w-full" [showClear]="true">
         <ng-template let-selectedOption pTemplate="selectedItem">
           <div class="flex align-items-center gap-2" *ngIf="selectedOption">
             <div>
@@ -157,7 +157,7 @@
           </div>
         </ng-template>
       </p-dropdown>
-      <label for="sorting">Sort by</label>
+      <label>Sort by</label>
     </p-floatLabel>
 
 

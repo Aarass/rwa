@@ -44,7 +44,7 @@ export class ParticipationsService {
   async findOne(id: number) {
     return await this.participationRepository.findOne({
       where: { id },
-      relations: ['appointment', 'user', 'appointment.sport'],
+      relations: ['appointment', 'user', 'user.location', 'appointment.sport'],
     });
   }
 

@@ -12,6 +12,7 @@ export interface UserDto {
   locationId: string;
   location: LocationDto;
   biography: string | null;
+  imageName: string | null;
 }
 export type UserInfo = {
   user: UserDto;

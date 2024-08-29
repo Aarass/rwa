@@ -50,6 +50,9 @@ export class User {
   biography: string | null;
 
   @Column({ type: 'varchar', nullable: true })
+  imageName: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
   @Exclude()
   refreshTokenHash: string | null;
 

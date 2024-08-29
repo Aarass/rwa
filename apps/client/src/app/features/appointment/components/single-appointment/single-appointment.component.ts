@@ -1,25 +1,28 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppointmentDto } from '@rwa/shared';
 import {
+  combineLatest,
   exhaustMap,
   filter,
   map,
   Observable,
   of,
-  Subject,
-  takeUntil,
+  switchMap,
   tap,
+  withLatestFrom,
+  zip,
 } from 'rxjs';
-import { AppointmentComponent } from '../appointment/appointment.component';
 import { AppointmentService } from '../../services/appointment/appointment.service';
-import { AppointmentDto } from '@rwa/shared';
-import { Store } from '@ngrx/store';
-import { appointmentFeature } from '../../store/appointment.feature';
 import {
   addAppointment,
+  loadAppointment,
   removeAppointment,
 } from '../../store/appointment.actions';
+import { appointmentFeature } from '../../store/appointment.feature';
+import { AppointmentComponent } from '../appointment/appointment.component';
 
 @Component({
   selector: 'app-single-appointment',
@@ -30,15 +33,9 @@ import {
 })
 export class SingleAppointmentComponent implements OnDestroy {
   appointment$: Observable<AppointmentDto>;
-  addedAppointment: AppointmentDto | null = null;
+  addedAppointmentId: number | null = null;
 
-  constructor(
-    private store: Store,
-    private route: ActivatedRoute,
-    // private page: Page,
-    private appointmentService: AppointmentService
-  ) {
-    let idtmp = -1;
+  constructor(private store: Store, private route: ActivatedRoute) {
     this.appointment$ = this.route.queryParamMap.pipe(
       map((map) => {
         const id = map.get('id');
@@ -51,28 +48,34 @@ export class SingleAppointmentComponent implements OnDestroy {
           return null;
         }
       }),
-      filter((val) => val != null),
-      exhaustMap((id) => {
-        idtmp = id!;
-        return this.store.select(appointmentFeature.selectAppointmentById(id!));
-      }),
-      exhaustMap((val) => {
-        if (val == undefined) {
-          return this.appointmentService.getAppointment(idtmp).pipe(
-            tap((appointment) => {
-              this.addedAppointment = appointment;
-              this.store.dispatch(addAppointment({ data: appointment }));
+      filter((id) => id != null),
+      map((val) => val!),
+      switchMap((id) => {
+        return this.store
+          .select(appointmentFeature.selectAppointmentById(id))
+          .pipe(
+            withLatestFrom(
+              this.store.select(appointmentFeature.selectIsLoading)
+            ),
+            filter((tuple) => tuple[1].val != true),
+            map((tuple) => tuple[0]),
+            tap((val) => {
+              if (val == undefined) {
+                console.log('Dispatched');
+                this.store.dispatch(loadAppointment({ id }));
+                this.addedAppointmentId = id;
+              }
             })
           );
-        } else {
-          return of(val);
-        }
-      })
+      }),
+      filter((val) => val != undefined),
+      map((val) => val!)
     );
   }
+
   ngOnDestroy(): void {
-    if (this.addedAppointment) {
-      this.store.dispatch(removeAppointment({ id: this.addedAppointment.id }));
+    if (this.addedAppointmentId) {
+      this.store.dispatch(removeAppointment({ id: this.addedAppointmentId }));
     }
   }
 

@@ -38,6 +38,8 @@ import { filtersFeature } from './features/filters/store/filters.feature';
 import { ParticipationEffects } from './features/participation/store/participation.effects';
 import { participationFeature } from './features/participation/store/participation.feature';
 import { FilterEffects } from './features/filters/store/filter.effects';
+import { userFeature } from './features/user/store/user.feature';
+import { UserEffects } from './features/user/store/user.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -79,6 +81,7 @@ export const appConfig: ApplicationConfig = {
     provideState(appointmentFeature),
     provideState(filtersFeature),
     provideState(participationFeature),
+    provideState(userFeature),
     provideEffects([
       GlobalEffects,
       AuthEffects,
@@ -88,6 +91,7 @@ export const appConfig: ApplicationConfig = {
       AppointmentEffects,
       FilterEffects,
       ParticipationEffects,
+      UserEffects,
     ]),
     provideStoreDevtools({
       maxAge: 25,

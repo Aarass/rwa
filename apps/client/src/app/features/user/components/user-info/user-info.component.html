@@ -1,10 +1,23 @@
 <div class="p-4 h-full flex-center" *ngIf="info">
   <div class="flex flex-column gap-4 align-items-center">
     <div class="flex gap-4">
-      <div class="grow-0 w-10rem h-10rem">
-        <img class="w-full h-full object-center border-round-xl"
-          src="https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg"
-          alt="Users profile image">
+      <div class="grow-0 w-10rem h-10rem relative border-round-xl overflow-hidden">
+        <div *ngIf="image$ | async as imageSrc" class="w-full h-full">
+          <img class="w-full h-full object-center " [src]="imageSrc" alt="Users profile image">
+        </div>
+        @if(info.user.id == viewerId) {
+        <div class="absolute top-0 right-0 flex align-items-start justify-content-end gap-2 p-2 bg-white"
+          style="border-bottom-left-radius: 10px;">
+          @if(info.user.imageName == null) {
+          <input id="image-upload" class="hidden" type="file" (change)="onChange($event)" accept="image/*">
+          <label for="image-upload" class="upload">
+            <i class="pi pi-upload cursor-pointer"></i>
+          </label>
+          } @else {
+          <i class="pi pi-trash cursor-pointer" (click)="deleteImage()"></i>
+          }
+        </div>
+        }
       </div>
       <div>
         <div class="flex align-items-center gap-1">

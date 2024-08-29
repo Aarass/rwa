@@ -8,4 +8,8 @@ export class ConfigService {
   getBackendBaseURL() {
     return this.backendBaseURL;
   }
+
+  getImageURL(imageName: string) {
+    return `${this.backendBaseURL}/images/${imageName}`;
+  }
 }

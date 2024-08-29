@@ -71,9 +71,8 @@ export class FiltersComponent {
       //   .pipe(map((upses) => upses.map((ups) => ups.sport)))
       .subscribe((sports) => {
         this.sportOptions = [
-          { name: 'Joinable (Default)', sportId: -1 },
           ...sports.map((sport) => ({ name: sport.name, sportId: sport.id })),
-          { name: 'All sports', sportId: -2 },
+          { name: 'All (Debug)', sportId: -1 },
         ];
       });
   }
@@ -110,22 +109,28 @@ export class FiltersComponent {
     //   }
     // }
 
-    let sportId, filterByUpses;
-    const value = this.formGroup.controls.sportId.value;
-    if (value == -1) {
-      sportId = null;
-      filterByUpses = true;
-    } else if (value == -2) {
+    let sportId = this.formGroup.controls.sportId.value;
+    let filterByUpses = true;
+
+    if (sportId == -1) {
       sportId = null;
       filterByUpses = false;
-    } else {
-      sportId = value;
-      if (sportId == null) {
-        filterByUpses = true;
-      } else {
-        filterByUpses = false;
-      }
     }
+
+    // if (value == -1) {
+    //   sportId = null;
+    //   filterByUpses = true;
+    // } else if (value == -2) {
+    //   sportId = null;
+    //   filterByUpses = false;
+    // } else {
+    //   sportId = value;
+    //   if (sportId == null) {
+    //     filterByUpses = true;
+    //   } else {
+    //     filterByUpses = false;
+    //   }
+    // }
 
     const filters: UserConfigurableFilters = {
       maxDistance: this.formGroup.controls.maxDistance.value,

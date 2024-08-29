@@ -52,6 +52,11 @@ export const loadAppointmentsFail = createAction(
   '[Appointment] Load Appointments Fail'
 );
 
+export const loadAppointment = createAction(
+  '[Appointment] Load Appointment',
+  props<{ id: number }>()
+);
+
 export const addAppointment = createAction(
   '[Appoitment] Add Appointment',
   props<{ data: AppointmentDto }>()

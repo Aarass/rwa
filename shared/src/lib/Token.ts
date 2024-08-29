@@ -23,6 +23,7 @@ export interface AccessTokenPayload {
     locationId: string;
     location: LocationDto;
     biography: string;
+    imageName: string | null;
   };
   iat: number;
   exp: number;

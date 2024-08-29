@@ -9,16 +9,20 @@ import {
   combineLatest,
   exhaustMap,
   map,
+  switchMap,
   take,
+  tap,
   throwError,
 } from 'rxjs';
 import { selectPayload } from '../../auth/store/auth.feature';
 import { filtersFeature } from '../../filters/store/filters.feature';
 import { AppointmentService } from '../services/appointment/appointment.service';
 import {
+  addAppointment,
   cancelAppointment,
   createAppointment,
   createAppointmentSuccess,
+  loadAppointment,
   loadAppointments,
   loadAppointmentsFail,
   loadAppointmentsSuccess,
@@ -27,6 +31,12 @@ import {
   updateAppointmentSuccess,
 } from './appointment.actions';
 import { appointmentFeature } from './appointment.feature';
+import {
+  createUpsSuccess,
+  deleteUps,
+  updateUps,
+} from '../../ups/store/ups.actions';
+import { selectUser } from '../../user/store/user.feature';
 
 @Injectable()
 export class AppointmentEffects {
@@ -95,6 +105,19 @@ export class AppointmentEffects {
     { dispatch: false }
   );
 
+  loadById = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loadAppointment),
+      exhaustMap((action) => {
+        return this.appointmentService.getAppointment(action.id).pipe(
+          map((data) => {
+            return addAppointment({ data });
+          })
+        );
+      })
+    );
+  });
+
   load$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadAppointments, reloadAppointments),
@@ -103,18 +126,13 @@ export class AppointmentEffects {
           this.store.select(filtersFeature.selectFilters),
           this.store.select(filtersFeature.selectOrdering),
           this.store.select(appointmentFeature.selectPaginationInfo),
-          selectPayload(this.store),
+          selectUser(this.store),
         ]).pipe(
           take(1),
           exhaustMap((tuple) => {
-            const [filters, ordering, paginationInfo, tokenPayload] = tuple;
+            const [filters, ordering, paginationInfo, user] = tuple;
             return this.appointmentService
-              .getFilteredAppointments(
-                filters,
-                paginationInfo,
-                ordering,
-                tokenPayload == null ? null : tokenPayload.user
-              )
+              .getFilteredAppointments(filters, paginationInfo, ordering, user)
               .pipe(
                 map((appointments) => {
                   if (appointments.length == 0) {
@@ -133,6 +151,15 @@ export class AppointmentEffects {
               );
           })
         );
+      })
+    );
+  });
+
+  reload$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(createUpsSuccess, deleteUps, updateUps),
+      map(() => {
+        return reloadAppointments();
       })
     );
   });

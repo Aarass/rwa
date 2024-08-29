@@ -96,6 +96,7 @@ export class AppointmentsService {
          appointment.maxAge >= COALESCE(:age, appointment.maxAge) AND 
          appointment.date >= COALESCE(:minDate, appointment.date) AND 
          appointment.date <= COALESCE(:maxDate, appointment.date) AND 
+         appointment.sportId = COALESCE(:sportId, appointment.sportId) AND
          appointment.startTime >= COALESCE(:minTime, appointment.startTime) AND 
          appointment.startTime <= COALESCE(:maxTime, appointment.startTime) AND 
          appointment.pricePerPlayer <= COALESCE(:maxPrice, appointment.pricePerPlayer) AND 
@@ -117,10 +118,6 @@ export class AppointmentsService {
 
         return `(${subQuery} BETWEEN appointment.minSkillLevel AND appointment.maxSkillLevel) = true`;
       });
-    } else {
-      query = query.andWhere(
-        `appointment.sportId = COALESCE(:sportId, appointment.sportId)`
-      );
     }
 
     if (filters.maxDistance != null || ordering?.by == 'distance') {

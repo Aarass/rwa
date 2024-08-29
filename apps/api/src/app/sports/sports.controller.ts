@@ -16,10 +16,14 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { Public } from '../auth/decorators/public.decorator';
+import { ImagesService } from '../images/images.service';
 
 @Controller('sports')
 export class SportsController {
-  constructor(private readonly sportsService: SportsService) {}
+  constructor(
+    private sportsService: SportsService,
+    private imagesService: ImagesService
+  ) {}
 
   @Roles(['admin'])
   @Post()
@@ -56,6 +60,14 @@ export class SportsController {
   @Roles(['admin'])
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: number) {
+    const sport = await this.sportsService.findOne(id);
+    if (sport == null) {
+      throw new NotFoundException();
+    }
+
+    try {
+      await this.imagesService.remove(sport.imageUrl);
+    } catch {}
     await this.sportsService.remove(id);
   }
 }

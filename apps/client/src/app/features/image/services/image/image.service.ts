@@ -13,6 +13,7 @@ export class ImageService {
   }
 
   uploadImage(image: File) {
+    console.log(image);
     const formData = new FormData();
     formData.append('file', image, image.name);
     return this.http.post<{ name: string }>(
@@ -21,7 +22,7 @@ export class ImageService {
     );
   }
 
-  deleteImage(name: number) {
+  deleteImage(name: string) {
     return this.http.delete(`http://localhost:3000/images/${name}`);
   }
 }
