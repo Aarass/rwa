@@ -22,6 +22,7 @@ import { UpsModule } from './ups/ups.module';
 import { UserModule } from './user/user.module';
 import { LocationsModule } from './locations/locations.module';
 import { ImagesModule } from './images/images.module';
+import { RatingsModule } from './ratings/ratings.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ImagesModule } from './images/images.module';
     ParticipationsModule,
     LocationsModule,
     ImagesModule,
+    RatingsModule,
   ],
   controllers: [],
   providers: [

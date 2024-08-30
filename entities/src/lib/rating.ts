@@ -8,7 +8,7 @@ import {
 import { User } from './user';
 
 @Entity()
-@Unique(['userRated', 'userRating'])
+@Unique('unique', ['userRated', 'userRating'])
 export class Rating {
   @PrimaryGeneratedColumn()
   id: number;

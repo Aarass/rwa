@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
-import { Router } from '@angular/router';
+import { PanelModule } from 'primeng/panel';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppointmentDto, ParticipationDto, UserDto } from '@rwa/shared';
 import { AccordionModule } from 'primeng/accordion';
@@ -34,6 +35,8 @@ import { appointmentFeature } from '../../store/appointment.feature';
     AccordionModule,
     DividerModule,
     InplaceModule,
+    PanelModule,
+    RouterModule,
   ],
   templateUrl: './participants.component.html',
   styleUrl: './participants.component.scss',

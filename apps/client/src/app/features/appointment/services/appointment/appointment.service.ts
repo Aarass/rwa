@@ -55,7 +55,7 @@ export class AppointmentService {
       userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    let filterByUpses;
+    let { filterByUpses } = userFilters;
     if (user && user.roles.includes('admin')) {
       filterByUpses = false;
     }
@@ -67,7 +67,7 @@ export class AppointmentService {
         organizerId: userFilters.onlyMine ? user?.id ?? null : null,
         userId: userFilters.onlyMine
           ? null
-          : userFilters.filterByUpses
+          : filterByUpses
           ? user?.id ?? null
           : null,
         skip: paginationInfo.pageSize * paginationInfo.loadedPages,

@@ -9,3 +9,21 @@ export const createRatingSchema = z
   .required();
 
 export type CreateRatingDto = z.infer<typeof createRatingSchema>;
+export type RatingDto = {
+  id: number;
+  value: number;
+};
+
+export type RatingStatsDto = {
+  avg: number | null;
+  count: number;
+};
+
+export const deleteRatingSchema = z
+  .object({
+    userRatedId: z.number(),
+    userRatingId: z.number(),
+  })
+  .required();
+
+export type deleteRatingDto = z.infer<typeof deleteRatingSchema>;

@@ -1,5 +1,5 @@
-<div class="p-4 h-full flex-center" *ngIf="info">
-  <div class="flex flex-column gap-4 align-items-center">
+<div class="p-4 h-full flex overflow-auto nice-scrollbar" *ngIf="info">
+  <div class="flex flex-column gap-4 align-items-center m-auto">
     <div class="flex gap-4">
       <div class="grow-0 w-10rem h-10rem relative border-round-xl overflow-hidden">
         <div *ngIf="image$ | async as imageSrc" class="w-full h-full">
@@ -9,7 +9,7 @@
         <div class="absolute top-0 right-0 flex align-items-start justify-content-end gap-2 p-2 bg-white"
           style="border-bottom-left-radius: 10px;">
           @if(info.user.imageName == null) {
-          <input id="image-upload" class="hidden" type="file" (change)="onChange($event)" accept="image/*">
+          <input id="image-upload" class="hidden" type="file" (change)="onFileChange($event)" accept="image/*">
           <label for="image-upload" class="upload">
             <i class="pi pi-upload cursor-pointer"></i>
           </label>
@@ -45,9 +45,14 @@
       </div>
     </div>
     <div class="flex-center flex-column gap-2 -mb-4">
-      <h2 class="m-0 text-3xl">(4.59)</h2>
-      <p class="m-0 -mt-2 text-sm text-300">41 ratings</p>
-      <p-rating [cancel]="false" />
+      @if (ratingStats) {
+      <h2 class="m-0 text-3xl">{{ getFormatedAvg(ratingStats) }}</h2>
+      <p class="m-0 -mt-2 text-sm text-300">{{ ratingStats.count }} ratings</p>
+      }
+      @if (myRating) {
+      <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event)" (onCancel)="ratingRemoved()"
+        [cancel]="myRating.value != 0" />
+      }
     </div>
     <div class="flex gap-4">
       <div class="flex flex-column align-items-center">
