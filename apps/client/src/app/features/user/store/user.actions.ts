@@ -7,6 +7,8 @@ export const loadMeSuccess = createAction(
   props<{ data: UserDto }>()
 );
 
+export const noUser = createAction('[User] No User');
+
 export const setImage = createAction(
   '[User] Set Image',
   props<{ name: string | null }>()

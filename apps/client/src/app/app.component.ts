@@ -117,18 +117,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.isAdmin = payload!.user.roles.includes('admin');
       });
 
-    // this.store
-    //   .select(authFeature.selectStatus)
-    //   .pipe(
-    //     filter((val) => val != null),
-    //     take(1)
-    //   )
-    //   .subscribe((val) => {
-    //     if (val == AuthStatus.LoggedIn) {
-    //       this.store.dispatch(loadMyUpses());
-    //     }
-    //   });
-
     this.store.dispatch(refresh());
     this.store.dispatch(loadAllSports());
     this.store.dispatch(loadAllSurfaces());

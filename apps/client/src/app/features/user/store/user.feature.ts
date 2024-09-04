@@ -1,7 +1,7 @@
 import { createFeature, createReducer, on, Store } from '@ngrx/store';
 import { UserDto } from '@rwa/shared';
-import { loadMeSuccess, setImage } from './user.actions';
-import { filter, map } from 'rxjs';
+import { loadMeSuccess, noUser, setImage } from './user.actions';
+import { filter, map, tap } from 'rxjs';
 
 export const userFeature = createFeature({
   name: 'user',
@@ -13,6 +13,12 @@ export const userFeature = createFeature({
     on(loadMeSuccess, (state, action) => {
       return {
         me: action.data,
+        isSet: true,
+      };
+    }),
+    on(noUser, (state, action) => {
+      return {
+        me: null,
         isSet: true,
       };
     }),

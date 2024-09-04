@@ -18,7 +18,9 @@ export type UserInfo = {
   user: UserDto;
   stats: {
     organizedAppointments: number;
+    maxOrganizedAppointments: number;
     participatedAppointments: number;
+    maxParticipations: number;
   }[];
 };
 

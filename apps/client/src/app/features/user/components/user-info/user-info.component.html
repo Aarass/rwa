@@ -49,18 +49,23 @@
       <h2 class="m-0 text-3xl">{{ getFormatedAvg(ratingStats) }}</h2>
       <p class="m-0 -mt-2 text-sm text-300">{{ ratingStats.count }} ratings</p>
       }
+
+      @if(info.user.id != viewerId) {
       @if (myRating) {
       <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event)" (onCancel)="ratingRemoved()"
         [cancel]="myRating.value != 0" />
       }
+      }
     </div>
     <div class="flex gap-4">
       <div class="flex flex-column align-items-center">
-        <p-knob [(ngModel)]="info.stats[0].organizedAppointments" [readonly]="true" max="10" />
+        <p-knob [(ngModel)]="info.stats[0].organizedAppointments" [readonly]="true"
+          [max]="info.stats[0].maxOrganizedAppointments || 1" />
         <label>Organized Appointments</label>
       </div>
       <div class="flex flex-column align-items-center">
-        <p-knob [(ngModel)]="info.stats[0].participatedAppointments" [readonly]="true" max="10" />
+        <p-knob [(ngModel)]="info.stats[0].participatedAppointments" [readonly]="true"
+          [max]="info.stats[0].maxParticipations || 1" />
         <label>Participated Appointments</label>
       </div>
     </div>

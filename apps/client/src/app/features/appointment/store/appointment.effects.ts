@@ -37,6 +37,7 @@ import {
   updateUps,
 } from '../../ups/store/ups.actions';
 import { selectUser } from '../../user/store/user.feature';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class AppointmentEffects {
@@ -45,7 +46,8 @@ export class AppointmentEffects {
     private store: Store,
     private appointmentService: AppointmentService,
     private messageService: MessageService,
-    private router: Location
+    private location: Location,
+    private router: Router
   ) {}
 
   // loadMyAppointments$ = createEffect(() => {
@@ -67,7 +69,8 @@ export class AppointmentEffects {
       exhaustMap((action) => {
         return this.appointmentService.createAppointment(action.data).pipe(
           map((appointment) => {
-            this.router.back();
+            // this.location.back();
+            this.router.navigateByUrl(`appointment?id=${appointment.id}`);
             return createAppointmentSuccess({ data: appointment });
           })
         );
@@ -83,7 +86,7 @@ export class AppointmentEffects {
           .updateAppointment(action.data.id, action.data.changes)
           .pipe(
             map((data) => {
-              this.router.back();
+              this.location.back();
               return updateAppointmentSuccess({ data });
             })
           );

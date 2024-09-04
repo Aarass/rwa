@@ -23,6 +23,17 @@ body {
   @extend .nice-scrollbar;
 }
 
+.hide-scrollbar {
+  &::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    right: 0;
+    width: .5rem;
+    background-color: white;
+  }
+}
+
 .nice-scrollbar::-webkit-scrollbar {
   height: .5rem;
   width: .5rem;
@@ -44,6 +55,11 @@ body {
 .object-center {
   object-fit: cover;
   object-position: center center;
+}
+
+.object-top {
+  object-fit: cover;
+  object-position: top center;
 }
 
 .w-unset {

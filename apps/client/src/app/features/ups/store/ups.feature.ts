@@ -11,6 +11,7 @@ import {
   loadMyUpsesSuccess,
   updateUps,
 } from './ups.actions';
+import { logout } from '../../auth/store/auth.actions';
 
 const adapter = createEntityAdapter<UpsDto>();
 
@@ -27,7 +28,7 @@ export const upsFeature = createFeature({
       };
     }),
     on(loadMyUpsesSuccess, (state, action) => {
-      return adapter.addMany(action.upses, state);
+      return adapter.addMany(action.upses, adapter.removeAll(state));
     }),
     on(deleteUps, (state, action) => {
       return adapter.removeOne(action.id, state);

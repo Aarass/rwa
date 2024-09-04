@@ -9,11 +9,12 @@ import { KnobModule } from 'primeng/knob';
 import { RatingModule } from 'primeng/rating';
 import {
   combineLatest,
+  distinct,
   filter,
-  iif,
   map,
   Observable,
-  of,
+  share,
+  shareReplay,
   Subject,
   switchMap,
   takeUntil,
@@ -24,7 +25,7 @@ import { ImageService } from '../../../image/services/image/image.service';
 import { RatingService } from '../../../rating/services/rating/rating.service';
 import { UserService } from '../../services/user/user.service';
 import { setImage } from '../../store/user.actions';
-import { selectUser, userFeature } from '../../store/user.feature';
+import { selectUser } from '../../store/user.feature';
 
 @Component({
   selector: 'app-user-info',
@@ -85,7 +86,8 @@ export class UserInfoComponent implements OnDestroy {
       filter((val) => val != null),
       switchMap((id) => {
         return this.userService.getUserInfoById(id!);
-      })
+      }),
+      shareReplay(1)
     );
 
     userInfo$.subscribe((info) => {

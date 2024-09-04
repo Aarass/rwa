@@ -3,13 +3,15 @@ import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { filter, map, switchMap, tap } from 'rxjs';
 import {
+  loginFailed,
   loginSuccess,
   logout,
+  refreshFailed,
   refreshSuccess,
 } from '../../auth/store/auth.actions';
 import { loadMyParticipations } from '../../participation/store/participation.actions';
 import { reloadAppointments } from '../../appointment/store/appointment.actions';
-import { loadMe } from '../../user/store/user.actions';
+import { loadMe, noUser } from '../../user/store/user.actions';
 import { Store } from '@ngrx/store';
 import { authFeature, selectPayload } from '../../auth/store/auth.feature';
 
@@ -32,6 +34,14 @@ export class GlobalEffects {
     },
     { dispatch: false }
   );
+
+  nullUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loginFailed, refreshFailed, logout),
+      tap(console.log),
+      map(() => noUser())
+    );
+  });
 
   loadAppointments$ = createEffect(() => {
     return this.actions$.pipe(

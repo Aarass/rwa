@@ -1,43 +1,58 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
-import { firstValueFrom } from 'rxjs';
-import { ConfigService } from '../../../global/services/config/config.service';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { sportFeature } from '../../../sport/store/sport.feature';
-import { upsFeature } from '../../../ups/store/ups.feature';
-import { RouterModule } from '@angular/router';
+import { Button, ButtonModule } from 'primeng/button';
+import { combineLatest, fromEvent, Subscription } from 'rxjs';
+import { AppointmentListComponent } from '../../../appointment/components/appointment-list/appointment-list.component';
+import { selectUser } from '../../../user/store/user.feature';
+import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, ButtonModule, RouterModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    RouterModule,
+    AppointmentListComponent,
+    DividerModule,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
-export class HomeComponent {
-  constructor(
-    private configService: ConfigService,
-    private http: HttpClient,
-    private store: Store
-  ) {}
-  async test() {
-    const res = await firstValueFrom(
-      this.http.get(`${this.configService.getBackendBaseURL()}/ups/user/me`, {})
-    );
-    console.log(res);
+export class HomeComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('button')
+  button!: ElementRef;
+
+  subscription: Subscription | undefined;
+
+  constructor(private store: Store, private router: Router) {}
+
+  ngAfterViewInit() {
+    this.subscription = combineLatest([
+      selectUser(this.store),
+      fromEvent(this.button.nativeElement, 'click'),
+    ]).subscribe((tuple) => {
+      const [user] = tuple;
+
+      if (user) {
+        this.router.navigateByUrl('appointments');
+      } else {
+        this.router.navigateByUrl('signup');
+      }
+    });
   }
-  async test2() {
-    const missing = await firstValueFrom(
-      this.store.select(upsFeature.selectSportsIDontPlay)
-    );
 
-    const played = await firstValueFrom(
-      this.store.select(upsFeature.selectMyUpses)
-    );
-
-    console.log(missing);
-    console.log(played);
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

@@ -26,7 +26,11 @@ export class UserService {
 
   async getUserStats(id: number) {
     return await this.userRepository.query(
-      `SELECT (SELECT COUNT(*) FROM appointment WHERE appointment.canceled = false AND appointment."organizerId" = ${id}) as "organizedAppointments", (SELECT COUNT(*) FROM participation WHERE participation."userId" = ${id} AND participation.approved = true) as "participatedAppointments"`
+      `SELECT
+       (SELECT COUNT(*)::int FROM appointment WHERE appointment.canceled = false AND appointment."organizerId" = ${id}) as "organizedAppointments",
+       (SELECT COALESCE(MAX("count"), 0)::int FROM (SELECT COUNT(*) FROM appointment WHERE appointment.canceled = false GROUP BY appointment."organizerId")) as "maxOrganizedAppointments",
+       (SELECT COUNT(*)::int FROM participation WHERE participation."userId" = ${id} AND participation.approved = true) as "participatedAppointments",
+       (SELECT COALESCE(MAX("count"), 0)::int FROM (SELECT COUNT(*) FROM participation WHERE participation.approved = true GROUP BY participation."userId")) as "maxParticipations"`
     );
   }
 

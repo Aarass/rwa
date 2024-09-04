@@ -28,6 +28,8 @@ import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
 import { register } from '../../store/auth.actions';
 import { authFeature } from '../../store/auth.feature';
+import { Router } from '@angular/router';
+import { selectUser } from '../../../user/store/user.feature';
 
 @Component({
   selector: 'app-register',
@@ -71,7 +73,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private messageService: MessageService,
     private locationService: LocationService,
-    private store: Store
+    private store: Store,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -80,6 +83,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.death))
       .subscribe((val) => {
         this.loading = val;
+      });
+
+    selectUser(this.store)
+      .pipe(takeUntil(this.death))
+      .subscribe((data) => {
+        if (data != null) {
+          this.router.navigateByUrl('appointments');
+        }
       });
   }
 

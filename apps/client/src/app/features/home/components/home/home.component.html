@@ -1,3 +1,12 @@
-<p-button label="Submit" (onClick)="test()" />
-<p-button label="Select" (onClick)="test2()" />
-<p-button label="Appointments" routerLink="appointments">
+<div class="h-full flex flex-column gap-4">
+  <div class="flex-grow-0 flex-shrink-1 flex m-auto gap-4">
+    <h1 class="text-center font-bold text-8xl m-0">Let's find you<br />teammates</h1>
+    <div class="flex">
+      <!-- <p-button #button label="Let's go" outlined="true" text="true" class="m-auto" size="large" /> -->
+      <span #button class="pi pi-play-circle m-auto text-8xl cursor-pointer pulse-animation border-round-full"></span>
+    </div>
+  </div>
+  <div class="m-auto flex-grow-1 overflow-hidden px-4 appointments-preview ">
+    <img src="http://localhost:4200/appointments-preview.png" alt="appointments-preview" class="h-full object-top ">
+  </div>
+</div>
