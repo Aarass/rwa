@@ -45,7 +45,7 @@ export class ProfileSummaryComponent {
   }
 
   getImageURL(imageName: string | null) {
-    if (imageName == null) {
+    if (imageName === null) {
       return `https://st3.depositphotos.com/6672868/13701/v/450/depositphotos_137014128-stock-illustration-user-profile-icon.jpg`;
       // return `https://wallpapers.com/images/featured/cool-profile-picture-87h46gcobjl5e4xu.jpg`;
     } else {

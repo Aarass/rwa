@@ -30,7 +30,7 @@ export class SingleAppointmentComponent implements OnDestroy {
     this.appointment$ = this.route.queryParamMap.pipe(
       map((map) => {
         const id = map.get('id');
-        if (id == null) {
+        if (id === null) {
           return null;
         }
         try {
@@ -50,7 +50,7 @@ export class SingleAppointmentComponent implements OnDestroy {
             filter((tuple) => tuple[1].val != true),
             map((tuple) => tuple[0]),
             tap((val) => {
-              if (val == undefined) {
+              if (val === undefined) {
                 console.log('Dispatched');
                 this.store.dispatch(loadAppointment({ id }));
                 this.addedAppointmentId = id;

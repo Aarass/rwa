@@ -45,7 +45,7 @@ export class GlobalEffects {
 
           const autoClose$ = this.store
             .select(authFeature.selectStatus)
-            .pipe(filter((val) => val == AuthStatus.LoggedIn));
+            .pipe(filter((val) => val === AuthStatus.LoggedIn));
 
           return merge(innerClose$, autoClose$).pipe(
             tap(() => {

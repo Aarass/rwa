@@ -57,7 +57,7 @@ export class CreateSportComponent implements OnInit, OnDestroy {
       .select(sportFeature.selectIsLoaded)
       .pipe(
         takeUntil(this.death),
-        filter((loaded) => loaded == true),
+        filter((loaded) => loaded === true),
         switchMap(() => {
           return this.store.select(sportFeature.selectCount);
         })
@@ -95,7 +95,7 @@ export class CreateSportComponent implements OnInit, OnDestroy {
   }
 
   async createSport() {
-    if (this.image == null || this.sportName.length == 0) {
+    if (this.image === null || this.sportName.length === 0) {
       return;
     }
 

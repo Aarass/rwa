@@ -10,7 +10,7 @@ import { DividerModule } from 'primeng/divider';
 import { InplaceModule } from 'primeng/inplace';
 import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
-import { filter, Observable, switchMap } from 'rxjs';
+import { EMPTY, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { selectPayload } from '../../../auth/store/auth.feature';
 import { isNotNull } from '../../../global/functions/rxjs-filter';
 import { rejectParticipation } from '../../../participation/store/participation.actions';
@@ -36,24 +36,26 @@ import { appointmentFeature } from '../../store/appointment.feature';
 })
 export class ParticipantsComponent {
   appointment$: Observable<AppointmentDto | undefined>;
-  viewerId: number | null = null;
+  viewerId$: Observable<number | null>;
 
   constructor(private store: Store, private router: Router) {
     this.appointment$ = this.store
       .select(participationFeature.selectSelectedAppointmentId)
       .pipe(
-        filter(isNotNull),
         switchMap((id) => {
-          return this.store.select(
-            appointmentFeature.selectAppointmentById(id)
-          );
+          if (id == null) {
+            return of(undefined);
+          } else {
+            return this.store.select(
+              appointmentFeature.selectAppointmentById(id)
+            );
+          }
         })
-        // tap((val) => console.log(val))
       );
 
-    selectPayload(this.store).subscribe((payload) => {
-      this.viewerId = payload?.user.id ?? null;
-    });
+    this.viewerId$ = selectPayload(this.store).pipe(
+      map((payload) => payload?.user.id ?? null)
+    );
   }
 
   showUser(userId: number) {

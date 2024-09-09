@@ -74,7 +74,7 @@ function ifIsLoggedIn(): Observable<boolean> {
   const store = inject(Store);
   return store.select(authFeature.selectStatus).pipe(
     filter(isNotNull),
-    map((val) => val == AuthStatus.LoggedIn)
+    map((val) => val === AuthStatus.LoggedIn)
   );
 }
 
@@ -91,7 +91,7 @@ function ifIsAdmin(): Observable<boolean> {
     }),
     map((state) => {
       const payload = state.decodedPayload;
-      if (payload == null) {
+      if (payload === null) {
         return false;
       }
       return payload.user.roles.includes('admin');

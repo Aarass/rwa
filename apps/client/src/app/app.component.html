@@ -49,11 +49,27 @@
     </div>
   </div>
 
+
+  <label class="sidebar-button" for="sidebarButton" *ngIf="participationSidebarService.isMinimized$ | async">
+    <span class="pi pi-angle-left"></span>
+  </label>
+  <button hidden id="sidebarButton" (click)="participationSidebarService.open()"></button>
+
   <p-toast key="global" position="bottom-right"></p-toast>
 
-  <p-sidebar [(visible)]="participationSidebarService.visible" position="right" styleClass="w-30rem">
+  <p-sidebar [(visible)]="participationSidebarService.visible"
+    (visibleChange)="participationSidebarService.change($event)" position="right" styleClass="w-30rem"
+    showCloseIcon="false" #sidebar>
     <ng-template pTemplate="header">
       <h1 class="font-lighter m-0">Participants</h1>
+      <button style="margin-left: auto !important;" class="p-ripple p-element p-sidebar-close p-sidebar-icon p-link"
+        (click)="participationSidebarService.close()">
+        <span class="pi pi-minus p-element p-icon-wrapper"></span>
+      </button>
+      <button class="p-ripple p-element p-sidebar-close p-sidebar-icon p-link"
+        (click)="participationSidebarService.close(); clearParticipants()">
+        <span class="pi pi-times p-element p-icon-wrapper"></span>
+      </button>
     </ng-template>
     <app-participants></app-participants>
   </p-sidebar>

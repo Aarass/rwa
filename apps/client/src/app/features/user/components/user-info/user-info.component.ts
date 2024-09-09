@@ -71,7 +71,7 @@ export class UserInfoComponent implements OnDestroy {
     const userInfo$ = this.route.queryParamMap.pipe(
       map((map) => {
         const id = map.get('id');
-        if (id == null) {
+        if (id === null) {
           return null;
         }
         try {
@@ -137,7 +137,7 @@ export class UserInfoComponent implements OnDestroy {
         const userId = info.user.id;
         const viewerId = viewer?.id ?? null;
 
-        if (viewer == null || viewerId != userId) {
+        if (viewer === null || viewerId != userId) {
           return info.user.imageName;
         } else {
           return viewer.imageName;
@@ -155,14 +155,14 @@ export class UserInfoComponent implements OnDestroy {
   onFileChange(event: Event) {
     if (event.target === null) throw `Unexpected error`;
 
-    if (this.info == undefined) {
+    if (this.info === undefined) {
       throw `This should not happen`;
     }
 
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file != undefined) {
       this.imageService.uploadImage(file).subscribe((data) => {
-        if (this.info == undefined) {
+        if (this.info === undefined) {
           throw 'User info became undefined while waiting for the image to upload';
         }
 
@@ -174,7 +174,7 @@ export class UserInfoComponent implements OnDestroy {
   }
 
   deleteImage() {
-    if (this.info == undefined) {
+    if (this.info === undefined) {
       throw `This should not happen`;
     }
 
@@ -186,10 +186,10 @@ export class UserInfoComponent implements OnDestroy {
   }
 
   ratingChanged(e: { value: number }) {
-    if (this.ratingStats == null) throw `This should not happen 1`;
-    if (this.myRating == null) throw `This should not happen 2`;
-    if (this.info == null) throw `This should not happen 3`;
-    if (this.viewerId == null) throw `This should not happen 4`;
+    if (this.ratingStats === null) throw `This should not happen 1`;
+    if (this.myRating === null) throw `This should not happen 2`;
+    if (this.info === undefined) throw `This should not happen 3`;
+    if (this.viewerId === null) throw `This should not happen 4`;
 
     const { value: newRating } = e;
     const { avg, count: n } = this.ratingStats;
@@ -208,21 +208,21 @@ export class UserInfoComponent implements OnDestroy {
         value: newRating,
       })
       .subscribe((res) => {
-        if (this.myRating == undefined) {
-          throw 'My rating became undefined while waiting for the image to upload';
+        if (this.myRating === null) {
+          throw 'My rating became null while waiting for the image to upload';
         }
         this.myRating.id = res.id;
       });
   }
 
   ratingRemoved() {
-    if (this.ratingStats == null) throw `This should not happen 1`;
-    if (this.myRating == null) throw `This should not happen 2`;
+    if (this.ratingStats === null) throw `This should not happen 1`;
+    if (this.myRating === null) throw `This should not happen 2`;
 
-    if (this.myRating.value == 0) return;
+    if (this.myRating.value === 0) return;
 
     const { avg, count: n } = this.ratingStats;
-    if (n == 1) {
+    if (n === 1) {
       this.ratingStats.avg = null;
     } else {
       this.ratingStats.avg = ((avg ?? 0) * n - this.myRating.value) / (n - 1);

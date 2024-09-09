@@ -70,3 +70,7 @@ export const showParticipants = createAction(
   '[Participation] Show Participants',
   props<{ data: AppointmentDto }>()
 );
+
+export const clearParticipants = createAction(
+  '[Participation] Clear Participants'
+);

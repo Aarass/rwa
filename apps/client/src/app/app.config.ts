@@ -40,6 +40,7 @@ import { upsFeature } from './features/ups/store/ups.feature';
 import { UserEffects } from './features/user/store/user.effects';
 import { userFeature } from './features/user/store/user.feature';
 import { MyHttpInterceptor } from './http.interceptor';
+import { withInMemoryScrolling } from '@angular/router';
 
 export const appConfig: ApplicationConfig = {
   providers: [

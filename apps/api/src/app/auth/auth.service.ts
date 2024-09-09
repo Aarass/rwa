@@ -11,6 +11,7 @@ import {
   CreateUserDto,
   RefreshToken,
   RefreshTokenPayload,
+  TokenUser,
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { User } from '@rwa/entities';
@@ -53,8 +54,8 @@ export class AuthService {
 
   async login(user: User) {
     const accessToken = await this.createAccessToken(user);
+    const refreshToken = await this.createRefreshToken(user.id);
 
-    const refreshToken = await this.createRefreshToken({ sub: user.id });
     await this.setRefreshToken(user.id, refreshToken);
 
     return { accessToken, refreshToken };
@@ -62,7 +63,8 @@ export class AuthService {
 
   async register(newUser: CreateUserDto) {
     const user = await this.userService.createUser(newUser);
-    const refreshToken = await this.createRefreshToken({ sub: user.id });
+    const refreshToken = await this.createRefreshToken(user.id);
+
     await this.setRefreshToken(user.id, refreshToken);
   }
 
@@ -102,8 +104,8 @@ export class AuthService {
     }
 
     const newAccessToken = await this.createAccessToken(user);
+    const newRefreshToken = await this.createRefreshToken(user.id);
 
-    const newRefreshToken = await this.createRefreshToken({ sub: user.id });
     await this.setRefreshToken(user.id, newRefreshToken);
 
     return { newAccessToken, newRefreshToken };
@@ -128,11 +130,14 @@ export class AuthService {
     await this.userService.setUserRefreshToken(userId, '');
   }
 
-  private async createAccessToken(user: User) {
-    const { passwordHash, refreshTokenHash, ...payload } = user;
+  private async createAccessToken(user: User): Promise<AccessToken> {
+    const tokenUser: TokenUser = {
+      id: user.id,
+      roles: user.roles,
+    };
     try {
       const access_token = await this.jwtService.signAsync(
-        { user: payload },
+        { user: tokenUser },
         {
           // expiresIn: '10sec',
           expiresIn: '10m',
@@ -140,16 +145,14 @@ export class AuthService {
       );
       return access_token;
     } catch (err) {
-      console.log('auth.service.ts:133', payload);
-      console.log('auth.service.ts:134', err);
+      console.log('Error while signing access token', err);
       return '';
     }
   }
 
-  private async createRefreshToken(payload: RefreshTokenPayload) {
+  private async createRefreshToken(userId: number): Promise<RefreshToken> {
     const refresh_token = await this.jwtService.signAsync(
-      // { ...payload, shake: Math.random() },
-      payload,
+      { id: userId },
       {
         expiresIn: '7d',
       }

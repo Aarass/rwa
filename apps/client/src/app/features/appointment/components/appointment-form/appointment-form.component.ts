@@ -118,7 +118,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
         take(1),
         exhaustMap((map) => {
           this.id = map.get('id');
-          return this.id == null
+          return this.id === null
             ? EMPTY
             : this.store
                 .select(
@@ -128,7 +128,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
         })
       )
       .subscribe((appointment) => {
-        if (appointment == undefined) {
+        if (appointment === undefined) {
           console.error('');
           return;
         }
@@ -216,7 +216,7 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
       totalPlayers: this.formGroup.controls.totalPlayers.value!,
     };
 
-    if (this.id == null) {
+    if (this.id === null) {
       this.store.dispatch(createAppointment({ data: dto }));
     } else {
       this.store.dispatch(

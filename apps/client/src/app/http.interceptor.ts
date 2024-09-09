@@ -54,7 +54,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
               request.clone({
                 withCredentials: true,
                 headers:
-                  accessToken == null
+                  accessToken === null
                     ? undefined
                     : new HttpHeaders().set(
                         'Authorization',
@@ -64,7 +64,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
             )
             .pipe(
               catchError((err: HttpErrorResponse) => {
-                if (err.status == 401) {
+                if (err.status === 401) {
                   if (payload != null && checkIfJwtExpired(payload.exp)) {
                     this.store.dispatch(refresh());
                     return EMPTY;
@@ -72,7 +72,7 @@ export class MyHttpInterceptor implements HttpInterceptor {
                 }
                 return throwError(() => err);
               }),
-              filter((val) => val.type == HttpEventType.Response),
+              filter((val) => val.type === HttpEventType.Response),
               tap(() => finished.next())
             );
         })
@@ -100,7 +100,7 @@ function checkIfJwtExpired(exp: number) {
 //           request.clone({
 //             withCredentials: true,
 //             headers:
-//               accessToken == null
+//               accessToken === null
 //                 ? undefined
 //                 : new HttpHeaders().set(
 //                     'Authorization',
@@ -110,7 +110,7 @@ function checkIfJwtExpired(exp: number) {
 //         )
 //         .pipe(
 //           catchError((err: HttpErrorResponse) => {
-//             if (accessToken != null && err.status == 401) {
+//             if (accessToken != null && err.status === 401) {
 //               this.store.dispatch(refresh());
 //               return EMPTY;
 //             } else {
@@ -138,7 +138,7 @@ function checkIfJwtExpired(exp: number) {
 //             request.clone({
 //               withCredentials: true,
 //               headers:
-//                 accessToken == null
+//                 accessToken === null
 //                   ? undefined
 //                   : new HttpHeaders().set(
 //                       'Authorization',
@@ -148,7 +148,7 @@ function checkIfJwtExpired(exp: number) {
 //           )
 //           .pipe(
 //             catchError((err: HttpErrorResponse) => {
-//               if (accessToken != null && err.status == 401) {
+//               if (accessToken != null && err.status === 401) {
 //                 console.log('Retryujem');
 //                 this.store.dispatch(refresh());
 //                 return this.store.select(selectAccessToken).pipe(
@@ -159,7 +159,7 @@ function checkIfJwtExpired(exp: number) {
 //                       request.clone({
 //                         withCredentials: true,
 //                         headers:
-//                           accessToken == null
+//                           accessToken === null
 //                             ? undefined
 //                             : new HttpHeaders().set(
 //                                 'Authorization',

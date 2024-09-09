@@ -29,7 +29,7 @@ export const userFeature = createFeature({
       };
     }),
     on(setImage, (state, action) => {
-      if (state.me == null) {
+      if (state.me === null) {
         throw `This should not happen`;
       }
 

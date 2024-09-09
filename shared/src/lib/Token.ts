@@ -3,11 +3,13 @@ export type Role = 'user' | 'admin';
 export type AccessToken = string;
 export type RefreshToken = string;
 
+export type TokenUser = {
+  id: number;
+  roles: Role[];
+};
+
 export interface AccessTokenPayload {
-  user: {
-    id: number;
-    roles: Role[];
-  };
+  user: TokenUser;
   iat: number;
   exp: number;
 }
@@ -15,6 +17,7 @@ export interface AccessTokenPayload {
 export interface RefreshTokenPayload {
   sub: number;
 }
+
 // username: string;
 // name: string;
 // surname: string;

@@ -25,6 +25,7 @@ import { participationFeature } from './features/participation/store/participati
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
+import { clearParticipants } from './features/participation/store/participation.actions';
 
 @Component({
   standalone: true,
@@ -74,7 +75,15 @@ export class AppComponent implements OnInit {
     this.store.dispatch(loadAllSurfaces());
   }
 
-  async showSignInDialog() {
+  showSignInDialog() {
     this.store.dispatch(openSignIn());
+  }
+
+  clearParticipants() {
+    this.store.dispatch(clearParticipants());
+  }
+
+  alert() {
+    alert();
   }
 }

@@ -2,7 +2,7 @@
   <div class="flex justify-content-center align-items-center w-full relative" id="container">
     <div class="offset-flex">
       @for (appointment of appointments$ | async; track appointment.id) {
-      <app-appointment [appointment]="appointment"></app-appointment>
+      <app-appointment [appointment]="appointment" [showFocusButton]="true"></app-appointment>
       }
       <div class="flex justify-content-center align-items-center w-full relative">
         <p-button label="Load more" [text]="true" [raised]="true" [rounded]="true" icon="pi pi-chevron-circle-down"

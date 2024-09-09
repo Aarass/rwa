@@ -3,6 +3,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { ParticipationDto } from '@rwa/shared';
 import { logout } from '../../auth/store/auth.actions';
 import {
+  clearParticipants,
   joinAppointmentSuccess,
   leaveAppointment,
   loadMyParticipationsSuccess,
@@ -44,6 +45,12 @@ export const participationFeature = createFeature({
         selectedAppointmentId: action.data.id,
       };
     }),
+    on(clearParticipants, (state, action) => {
+      return {
+        ...state,
+        selectedAppointmentId: null,
+      };
+    }),
     on(logout, (state) => {
       return {
         ...adapter.removeAll(state),
@@ -80,12 +87,12 @@ export const participationFeature = createFeature({
 //   .map((id) => state.entities[id])
 //   .find((participation) => {
 //     return (
-//       participation!.appointmentId == action.data.appointmentId &&
-//       participation!.userId == action.data.userId
+//       participation!.appointmentId === action.data.appointmentId &&
+//       participation!.userId === action.data.userId
 //     );
 //   });
 
-// if (participation == undefined) {
+// if (participation === undefined) {
 //   throw `Can't find participation`;
 // }
 
@@ -93,11 +100,11 @@ export const participationFeature = createFeature({
 //   .map((id) => state.entities[id])
 //   .find((participation) => {
 //     return (
-//       participation!.appointmentId == action.data.appointmentId &&
-//       participation!.userId == action.data.userId
+//       participation!.appointmentId === action.data.appointmentId &&
+//       participation!.userId === action.data.userId
 //     );
 //   });
 
-// if (participation == undefined) {
+// if (participation === undefined) {
 //   throw `Can't find participation`;
 // }

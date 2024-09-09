@@ -135,7 +135,7 @@ export class AppointmentEffects {
               .getFilteredAppointments(filters, paginationInfo, ordering, user)
               .pipe(
                 map((appointments) => {
-                  if (appointments.length == 0) {
+                  if (appointments.length === 0) {
                     this.messageService.add({
                       key: 'global',
                       severity: 'error',

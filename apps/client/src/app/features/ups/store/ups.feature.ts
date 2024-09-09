@@ -69,10 +69,10 @@ export const upsFeature = createFeature({
         });
 
         return sportIds
-          .filter((id) => sportsIPlayDic[id] == undefined)
+          .filter((id) => sportsIPlayDic[id] === undefined)
           .map((id) => {
             const tmp = sportsDic[id];
-            if (tmp == undefined) throw `This should not be possible`; // jer entity adapter odrzava konzistentnost izmedju liste id-a i dict entity-a
+            if (tmp === undefined) throw `This should not be possible`; // jer entity adapter odrzava konzistentnost izmedju liste id-a i dict entity-a
             return tmp;
           });
       }

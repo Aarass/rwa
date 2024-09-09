@@ -42,7 +42,7 @@ export class MyDialogService {
   }
 
   close() {
-    if (this.ref == null) {
+    if (this.ref === null) {
       console.error(`There is no dialog to close`);
       return;
     }

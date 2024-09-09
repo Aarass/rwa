@@ -116,14 +116,14 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const values = this.formGroup.getRawValue();
 
     if (
-      values.biography == null ||
-      values.birthDate == null ||
-      values.location == null ||
-      values.name == null ||
-      values.password == null ||
-      values.phoneNumber == null ||
-      values.surname == null ||
-      values.username == null
+      values.biography === null ||
+      values.birthDate === null ||
+      values.location === null ||
+      values.name === null ||
+      values.password === null ||
+      values.phoneNumber === null ||
+      values.surname === null ||
+      values.username === null
     ) {
       this.messageService.clear('register');
       this.messageService.add({
@@ -135,7 +135,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (values.location.place_id == undefined) {
+    if (values.location.place_id === undefined) {
       this.messageService.clear('register');
       this.messageService.add({
         key: 'register',
@@ -158,7 +158,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     const zodResult = await registerUserSchema.safeParseAsync(registerUserDto);
 
-    if (zodResult.success == false) {
+    if (zodResult.success === false) {
       const error = zodResult.error.errors[0];
       this.messageService.clear('register');
       this.messageService.add({

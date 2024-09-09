@@ -113,7 +113,7 @@ export const appointmentFeature = createFeature({
       const appointment =
         state.appointments.entities[action.data.appointmentId];
 
-      if (appointment == undefined) {
+      if (appointment === undefined) {
         throw `Can't find appointment`;
       }
 
@@ -138,7 +138,7 @@ export const appointmentFeature = createFeature({
       const appointment =
         state.appointments.entities[action.data.appointmentId];
 
-      if (appointment == undefined) {
+      if (appointment === undefined) {
         throw `Can't find appointment`;
       }
 
@@ -162,15 +162,15 @@ export const appointmentFeature = createFeature({
       const appointment =
         state.appointments.entities[action.data.appointmentId];
 
-      if (appointment == undefined) {
+      if (appointment === undefined) {
         throw `Can't find appointment`;
       }
 
       const participationIndex = appointment.participants.findIndex(
-        (participation) => participation.id == action.data.participationId
+        (participation) => participation.id === action.data.participationId
       );
 
-      if (participationIndex == -1) {
+      if (participationIndex === -1) {
         `Can't find participation`;
       }
 

@@ -10,14 +10,14 @@ import { DialogModule } from 'primeng/dialog';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { map } from 'rxjs';
 import { selectPayload } from '../../../auth/store/auth.feature';
+import { toPostgresIntervalString } from '../../../global/functions/date-utility';
+import { ConfigService } from '../../../global/services/config/config.service';
 import {
   joinAppointment,
   leaveAppointment,
   showParticipants,
 } from '../../../participation/store/participation.actions';
 import { cancelAppointment } from '../../store/appointment.actions';
-import { toPostgresIntervalString } from '../../../global/functions/date-utility';
-import { ConfigService } from '../../../global/services/config/config.service';
 
 @Component({
   selector: 'app-appointment',
@@ -37,6 +37,9 @@ export class AppointmentComponent implements OnChanges {
   @Input()
   appointment!: AppointmentDto;
 
+  @Input()
+  showFocusButton!: boolean;
+
   viewerId: number | null = null;
 
   additionalInfoVisible = false;
@@ -50,6 +53,7 @@ export class AppointmentComponent implements OnChanges {
   constructor(
     private store: Store,
     private router: Router,
+    // private activatedRoute: ActivatedRoute,
     private configService: ConfigService,
     private confirmationService: ConfirmationService
   ) {
@@ -59,6 +63,12 @@ export class AppointmentComponent implements OnChanges {
         this.viewerId = val;
         this.check();
       });
+
+    // const urlSegments = this.activatedRoute.snapshot.url;
+    // if (urlSegments.length > 0) {
+    //   const path = urlSegments[0].path;
+    //   console.log(path);
+    // }
   }
 
   ngOnChanges(): void {
@@ -66,11 +76,11 @@ export class AppointmentComponent implements OnChanges {
   }
 
   private check() {
-    if (this.viewerId == null) {
+    if (this.viewerId === null) {
       this.isJoined = false;
     } else if (this.appointment) {
       this.participation = this.appointment.participants.find(
-        (participation) => participation.userId == this.viewerId
+        (participation) => participation.userId === this.viewerId
       );
       if (this.participation) {
         this.isJoined = true;
@@ -93,7 +103,7 @@ export class AppointmentComponent implements OnChanges {
     return (
       this.appointment.totalPlayers -
       this.appointment.missingPlayers +
-      this.appointment.participants.filter((p) => p.approved == true).length
+      this.appointment.participants.filter((p) => p.approved === true).length
     );
   }
 
@@ -105,12 +115,12 @@ export class AppointmentComponent implements OnChanges {
   }
 
   click() {
-    if (this.viewerId == null) {
+    if (this.viewerId === null) {
       return;
     }
 
     if (this.isJoined) {
-      if (this.participation == undefined) throw `This should not happen`;
+      if (this.participation === undefined) throw `This should not happen`;
       this.store.dispatch(
         leaveAppointment({
           data: {
@@ -175,5 +185,9 @@ export class AppointmentComponent implements OnChanges {
     return `${this.configService.getBackendBaseURL()}/images/${
       this.appointment.sport.imageName
     }`;
+  }
+
+  showSingle() {
+    this.router.navigateByUrl(`appointment?id=${this.appointment.id}`);
   }
 }

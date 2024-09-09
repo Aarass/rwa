@@ -94,15 +94,15 @@ export class FiltersComponent {
 
   applyFilters() {
     // let sportId, filterByUpses;
-    // if (this.formGroup.controls.sportId.value == -1) {
+    // if (this.formGroup.controls.sportId.value === -1) {
     //   sportId = null;
     //   filterByUpses = true;
-    // } else if (this.formGroup.controls.sportId.value == -2) {
+    // } else if (this.formGroup.controls.sportId.value === -2) {
     //   sportId = null;
     //   filterByUpses = false;
     // } else {
     //   sportId = this.formGroup.controls.sportId.value;
-    //   if (sportId == null) {
+    //   if (sportId === null) {
     //     filterByUpses = true;
     //   } else {
     //     filterByUpses = false;
@@ -112,20 +112,20 @@ export class FiltersComponent {
     let sportId = this.formGroup.controls.sportId.value;
     let filterByUpses = true;
 
-    if (sportId == -1) {
+    if (sportId === -1) {
       sportId = null;
       filterByUpses = false;
     }
 
-    // if (value == -1) {
+    // if (value === -1) {
     //   sportId = null;
     //   filterByUpses = true;
-    // } else if (value == -2) {
+    // } else if (value === -2) {
     //   sportId = null;
     //   filterByUpses = false;
     // } else {
     //   sportId = value;
-    //   if (sportId == null) {
+    //   if (sportId === null) {
     //     filterByUpses = true;
     //   } else {
     //     filterByUpses = false;
@@ -165,14 +165,14 @@ export class FiltersComponent {
   }
 
   firstTimeStartTime() {
-    if (this.formGroup.controls.startTime.value == null) {
+    if (this.formGroup.controls.startTime.value === null) {
       this.formGroup.controls.startTime.setValue(roundTime(new Date()));
     }
   }
 
   firstTimeEndTime() {
-    if (this.formGroup.controls.endTime.value == null) {
-      if (this.formGroup.controls.startTime.value == null) {
+    if (this.formGroup.controls.endTime.value === null) {
+      if (this.formGroup.controls.startTime.value === null) {
         this.formGroup.controls.endTime.setValue(roundTime(new Date()));
       } else {
         this.formGroup.controls.endTime.setValue(

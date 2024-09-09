@@ -51,7 +51,7 @@ export class UpsListItemComponent implements OnChanges {
   }
 
   onRate(event: RatingRateEvent) {
-    if (this.ups == undefined || this.ups == null)
+    if (this.ups === undefined || this.ups === null)
       throw `This should not happen`;
 
     const { value } = event;

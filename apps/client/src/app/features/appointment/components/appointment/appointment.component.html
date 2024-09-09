@@ -4,20 +4,27 @@
       <div class="w-full h-full relative">
         <img alt="Card" [src]="getImageUrl()" class="object-center w-full ar169" />
         <div class="overlay">
-          <h1 class="ml-4 mb-0 text-300 font-lighter">
-            {{ appointment.sport.name }}
-          </h1>
-          <div class="flex justify-content-between w-full">
-            <h2 class="ml-4 mt-2 text-white">{{ getDate() }}</h2>
-            <h2 class="mr-4 mt-2 text-white">{{ getTime() }}</h2>
+          <div class="flex p-2">
+            <div class="flex flex-nowrap align-items-center cursor-pointer" (click)="nameClick()">
+              <span class="pi pi-crown m-2 text-white"></span>
+              <p class="m-0 text-white">{{ appointment.organizer.name }} {{ appointment.organizer.surname }}</p>
+            </div>
+            <span class="ml-auto pi pi-thumbtack m-2 text-white cursor-pointer" (click)="showSingle()"
+              *ngIf="showFocusButton"></span>
+            <!-- pi-bullseye -->
+            <!-- pi-arrow-down-left  -->
+          </div>
+          <div class="mx-4">
+            <h1 class="mb-0 text-300 font-lighter">
+              {{ appointment.sport.name }}
+            </h1>
+            <div class="flex justify-content-between w-full">
+              <h2 class="mt-2 text-white">{{ getDate() }}</h2>
+              <h2 class="mt-2 text-white">{{ getTime() }}</h2>
+            </div>
           </div>
         </div>
 
-        <div class="absolute top-0 right-0 m-1 flex flex-nowrap align-items-center cursor-pointer"
-          (click)="nameClick()">
-          <p class="m-0 text-white">{{ appointment.organizer.name }} {{ appointment.organizer.surname }}</p>
-          <span class="pi pi-crown m-2 text-white"></span>
-        </div>
       </div>
     </ng-template>
     <ng-template pTemplate="content" styleClass="bg-white">

@@ -71,7 +71,7 @@ export class CreateUpsComponent implements OnInit, OnDestroy {
       .select(upsFeature.selectIsLoading)
       .pipe(takeUntil(this.death))
       .subscribe((newIsLoading) => {
-        if (this.isLoading && newIsLoading == false) {
+        if (this.isLoading && newIsLoading === false) {
           this.isLoading = false;
           this.close.emit();
         }

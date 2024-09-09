@@ -70,7 +70,7 @@ export class AuthEffects {
             return loginSuccess(data);
           }),
           catchError((err: HttpErrorResponse) => {
-            if (err.status == 401) {
+            if (err.status === 401) {
               this.messageService.add({
                 key: 'global',
                 severity: 'error',
@@ -98,14 +98,14 @@ export class AuthEffects {
       exhaustMap((action) => {
         return this.authService.refresh().pipe(
           map((data) => {
-            if (action.type == restoreSession.type) {
+            if (action.type === restoreSession.type) {
               return restoreSessionSuccess(data);
             } else {
               return refreshSuccess(data);
             }
           }),
           catchError(() => {
-            if (action.type == restoreSession.type) {
+            if (action.type === restoreSession.type) {
               return of(restoreSessionFailed());
             } else {
               return of(refreshFailed());

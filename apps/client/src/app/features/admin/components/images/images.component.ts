@@ -47,7 +47,7 @@ export class ImagesComponent implements OnInit {
   }
 
   delete(item: ImageData) {
-    if (this.images == null) {
+    if (this.images === null) {
       console.error('Imposible');
       return;
     }
