@@ -8,16 +8,16 @@ import { exhaustMap, map } from 'rxjs';
 export class ImageEffects {
   constructor(private actions$: Actions, private imageService: ImageService) {}
 
-  loadAllImages$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loadAllImages),
-      exhaustMap(() => {
-        return this.imageService.getAllImages().pipe(
-          map((data) => {
-            return loadAllImagesSuccess({ data });
-          })
-        );
-      })
-    );
-  });
+  // loadAllImages$ = createEffect(() => {
+  //   return this.actions$.pipe(
+  //     ofType(loadAllImages),
+  //     exhaustMap(() => {
+  //       return this.imageService.getAllImages().pipe(
+  //         map((data) => {
+  //           return loadAllImagesSuccess({ data });
+  //         })
+  //       );
+  //     })
+  //   );
+  // });
 }

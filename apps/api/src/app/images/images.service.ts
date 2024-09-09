@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as fs from 'fs';
 
 @Injectable()
@@ -11,8 +15,12 @@ export class ImagesService {
     try {
       fs.rmSync(`./uploads/${name}`);
     } catch (err) {
-      console.error(err);
-      throw new BadRequestException();
+      if ((err as any).code === 'ENOENT') {
+        throw new NotFoundException();
+      } else {
+        console.error(err);
+        throw new BadRequestException();
+      }
     }
   }
 }

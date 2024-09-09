@@ -66,7 +66,6 @@ export class UserService {
 
     user.refreshTokenHash = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(userId, user);
-    // const updatedUser = await this.userRepository.save(user);
   }
 
   async createUser(newUser: CreateUserDto) {

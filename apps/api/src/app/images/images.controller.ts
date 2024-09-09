@@ -2,13 +2,9 @@ import {
   BadRequestException,
   Controller,
   Delete,
-  FileTypeValidator,
-  FileValidator,
   Get,
   InternalServerErrorException,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Post,
   Res,
   UnauthorizedException,
@@ -16,16 +12,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ImagesService } from './images.service';
-import { diskStorage, Multer } from 'multer';
+import { AccessTokenPayload, TokenUser } from '@rwa/shared';
 import { Response } from 'express';
-import { Public } from '../auth/decorators/public.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
-import { AccessTokenPayload, UserDto } from '@rwa/shared';
+import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
-import { User } from '@rwa/entities';
 import { UserService } from '../user/user.service';
+import { ImagesService } from './images.service';
 
 @Controller('images')
 export class ImagesController {
@@ -70,7 +64,7 @@ export class ImagesController {
   )
   async uploadImage(
     @UploadedFile() file: Express.Multer.File,
-    @ExtractUser() user: User
+    @ExtractUser() user: TokenUser
   ) {
     if (!user.roles.includes('admin')) {
       this.userService.setUserProfileImage(user.id, file.filename);
@@ -81,7 +75,21 @@ export class ImagesController {
   @Public()
   @Get(':name')
   getImage(@Param('name') name: string, @Res() res: Response) {
-    return res.sendFile(name, { root: './uploads' });
+    return res.sendFile(name, { root: './uploads' }, (err?) => {
+      if (err) {
+        if (!res.headersSent) {
+          if ((err as any).code === 'ENOENT') {
+            res.statusCode = 404;
+            res.send({
+              statusCode: 404,
+              message: err.message,
+            });
+          } else {
+            res.sendStatus(500);
+          }
+        }
+      }
+    });
   }
 
   @Public()
@@ -91,7 +99,7 @@ export class ImagesController {
   }
 
   @Delete(':name')
-  remove(@ExtractUser() user: User, @Param('name') name: string) {
+  remove(@ExtractUser() user: TokenUser, @Param('name') name: string) {
     if (!user.roles.includes('admin') && name != `user_${user.id}`) {
       return new UnauthorizedException();
     }

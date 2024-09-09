@@ -53,7 +53,7 @@ export class UpsService {
     });
 
     try {
-      await this.userPlaysSportRepository.save(ups);
+      await this.userPlaysSportRepository.insert(ups);
       return await this.userPlaysSportRepository.findOne({
         where: { id: ups.id },
         relations: ['sport'],

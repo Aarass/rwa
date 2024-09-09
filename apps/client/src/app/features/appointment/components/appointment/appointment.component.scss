@@ -24,10 +24,12 @@
     transform: translate(-50%, -50%) rotate(45deg);
     opacity: .5;
 
-    color: rgb(239, 68, 68);
     font-weight: 900;
     font-size: 6rem;
-    border: .8rem solid rgb(239, 68, 68);
+
+    $clr: rgb(239, 68, 68);
+    color: $clr;
+    border: .8rem solid $clr;
     // border-radius: 1rem;
     // background-color: white;
     padding: .5rem;

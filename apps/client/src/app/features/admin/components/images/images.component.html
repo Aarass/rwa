@@ -4,10 +4,11 @@
   <p>No images to show</p>
   } @else {
   <p-galleria [value]="images" [showItemNavigators]="true" [circular]="true" [numVisible]="5"
-    [containerStyle]="{ 'max-width': '1000px' }" [responsiveOptions]="responsiveOptions">
+    [containerStyle]="{ 'max-width': '1000px' }" #galleria>
     <ng-template pTemplate="caption" let-item>
       <div class="w-full flex justify-content-center">
-        <p-button icon="pi pi-trash" [rounded]="true" [raised]="true" severity="danger" (onClick)="delete(item)" />
+        <p-button icon="pi pi-trash" [rounded]="true" [raised]="true" severity="danger"
+          (onClick)="delete(item); galleria.activeIndex = getNewIndex(galleria.activeIndex)" />
       </div>
     </ng-template>
 

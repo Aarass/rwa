@@ -17,7 +17,7 @@ export class ParticipationsService {
       ...createParticipationDto,
       userId,
     });
-    await this.participationRepository.save(participation);
+    await this.participationRepository.insert(participation);
     return await this.participationRepository.findOne({
       where: { id: participation.id },
       relations: ['appointment', 'user', 'user.location'],

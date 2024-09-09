@@ -15,6 +15,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { UserService } from './user.service';
+import { TokenUser } from '@rwa/shared';
 
 @Controller('users')
 export class UserController {
@@ -27,7 +28,7 @@ export class UserController {
   }
 
   @Get('me')
-  async getMe(@ExtractUser() user: User) {
+  async getMe(@ExtractUser() user: TokenUser) {
     return await this.userService.getUserById(user.id);
   }
 
@@ -56,7 +57,7 @@ export class UserController {
 
   @Delete(':id')
   async deleteUser(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number
   ) {
     if (!user.roles.includes('admin') && id != user.id) {

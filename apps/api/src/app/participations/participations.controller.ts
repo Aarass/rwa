@@ -11,26 +11,31 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { User } from '@rwa/entities';
-import { CreateParticipationDto, createParticipationSchema } from '@rwa/shared';
+import {
+  CreateParticipationDto,
+  createParticipationSchema,
+  TokenUser,
+} from '@rwa/shared';
 import { AppointmentsService } from '../appointments/appointments.service';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { UpsService } from '../ups/ups.service';
 import { ParticipationsService } from './participations.service';
+import { UserService } from '../user/user.service';
 
 @Controller('participations')
 export class ParticipationsController {
   constructor(
     private participationsService: ParticipationsService,
     private appointmentService: AppointmentsService,
-    private upsService: UpsService
+    private upsService: UpsService,
+    private userService: UserService
   ) {}
 
   @Post()
   async create(
-    @ExtractUser() user: User,
+    @ExtractUser() tokenUser: TokenUser,
     @Body(new ZodValidationPipe(createParticipationSchema))
     createParticipationDto: CreateParticipationDto
   ) {
@@ -46,9 +51,18 @@ export class ParticipationsController {
       throw new ForbiddenException(`Can't register for a canceled appointment`);
     }
 
-    // if (appointment.missingPlayers == appointment.participants.length) {
-    //   throw new ForbiddenException('Appointment is full');
-    // }
+    if (
+      appointment.missingPlayers ==
+      appointment.participants.filter((p) => p.approved).length
+    ) {
+      throw new ForbiddenException('Appointment is full');
+    }
+
+    const user = await this.userService.getUserById(tokenUser.id);
+
+    if (user == null) {
+      throw new InternalServerErrorException('Unexpected error');
+    }
 
     const userAge = Math.abs(
       new Date(
@@ -108,7 +122,7 @@ export class ParticipationsController {
   }
 
   @Get('user/me')
-  async findMy(@ExtractUser() user: User) {
+  async findMy(@ExtractUser() user: TokenUser) {
     return await this.participationsService.findMy(user.id);
   }
 
@@ -120,7 +134,7 @@ export class ParticipationsController {
 
   @Patch(':id/seen')
   async markSeen(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number
   ) {
     const participation = await this.participationsService.findOne(id);
@@ -138,7 +152,7 @@ export class ParticipationsController {
 
   @Patch(':id/reject')
   async reject(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number
   ) {
     const participation = await this.participationsService.findOne(id);
@@ -158,7 +172,7 @@ export class ParticipationsController {
 
   @Delete(':id')
   async remove(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number
   ) {
     const participation = await this.participationsService.findOne(id);
@@ -176,7 +190,7 @@ export class ParticipationsController {
 
   // @Delete('appointment/:appointmentId')
   // async removeByAppointmentId(
-  //   @ExtractUser() user: User,
+  //   @ExtractUser() user: TokenUser,
   //   @Param('appointmentId', ParseIntPipe) appointmentId: number
   // ) {
   //   const participation = await this.participationsService.findOneWithoutId(

@@ -21,6 +21,7 @@ import {
   findAppointmentsSchema,
   UpdateAppointmentDto,
   updateAppointmentSchema,
+  TokenUser,
 } from '@rwa/shared';
 import { User } from '@rwa/entities';
 import { Public } from '../auth/decorators/public.decorator';
@@ -35,7 +36,7 @@ export class AppointmentsController {
 
   @Post()
   async create(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Body(new ZodValidationPipe(createAppointmentSchema))
     createAppointmentDto: CreateAppointmentDto
   ) {
@@ -44,7 +45,7 @@ export class AppointmentsController {
 
   @Post(':id/cancel')
   @HttpCode(200)
-  async cancel(@ExtractUser() user: User, @Param('id') id: number) {
+  async cancel(@ExtractUser() user: TokenUser, @Param('id') id: number) {
     const appointment = await this.appointmentService.findOne(id);
 
     if (appointment == null) {
@@ -76,7 +77,7 @@ export class AppointmentsController {
 
   @Patch(':id')
   async update(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id') id: number,
     @Body(new ZodValidationPipe(updateAppointmentSchema))
     updateAppointmentDto: UpdateAppointmentDto

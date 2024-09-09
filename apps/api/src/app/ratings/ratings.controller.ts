@@ -13,6 +13,7 @@ import { CreateRatingDto } from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { User } from '@rwa/entities';
+import { TokenUser } from '@rwa/shared';
 
 @Controller('ratings')
 export class RatingsController {
@@ -21,7 +22,7 @@ export class RatingsController {
   @Get('user/:id')
   async getMyRating(
     @Param('id', ParseIntPipe) id: number,
-    @ExtractUser() user: User
+    @ExtractUser() user: TokenUser
   ) {
     return await this.ratingsService.findOne(id, user.id);
   }

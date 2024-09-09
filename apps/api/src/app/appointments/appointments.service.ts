@@ -35,9 +35,9 @@ export class AppointmentsService {
     });
 
     try {
-      const wid = await this.appointmentRepository.save(appointment);
+      await this.appointmentRepository.insert(appointment);
       return await this.appointmentRepository.findOne({
-        where: { id: wid.id },
+        where: { id: appointment.id },
         relations: ['sport', 'surface', 'location', 'organizer'],
       });
     } catch (err: any) {

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
-import { GalleriaModule, GalleriaResponsiveOptions } from 'primeng/galleria';
+import { GalleriaModule } from 'primeng/galleria';
+import { ConfigService } from '../../../global/services/config/config.service';
 import { ImageService } from '../../../image/services/image/image.service';
 
 type ImageData = {
@@ -18,41 +18,28 @@ type ImageData = {
   styleUrl: './images.component.scss',
 })
 export class ImagesComponent implements OnInit {
-  images: ImageData[] | null = null;
+  images: ImageData[] = [];
 
-  responsiveOptions: GalleriaResponsiveOptions[] = [
-    {
-      breakpoint: '1024px',
-      numVisible: 5,
-    },
-    {
-      breakpoint: '768px',
-      numVisible: 3,
-    },
-    {
-      breakpoint: '560px',
-      numVisible: 1,
-    },
-  ];
-
-  constructor(private store: Store, private imageService: ImageService) {}
+  constructor(
+    private configService: ConfigService,
+    private imageService: ImageService
+  ) {}
 
   ngOnInit(): void {
     this.imageService.getAllImages().subscribe((names) => {
       this.images = names.map((name) => ({
         name,
-        src: `http://localhost:3000/images/${name}`,
+        src: `${this.configService.getBackendBaseURL()}/images/${name}`,
       }));
     });
   }
 
   delete(item: ImageData) {
-    if (this.images === null) {
-      console.error('Imposible');
-      return;
-    }
-
     this.imageService.deleteImage(item.name).subscribe();
     this.images = this.images.filter((image) => image.name != item.name);
+  }
+
+  getNewIndex(index: number) {
+    return Math.max(index - 1, 0);
   }
 }

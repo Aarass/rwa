@@ -1,3 +1,4 @@
+import { TokenUser } from '@rwa/shared';
 import {
   Body,
   Controller,
@@ -84,7 +85,7 @@ export class AuthController {
 
   @Post('test')
   @HttpCode(200)
-  test(@ExtractUser() user: User) {
+  test(@ExtractUser() user: TokenUser) {
     return user;
   }
 }

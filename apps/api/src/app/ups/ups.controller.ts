@@ -22,13 +22,14 @@ import {
   UpdateUpsDto,
   updateUpsSchema,
 } from '@rwa/shared';
+import { TokenUser } from '@rwa/shared';
 
 @Controller('ups')
 export class UpsController {
   constructor(private upsService: UpsService) {}
 
   @Get('user/me')
-  getMySports(@ExtractUser() user: User) {
+  getMySports(@ExtractUser() user: TokenUser) {
     return this.upsService.getUserSports(user.id);
   }
 
@@ -40,7 +41,7 @@ export class UpsController {
 
   @Post('')
   async addSportToUser(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Body(new ZodValidationPipe(createUpsSchema))
     upsDto: CreateUpsDto
   ) {
@@ -49,7 +50,7 @@ export class UpsController {
 
   @Patch(':id')
   async updateSelfRating(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number,
     @Body(new ZodValidationPipe(updateUpsSchema))
     updateDto: UpdateUpsDto
@@ -59,7 +60,7 @@ export class UpsController {
 
   @Delete(':id')
   async removeSportFromUser(
-    @ExtractUser() user: User,
+    @ExtractUser() user: TokenUser,
     @Param('id', ParseIntPipe) id: number
   ) {
     const ups = await this.upsService.getUps(id);

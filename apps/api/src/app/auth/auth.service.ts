@@ -74,7 +74,8 @@ export class AuthService {
     let payload: RefreshTokenPayload;
     try {
       payload = this.jwtService.verify(refreshToken);
-    } catch (e) {
+    } catch (err) {
+      console.error(err);
       throw new ForbiddenException('Invalid token');
     }
 
@@ -88,6 +89,7 @@ export class AuthService {
     }
 
     if (user.refreshTokenHash == null) {
+      console.error(`User has no refresh token stored in db`);
       throw new ForbiddenException(`User has no refresh token stored in db`);
     }
 
@@ -98,6 +100,9 @@ export class AuthService {
 
     if (!tokenIsValid) {
       await this.revokeRefreshToken(user.id);
+      console.error(
+        `User attempted to use different refresh token than the one stored in db`
+      );
       throw new ForbiddenException(
         `User attempted to use different refresh token than the one stored in db`
       );
@@ -145,18 +150,16 @@ export class AuthService {
       );
       return access_token;
     } catch (err) {
-      console.log('Error while signing access token', err);
+      console.error('Error while signing access token', err);
       return '';
     }
   }
 
   private async createRefreshToken(userId: number): Promise<RefreshToken> {
-    const refresh_token = await this.jwtService.signAsync(
-      { id: userId },
-      {
-        expiresIn: '7d',
-      }
-    );
+    const payload: RefreshTokenPayload = { sub: userId };
+    const refresh_token = await this.jwtService.signAsync(payload, {
+      expiresIn: '7d',
+    });
 
     return refresh_token;
   }
