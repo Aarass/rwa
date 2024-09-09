@@ -5,6 +5,7 @@ import {
   createSurfaceSuccess,
   deleteSurfaceSuccess,
   loadAllSurfacesSuccess,
+  updateSurface,
 } from './surface.actions';
 
 const adapter = createEntityAdapter<SurfaceDto>();
@@ -23,6 +24,15 @@ export const surfaceFeature = createFeature({
     }),
     on(createSurfaceSuccess, (state, action) => {
       return adapter.addOne(action.data, state);
+    }),
+    on(updateSurface, (state, action) => {
+      return adapter.updateOne(
+        {
+          id: action.data.id,
+          changes: action.data.dto,
+        },
+        state
+      );
     }),
     on(deleteSurfaceSuccess, (state, action) => {
       return adapter.removeOne(action.id, state);

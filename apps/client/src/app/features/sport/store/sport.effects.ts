@@ -1,14 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {
-  catchError,
-  exhaustMap,
-  map,
-  of,
-  switchMap,
-  tap,
-  throwError,
-} from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { catchError, exhaustMap, map, throwError } from 'rxjs';
 import { SportService } from '../services/sport/sport.service';
 import {
   createSport,
@@ -17,9 +11,8 @@ import {
   deleteSportSuccess,
   loadAllSports,
   loadAllSportsSuccess,
+  updateSport,
 } from './sport.actions';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MessageService } from 'primeng/api';
 
 @Injectable()
 export class SportEffects {
@@ -45,21 +38,27 @@ export class SportEffects {
   createSport$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(createSport),
-      map((val) => {
-        console.log(val);
-        return val;
-      }),
       exhaustMap((action) => {
-        console.log('Effect: about to send sport post req');
         return this.sportService.createSport(action.data).pipe(
           map((data) => {
-            console.log(data);
             return createSportSuccess({ data });
           })
         );
       })
     );
   });
+
+  updateSport$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(updateSport),
+        exhaustMap((action) => {
+          return this.sportService.updateSport(action.data.id, action.data.dto);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   deleteSport$ = createEffect(() => {
     return this.actions$.pipe(

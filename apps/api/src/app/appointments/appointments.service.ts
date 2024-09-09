@@ -38,7 +38,7 @@ export class AppointmentsService {
       const wid = await this.appointmentRepository.save(appointment);
       return await this.appointmentRepository.findOne({
         where: { id: wid.id },
-        relations: ['sport', 'surface', 'location'],
+        relations: ['sport', 'surface', 'location', 'organizer'],
       });
     } catch (err: any) {
       if (err.code != undefined && err.code == 23503) {

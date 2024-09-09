@@ -1,6 +1,6 @@
 <div *ngIf="appointment$ | async as appointment">
   <p-accordion class="w-full" *ngIf="getApprovedUsers(appointment) as approved">
-    @if (approved.length == 0) {
+    @if (approved.length === 0) {
     <p class="text-right">No online participants</p>
     } @else {
     @for (participation of approved; track participation.id) {
@@ -31,7 +31,7 @@
             <p>{{ participation.user.location.name }} </p>
           </div>
         </div>
-        @if (viewerId && viewerId == appointment.organizerId) {
+        @if (viewerId && viewerId === appointment.organizerId) {
         <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger"
           (click)="reject(participation, appointment)" />
         }

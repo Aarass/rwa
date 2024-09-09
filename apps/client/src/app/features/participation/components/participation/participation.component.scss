@@ -1,45 +1,54 @@
-:host {
-  cursor: pointer;
-  // background-color: lightblue;
-  // border-radius: 10px;
-}
-
 .disabled {
   position: relative;
-  opacity: .5;
+  opacity: .7;
 
   // &::after {
-  //   content: 'Rejected';
-  //   color: white;
-  //   text-align: center; 
+  //   content: '';
   //   position: absolute;
+  //   z-index: 99;
   //   inset: 0;
+  //   border-radius: 12px;
 
-  //   background-color: rgba(0, 0, 0, 0.441);
+  //   background-color: rgba(0, 0, 0, .1);
   // }
 }
 
-.badge {
-  position: absolute;
-  top: 50%;
-  left: 20px;
-  transform: translate(-50%, -50%);
+.wrapper {
+  position: relative;
+  cursor: pointer;
 
-  color: white;
-}
+  padding: 1rem;
+  color: #334155;
+  width: 15rem;
 
-:host ::ng-deep {
-  .p-accordion-tab:not(.p-accordion-tab-active) {
-    .p-toggleable-content {
-      height: 0;
-      overflow: hidden;
-    }
+  p {
+    margin: 0 auto;
   }
 
-  .p-accordion-tab.p-accordion-tab-active {
-    .p-toggleable-content {
-      height: auto !important;
-      overflow: auto !important;
-    }
+  .header {
+    font-size: 2.5rem;
+    font-weight: 600;
+
+    background-color: lightgray;
+    background-color: gray;
+    color: transparent;
+    text-shadow: 2px 2px 3px rgba(255, 255, 255, 1);
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    background-clip: text;
+
+    margin-bottom: 1rem;
+  }
+
+  .time {
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+
+  .bell {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(-200%, -50%);
   }
 }

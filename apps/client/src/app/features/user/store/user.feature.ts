@@ -1,7 +1,13 @@
 import { createFeature, createReducer, on, Store } from '@ngrx/store';
 import { UserDto } from '@rwa/shared';
-import { loadMeSuccess, noUser, setImage } from './user.actions';
-import { filter, map, tap } from 'rxjs';
+import { filter, map } from 'rxjs';
+import { loadMeSuccess, setImage } from './user.actions';
+import {
+  loginFailed,
+  logout,
+  refreshFailed,
+  restoreSessionFailed,
+} from '../../auth/store/auth.actions';
 
 export const userFeature = createFeature({
   name: 'user',
@@ -16,7 +22,7 @@ export const userFeature = createFeature({
         isSet: true,
       };
     }),
-    on(noUser, (state, action) => {
+    on(loginFailed, refreshFailed, restoreSessionFailed, logout, () => {
       return {
         me: null,
         isSet: true,

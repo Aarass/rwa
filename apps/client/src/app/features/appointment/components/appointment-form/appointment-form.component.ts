@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DebugElement, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -26,15 +26,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { SliderModule } from 'primeng/slider';
 import { TooltipModule } from 'primeng/tooltip';
 import { EMPTY, exhaustMap, Subject, take, takeUntil } from 'rxjs';
-import { LocationService } from '../../../location/services/location/location.service';
-import { sportFeature } from '../../../sport/store/sport.feature';
-import { surfaceFeature } from '../../../surface/store/surface.feature';
-import {
-  createAppointment,
-  updateAppointment,
-} from '../../store/appointment.actions';
-import { appointmentFeature } from '../../store/appointment.feature';
-import { disableDebugTools } from '@angular/platform-browser';
 import {
   dateDateFromPostgresString,
   roundTime,
@@ -43,6 +34,14 @@ import {
   toPostgresIntervalString,
   toPostgresTimeString,
 } from '../../../global/functions/date-utility';
+import { LocationService } from '../../../location/services/location/location.service';
+import { sportFeature } from '../../../sport/store/sport.feature';
+import { surfaceFeature } from '../../../surface/store/surface.feature';
+import {
+  createAppointment,
+  updateAppointment,
+} from '../../store/appointment.actions';
+import { appointmentFeature } from '../../store/appointment.feature';
 
 @Component({
   selector: 'app-appointment-form',

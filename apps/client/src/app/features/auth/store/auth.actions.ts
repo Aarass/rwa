@@ -5,7 +5,6 @@ export const register = createAction(
   '[Auth] Register',
   props<RegisterUserDto>()
 );
-
 export const registerSuccess = createAction(
   '[Auth] Register Success',
   props<RegisterUserDto>()
@@ -13,15 +12,22 @@ export const registerSuccess = createAction(
 export const registerFailed = createAction('[Auth] Register Failed');
 
 export const login = createAction('[Auth] Login', props<LoginUserDto>());
-
 export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ accessToken: AccessToken }>()
 );
 export const loginFailed = createAction('[Auth] Login Failed');
 
-export const refresh = createAction('[Auth] Refresh');
+export const restoreSession = createAction('[Auth] Restore Session');
+export const restoreSessionSuccess = createAction(
+  '[Auth] Restore Session Success',
+  props<{ accessToken: AccessToken }>()
+);
+export const restoreSessionFailed = createAction(
+  '[Auth] Restore Session Failed'
+);
 
+export const refresh = createAction('[Auth] Refresh');
 export const refreshSuccess = createAction(
   '[Auth] Refresh Success',
   props<{ accessToken: AccessToken }>()

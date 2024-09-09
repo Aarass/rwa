@@ -1,7 +1,7 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
+import { AppointmentsOrdering } from '@rwa/shared';
 import { UserConfigurableFilters } from '../interfaces/filters';
 import { filtersChanged } from './filter.actions';
-import { AppointmentsOrdering } from '@rwa/shared';
 
 const initialState: {
   filters: UserConfigurableFilters;

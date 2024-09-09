@@ -1,7 +1,6 @@
 import { createEntityAdapter } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { imageUploaded } from './image.actions';
-import { act } from '@ngrx/effects';
 
 const adapter = createEntityAdapter<{ name: string }>();
 

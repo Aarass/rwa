@@ -1,15 +1,10 @@
-<div class="relative">
-  <div class="p-card px-3 overflow-hidden"
-    [ngClass]="{'disabled': participation.approved == false || participation.appointment.canceled}">
-    <div class="flex relative gap-4" (click)="openAppointment()">
-      <div class="flex-center w-10rem bg-primary pl-4 -ml-4 flex-shrink-0">
-        <h3 class="m-0">{{ participation.appointment.sport.name }}</h3>
-      </div>
-      <p>{{ getDate() }}</p>
-      <p>{{ getTime() }}</p>
-    </div>
-  </div>
-  <div class="badge" *ngIf="!participation.userHasSeenChanges">
-    <i class="pi pi-bell"></i>
+<div class="p-card wrapper"
+  [ngClass]="{'disabled': participation.approved === false || participation.appointment.canceled}"
+  (click)="openAppointment()">
+  <p class="header">{{ participation.appointment.sport.name }}</p>
+  <p class="date">{{ getDate() }}</p>
+  <p class="time">{{ getTime() }}</p>
+  <div class="bell">
+    <i class="pi pi-bell" *ngIf="!participation.userHasSeenChanges"></i>
   </div>
 </div>

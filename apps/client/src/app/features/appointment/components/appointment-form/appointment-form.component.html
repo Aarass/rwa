@@ -16,7 +16,7 @@
     <div class="flex justify-content-center">
       <p-selectButton [formControl]="formGroup.controls.environment"
         [options]=" [{label: 'Outdoor' , value: 0}, {label: 'Indoor' , value: 1}]" optionLabel="label"
-        optionValue="value" required />
+        optionValue="value" required unselectable="true" />
     </div>
 
     <p-floatLabel>
@@ -42,8 +42,8 @@
         inputStyleClass="w-6" class="w-6" [formControl]="formGroup.controls.durationHours" required
         [suffix]="formGroup.controls.durationHours.value! > 1 ? ' hours' : ' hour'" />
       <label for="duration-hours">Duration</label>
-      <p-inputNumber mode="decimal" [showButtons]="true" inputId="duration-minutes" [min]="0" styleClass="w-full"
-        inputStyleClass="w-full" class="w-6" [formControl]="formGroup.controls.durationMinutes"
+      <p-inputNumber mode="decimal" [showButtons]="true" inputId="duration-minutes" [min]="0" step="10"
+        styleClass="w-full" inputStyleClass="w-full" class="w-6" [formControl]="formGroup.controls.durationMinutes"
         [suffix]="formGroup.controls.durationMinutes.value! > 1 ? ' mins' : ' min'" required />
     </p-floatLabel>
 
@@ -92,8 +92,9 @@
     </p-floatLabel>
 
     <p-floatLabel class="w-full">
-      <p-inputNumber mode="currency" inputId="price-per-player" currency="EUR" locale="de-DE" styleClass="w-full"
-        inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.pricePerPlayer" required />
+      <p-inputNumber mode="currency" [showButtons]="true" inputId="price-per-player" currency="EUR" locale="de-DE"
+        styleClass="w-full" inputStyleClass="w-full" class="w-full" [formControl]="formGroup.controls.pricePerPlayer"
+        required />
       <label for="price-per-player">Price per player</label>
     </p-floatLabel>
 
@@ -103,5 +104,5 @@
       <label for="info">Additional Informations (optional)</label>
     </p-floatLabel>
   </div>
-  <p-button [label]="id == null ? 'Create' : 'Update'" (onClick)="submit()" />
+  <p-button [label]="id === null ? 'Create' : 'Update'" (onClick)="submit()" />
 </div>

@@ -5,10 +5,10 @@
         <div *ngIf="image$ | async as imageSrc" class="w-full h-full">
           <img class="w-full h-full object-center " [src]="imageSrc" alt="Users profile image">
         </div>
-        @if(info.user.id == viewerId) {
+        @if(info.user.id === viewerId) {
         <div class="absolute top-0 right-0 flex align-items-start justify-content-end gap-2 p-2 bg-white"
           style="border-bottom-left-radius: 10px;">
-          @if(info.user.imageName == null) {
+          @if(info.user.imageName === null) {
           <input id="image-upload" class="hidden" type="file" (change)="onFileChange($event)" accept="image/*">
           <label for="image-upload" class="upload">
             <i class="pi pi-upload cursor-pointer"></i>
@@ -50,10 +50,10 @@
       <p class="m-0 -mt-2 text-sm text-300">{{ ratingStats.count }} ratings</p>
       }
 
-      @if(info.user.id != viewerId) {
+      @if(info.user.id !== viewerId) {
       @if (myRating) {
       <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event)" (onCancel)="ratingRemoved()"
-        [cancel]="myRating.value != 0" />
+        [cancel]="myRating.value !== 0" />
       }
       }
     </div>

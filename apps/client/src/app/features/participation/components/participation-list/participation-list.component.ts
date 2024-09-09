@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ParticipationDto } from '../../../../../../../../shared/src';
+import { ParticipationDto } from '@rwa/shared';
 import { participationFeature } from '../../store/participation.feature';
 import { ParticipationComponent } from '../participation/participation.component';
 

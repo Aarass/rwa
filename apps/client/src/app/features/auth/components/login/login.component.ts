@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -20,9 +14,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { MessagesModule } from 'primeng/messages';
 import { PasswordModule } from 'primeng/password';
 import { ToastModule } from 'primeng/toast';
-import { filter, Subject, takeUntil, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { login } from '../../store/auth.actions';
-import { AuthStatus } from '../../store/auth.state';
 import { authFeature } from '../../store/auth.feature';
 
 @Component({
@@ -41,43 +34,18 @@ import { authFeature } from '../../store/auth.feature';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent {
   @Output() close = new EventEmitter<void>();
+
+  loading$: Observable<boolean>;
 
   formGroup = new FormGroup({
     usernameControl: new FormControl<string>('', [Validators.required]),
     passwordControl: new FormControl<string>('', [Validators.required]),
   });
 
-  death = new Subject<void>();
-  loading: boolean = false;
-
-  constructor(private store: Store, private messageService: MessageService) {}
-
-  ngOnInit(): void {
-    this.store
-      .select(authFeature.selectIsCurrentlyLoggingIn)
-      .pipe(takeUntil(this.death))
-      .subscribe((val) => {
-        this.loading = val;
-      });
-
-    this.store
-      .select(authFeature.selectStatus)
-      .pipe(
-        takeUntil(this.death),
-        filter((val) => {
-          return val == AuthStatus.LoggedIn;
-        })
-      )
-      .subscribe((val) => {
-        this.close.emit();
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.death.next();
-    this.death.complete();
+  constructor(private store: Store, private messageService: MessageService) {
+    this.loading$ = this.store.select(authFeature.selectIsCurrentlyLoggingIn);
   }
 
   submit() {
@@ -94,9 +62,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancel() {
+  onClose() {
     this.messageService.clear('login');
-    this.loading = false;
     this.close.emit();
   }
 }

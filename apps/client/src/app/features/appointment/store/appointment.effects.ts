@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
@@ -9,13 +10,16 @@ import {
   combineLatest,
   exhaustMap,
   map,
-  switchMap,
   take,
-  tap,
   throwError,
 } from 'rxjs';
-import { selectPayload } from '../../auth/store/auth.feature';
 import { filtersFeature } from '../../filters/store/filters.feature';
+import {
+  createUpsSuccess,
+  deleteUps,
+  updateUps,
+} from '../../ups/store/ups.actions';
+import { selectUser } from '../../user/store/user.feature';
 import { AppointmentService } from '../services/appointment/appointment.service';
 import {
   addAppointment,
@@ -31,13 +35,6 @@ import {
   updateAppointmentSuccess,
 } from './appointment.actions';
 import { appointmentFeature } from './appointment.feature';
-import {
-  createUpsSuccess,
-  deleteUps,
-  updateUps,
-} from '../../ups/store/ups.actions';
-import { selectUser } from '../../user/store/user.feature';
-import { Router } from '@angular/router';
 
 @Injectable()
 export class AppointmentEffects {

@@ -37,7 +37,7 @@ export class AppointmentListComponent implements OnDestroy {
 
   appointments$: Observable<AppointmentDto[]>;
 
-  loading: boolean = false;
+  loading = false;
 
   constructor(private store: Store) {
     this.store

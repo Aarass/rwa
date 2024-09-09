@@ -1,4 +1,4 @@
-import { EventEmitter, Injectable, Output, Type } from '@angular/core';
+import { EventEmitter, Injectable, Type } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { take } from 'rxjs';
 
@@ -50,7 +50,3 @@ export class MyDialogService {
     this.ref.close();
   }
 }
-
-export type Closable = {
-  close: EventEmitter<any>;
-};

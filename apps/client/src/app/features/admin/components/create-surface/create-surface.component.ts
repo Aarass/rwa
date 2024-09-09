@@ -1,19 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { ButtonModule } from 'primeng/button';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { SkeletonModule } from 'primeng/skeleton';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
-import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { surfaceFeature } from '../../../surface/store/surface.feature';
-import { SurfaceDto } from '@rwa/shared';
 import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { SurfaceDto } from '@rwa/shared';
+import { ButtonModule } from 'primeng/button';
+import { Inplace, InplaceModule } from 'primeng/inplace';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
+import { SkeletonModule } from 'primeng/skeleton';
+import { Subject, takeUntil } from 'rxjs';
 import {
   createSurface,
   deleteSurface,
+  updateSurface,
 } from '../../../surface/store/surface.actions';
+import { surfaceFeature } from '../../../surface/store/surface.feature';
 
 @Component({
   selector: 'app-create-surface',
@@ -26,6 +28,7 @@ import {
     ButtonModule,
     SkeletonModule,
     FormsModule,
+    InplaceModule,
   ],
   templateUrl: './create-surface.component.html',
   styleUrl: './create-surface.component.scss',
@@ -35,7 +38,7 @@ export class CreateSurfaceComponent implements OnInit, OnDestroy {
 
   surfaces: SurfaceDto[] | null = null;
 
-  newSurfaceName: string = '';
+  newSurfaceName = '';
 
   constructor(private store: Store) {}
 
@@ -54,6 +57,21 @@ export class CreateSurfaceComponent implements OnInit, OnDestroy {
   createSurface() {
     this.store.dispatch(createSurface({ data: { name: this.newSurfaceName } }));
     this.newSurfaceName = '';
+  }
+
+  editSurface(inplace: Inplace, surface: SurfaceDto, input: HTMLInputElement) {
+    if (input.value.length) {
+      this.store.dispatch(
+        updateSurface({
+          data: {
+            id: surface.id,
+            dto: { name: input.value },
+          },
+        })
+      );
+    }
+
+    inplace.deactivate();
   }
 
   deleteSurface(id: number) {

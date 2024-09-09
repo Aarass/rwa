@@ -7,16 +7,14 @@ import {
   ParseIntPipe,
   Post,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto, createUserSchema } from '@rwa/shared';
-import { ExtractUser } from '../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { ZodValidationPipe } from '../global/validation';
-import { UserService } from './user.service';
 import { User } from '@rwa/entities';
+import { CreateUserDto, createUserSchema } from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { ExtractUser } from '../auth/decorators/user.decorator';
+import { ZodValidationPipe } from '../global/validation';
+import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {

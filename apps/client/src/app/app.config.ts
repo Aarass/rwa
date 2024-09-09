@@ -9,37 +9,37 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideState, provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DialogService } from 'primeng/dynamicdialog';
 import { appRoutes } from './app.routes';
+import { AppointmentEffects } from './features/appointment/store/appointment.effects';
+import { appointmentFeature } from './features/appointment/store/appointment.feature';
 import { AuthEffects } from './features/auth/store/auth.effects';
 import { authFeature } from './features/auth/store/auth.feature';
-import { ConfigService } from './features/global/services/config/config.service';
-import { MyHttpInterceptor } from './http.interceptor';
+import { FilterEffects } from './features/filters/store/filter.effects';
+import { filtersFeature } from './features/filters/store/filters.feature';
 import { GlobalEffects } from './features/global/effects/global.effects';
-import { sportFeature } from './features/sport/store/sport.feature';
-import { SportEffects } from './features/sport/store/sport.effects';
-import { SportService } from './features/sport/services/sport/sport.service';
-import { UpsService } from './features/ups/services/ups/ups.service';
-import { upsFeature } from './features/ups/store/ups.feature';
-import { UpsEffects } from './features/ups/store/ups.effects';
+import { ConfigService } from './features/global/services/config/config.service';
 import { MyDialogService } from './features/global/services/my-dialog/my-dialog.service';
-import { surfaceFeature } from './features/surface/store/surface.feature';
-import { SurfaceEffects } from './features/surface/store/surface.effects';
 import { ImageService } from './features/image/services/image/image.service';
 import { LocationService } from './features/location/services/location/location.service';
-import { appointmentFeature } from './features/appointment/store/appointment.feature';
-import { AppointmentEffects } from './features/appointment/store/appointment.effects';
-import { filtersFeature } from './features/filters/store/filters.feature';
 import { ParticipationEffects } from './features/participation/store/participation.effects';
 import { participationFeature } from './features/participation/store/participation.feature';
-import { FilterEffects } from './features/filters/store/filter.effects';
-import { userFeature } from './features/user/store/user.feature';
+import { SportService } from './features/sport/services/sport/sport.service';
+import { SportEffects } from './features/sport/store/sport.effects';
+import { sportFeature } from './features/sport/store/sport.feature';
+import { SurfaceEffects } from './features/surface/store/surface.effects';
+import { surfaceFeature } from './features/surface/store/surface.feature';
+import { UpsService } from './features/ups/services/ups/ups.service';
+import { UpsEffects } from './features/ups/store/ups.effects';
+import { upsFeature } from './features/ups/store/ups.feature';
 import { UserEffects } from './features/user/store/user.effects';
+import { userFeature } from './features/user/store/user.feature';
+import { MyHttpInterceptor } from './http.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [

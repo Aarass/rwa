@@ -1,20 +1,21 @@
 import { inject } from '@angular/core';
 import { Route } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable, tap } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ImagesComponent } from './features/admin/components/images/images.component';
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
 import { AppointmentListComponent } from './features/appointment/components/appointment-list/appointment-list.component';
-import { ParticipationListComponent } from './features/participation/components/participation-list/participation-list.component';
+import { SingleAppointmentComponent } from './features/appointment/components/single-appointment/single-appointment.component';
 import { RegisterComponent } from './features/auth/components/register/register.component';
 import { authFeature } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
+import { isNotNull } from './features/global/functions/rxjs-filter';
 import { HomeComponent } from './features/home/components/home/home.component';
+import { ParticipationListComponent } from './features/participation/components/participation-list/participation-list.component';
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
 import { UpsListComponent } from './features/ups/components/ups-list/ups-list.component';
 import { UserInfoComponent } from './features/user/components/user-info/user-info.component';
-import { SingleAppointmentComponent } from './features/appointment/components/single-appointment/single-appointment.component';
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -72,7 +73,7 @@ export const appRoutes: Route[] = [
 function ifIsLoggedIn(): Observable<boolean> {
   const store = inject(Store);
   return store.select(authFeature.selectStatus).pipe(
-    filter((val) => val != null),
+    filter(isNotNull),
     map((val) => val == AuthStatus.LoggedIn)
   );
 }

@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { CreateSportDto, SportDto } from '@rwa/shared';
+import { CreateSportDto, SportDto, UpdateSportDto } from '@rwa/shared';
 
 export const loadAllSports = createAction('[Sport] Load All Sports');
 
@@ -15,6 +15,16 @@ export const createSport = createAction(
 export const createSportSuccess = createAction(
   '[Sport] Create Sport Success',
   props<{ data: SportDto }>()
+);
+
+export const updateSport = createAction(
+  '[Sport] Update Sport',
+  props<{
+    data: {
+      id: number;
+      dto: UpdateSportDto;
+    };
+  }>()
 );
 
 export const deleteSport = createAction(

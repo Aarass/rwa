@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ImageDto } from '@rwa/shared';
 
 @Injectable({
   providedIn: 'root',

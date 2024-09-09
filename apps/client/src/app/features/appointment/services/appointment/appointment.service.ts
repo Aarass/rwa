@@ -9,10 +9,8 @@ import {
   UpdateAppointmentDto,
   UserDto,
 } from '@rwa/shared';
-import { authFeature } from '../../../auth/store/auth.feature';
-import { exhaustMap, filter, map, Observable, of, take } from 'rxjs';
-import { PaginationInfo } from '../../store/appointment.feature';
 import { UserConfigurableFilters } from '../../../filters/interfaces/filters';
+import { PaginationInfo } from '../../store/appointment.feature';
 
 @Injectable({
   providedIn: 'root',

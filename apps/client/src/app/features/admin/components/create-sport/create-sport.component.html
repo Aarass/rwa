@@ -1,21 +1,13 @@
 <div class="flex flex-column justify-content-center align-items-center h-full">
   <div class="flex-grow-1 overflow-auto">
     <div class="block h-full overflow-hidden flex flex-column relative">
-      @if (count != null && count == 0) {
+      @if (count !== null && count === 0) {
       <p class="flex-grow-0 text-center">Here will be shown sports</p>
       }
       <div class="p-4 w-full flex justify-content-center flex-wrap gap-4 nice-scrollbar overflow-auto">
-        @if (count != null) {
+        @if (count !== null) {
         @for (sport of sports; track sport.id) {
-        <p-card>
-          <div class="sport sport-card-dim">
-            <div class="flex align-items-center">
-              <img [src]="sport.iconUrl" alt="sport image">
-              <p class="ml-4">{{ sport.name }}</p>
-            </div>
-            <p-button icon="pi pi-trash" severity="danger" (onClick)="deleteSport(sport.id)" />
-          </div>
-        </p-card>
+        <app-sport [sport]="sport"></app-sport>
         }
         }
       </div>
@@ -24,10 +16,10 @@
   <div class="flex-grow-0 mb-4">
     <p-card class="create-sport-card">
       <div class="create-sport-container">
-        @if (image == null) {
+        @if (image === null) {
         <div class="img-wrapper">
           <label for="image-upload" class="upload"></label>
-          <input id="image-upload" class="hidden" type="file" (change)="onChange($event)" accept="image/*">
+          <input id="image-upload" class="hidden" type="file" (change)="imageSelected($event)" accept="image/*">
         </div>
         } @else {
         <div class="img-wrapper">

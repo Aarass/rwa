@@ -1,27 +1,90 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { DialogService } from 'primeng/dynamicdialog';
+import { filter, map, merge, switchMap, tap } from 'rxjs';
+import { reloadAppointments } from '../../appointment/store/appointment.actions';
+import { LoginComponent } from '../../auth/components/login/login.component';
 import {
-  loginFailed,
   loginSuccess,
   logout,
-  refreshFailed,
-  refreshSuccess,
+  restoreSessionSuccess,
 } from '../../auth/store/auth.actions';
+import { authFeature } from '../../auth/store/auth.feature';
+import { AuthStatus } from '../../auth/store/auth.state';
 import { loadMyParticipations } from '../../participation/store/participation.actions';
-import { reloadAppointments } from '../../appointment/store/appointment.actions';
-import { loadMe, noUser } from '../../user/store/user.actions';
-import { Store } from '@ngrx/store';
-import { authFeature, selectPayload } from '../../auth/store/auth.feature';
+import { loadMyUpses } from '../../ups/store/ups.actions';
+import { loadMe, loadMeSuccess } from '../../user/store/user.actions';
+import { openSignIn } from '../actions/global.actions';
 
 @Injectable()
 export class GlobalEffects {
   constructor(
+    private store: Store,
     private actions$: Actions,
     private router: Router,
-    private store: Store
+    private dialogService: DialogService
   ) {}
+  openSignIn$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(openSignIn),
+        switchMap(() => {
+          const dialogRef = this.dialogService.open(LoginComponent, {
+            header: 'Sign in',
+            modal: true,
+            draggable: false,
+            resizable: false,
+            dismissableMask: true,
+          });
+
+          const innerClose$ = dialogRef.onChildComponentLoaded.pipe(
+            switchMap((val) => val.close)
+          );
+
+          const autoClose$ = this.store
+            .select(authFeature.selectStatus)
+            .pipe(filter((val) => val == AuthStatus.LoggedIn));
+
+          return merge(innerClose$, autoClose$).pipe(
+            tap(() => {
+              dialogRef.close();
+            })
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  loadMe$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loginSuccess, restoreSessionSuccess),
+      map(() => loadMe())
+    );
+  });
+
+  loadAppointments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loadMeSuccess),
+      map(() => reloadAppointments())
+    );
+  });
+
+  loadMyParticipations$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loginSuccess, restoreSessionSuccess),
+      map(() => loadMyParticipations())
+    );
+  });
+
+  loadMyUpses$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(loginSuccess, restoreSessionSuccess),
+      map(() => loadMyUpses())
+    );
+  });
 
   logout$ = createEffect(
     () => {
@@ -34,41 +97,4 @@ export class GlobalEffects {
     },
     { dispatch: false }
   );
-
-  nullUser$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loginFailed, refreshFailed, logout),
-      tap(console.log),
-      map(() => noUser())
-    );
-  });
-
-  loadAppointments$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loginSuccess, refreshSuccess),
-      map(() => reloadAppointments())
-    );
-  });
-
-  loadMyParticipations$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loginSuccess, refreshSuccess),
-      map(() => loadMyParticipations())
-    );
-  });
-
-  loadMe$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(loginSuccess, refreshSuccess),
-      switchMap(() => {
-        return this.store.select(authFeature.selectDecodedPayload).pipe(
-          filter((payload) => payload != null),
-          map((val) => val!),
-          map((payload) => {
-            return loadMe({ id: payload.user.id });
-          })
-        );
-      })
-    );
-  });
 }

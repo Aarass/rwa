@@ -27,7 +27,7 @@ export class ParticipationService {
     );
   }
 
-  markSeen(participationId: number): any {
+  markSeen(participationId: number) {
     return this.http.patch(
       `http://localhost:3000/participations/${participationId}/seen`,
       {}

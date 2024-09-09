@@ -1,65 +1,46 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { LetDirective } from '@ngrx/component';
 import { Store } from '@ngrx/store';
 import { PrimeNGConfig } from 'primeng/api';
-import { AvatarGroupModule } from 'primeng/avatargroup';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import {
-  DialogService,
-  DynamicDialogModule,
-  DynamicDialogRef,
-} from 'primeng/dynamicdialog';
-import { InputTextModule } from 'primeng/inputtext';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
 import { SidebarModule } from 'primeng/sidebar';
 import { ToastModule } from 'primeng/toast';
-import {
-  filter,
-  firstValueFrom,
-  Observable,
-  Subject,
-  take,
-  takeUntil,
-} from 'rxjs';
+import { Observable } from 'rxjs';
 import { ParticipantsComponent } from './features/appointment/components/participants/participants.component';
-import {
-  loadAppointments,
-  reloadAppointments,
-} from './features/appointment/store/appointment.actions';
 import { LoginComponent } from './features/auth/components/login/login.component';
-import { refresh } from './features/auth/store/auth.actions';
-import { authFeature, selectPayload } from './features/auth/store/auth.feature';
+import { restoreSession } from './features/auth/store/auth.actions';
+import { authFeature } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
+import { openSignIn } from './features/global/actions/global.actions';
 import { ParticipationsSidebarService } from './features/participation/services/participations-sidebar/participations-sidebar.service';
+import { participationFeature } from './features/participation/store/participation.feature';
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
-import { SidebarComponent } from './features/sidebar/components/sidebar/sidebar.component';
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
-import { loadMyUpses } from './features/ups/store/ups.actions';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { participationFeature } from './features/participation/store/participation.feature';
 
 @Component({
   standalone: true,
   imports: [
-    AvatarGroupModule,
     SidebarModule,
     ProfileSummaryComponent,
+    LetDirective,
     RouterModule,
     MenubarModule,
     BadgeModule,
-    InputTextModule,
     RippleModule,
     CommonModule,
     ButtonModule,
     DynamicDialogModule,
     LoginComponent,
     ToastModule,
-    SidebarComponent,
     CardModule,
     ParticipantsComponent,
     ConfirmDialogModule,
@@ -68,26 +49,18 @@ import { participationFeature } from './features/participation/store/participati
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit, OnDestroy {
-  death = new Subject<void>();
-
-  authStatus: AuthStatus | null = null;
-  isAdmin: boolean = false;
-  singInDialogRef: DynamicDialogRef<LoginComponent> | null = null;
-  participationsSidebarVisible: boolean = false;
+export class AppComponent implements OnInit {
+  isAdmin$: Observable<boolean>;
+  authStatus$: Observable<AuthStatus | null>;
   unseenChanges$: Observable<number>;
 
   constructor(
-    private primengConfig: PrimeNGConfig,
-    private router: Router,
     private store: Store,
-    private dialogService: DialogService,
+    private primengConfig: PrimeNGConfig,
     public participationSidebarService: ParticipationsSidebarService
   ) {
-    participationSidebarService.visible$.subscribe(
-      (val) => (this.participationsSidebarVisible = val)
-    );
-
+    this.isAdmin$ = this.store.select(authFeature.selectIsAdmin);
+    this.authStatus$ = this.store.select(authFeature.selectStatus);
     this.unseenChanges$ = this.store.select(
       participationFeature.selectChangesCount
     );
@@ -96,75 +69,12 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.primengConfig.ripple = true;
 
-    this.store
-      .select(authFeature.selectStatus)
-      .pipe(takeUntil(this.death))
-      .subscribe((val) => {
-        this.authStatus = val;
-        if (val == AuthStatus.LoggedIn) {
-          this.closeSignInDialog();
-          this.store.dispatch(loadMyUpses());
-        }
-      });
-
-    this.store
-      .select(authFeature.selectDecodedPayload)
-      .pipe(
-        takeUntil(this.death),
-        filter((val) => val != null)
-      )
-      .subscribe((payload) => {
-        this.isAdmin = payload!.user.roles.includes('admin');
-      });
-
-    this.store.dispatch(refresh());
+    this.store.dispatch(restoreSession());
     this.store.dispatch(loadAllSports());
     this.store.dispatch(loadAllSurfaces());
-    this.store.dispatch(loadAppointments());
-  }
-
-  ngOnDestroy(): void {
-    this.death.next();
-    this.death.complete();
   }
 
   async showSignInDialog() {
-    this.singInDialogRef = this.dialogService.open(LoginComponent, {
-      header: 'Sign in',
-      modal: true,
-      draggable: false,
-      resizable: false,
-      dismissableMask: true,
-    });
-
-    (await firstValueFrom(this.singInDialogRef.onChildComponentLoaded)).close
-      .pipe(take(1))
-      .subscribe(() => {
-        this.closeSignInDialog();
-      });
-  }
-
-  closeSignInDialog() {
-    if (this.singInDialogRef != null) {
-      this.singInDialogRef.close();
-    } else {
-      console.info('Trying to close non existing dialog');
-    }
-  }
-
-  goToSingUpPage() {
-    this.router.navigate(['/signup']);
-  }
-
-  showMyAppointments() {
-    selectPayload(this.store)
-      .pipe(take(1))
-      .subscribe((payload) => {
-        if (payload == null) {
-          console.error('payload null');
-          return;
-        }
-        this.router.navigateByUrl(`appointments?userId=${payload.user.id}`);
-      });
+    this.store.dispatch(openSignIn());
   }
 }

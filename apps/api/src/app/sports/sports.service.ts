@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSportDto } from '@rwa/shared';
+import { CreateSportDto, UpdateSportDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
 import { Sport } from '@rwa/entities';
 
@@ -15,7 +15,11 @@ export class SportsService {
   }
 
   async findAll() {
-    return await this.sportRepository.find();
+    return await this.sportRepository.find({
+      order: {
+        id: 'asc',
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -27,12 +31,14 @@ export class SportsService {
       return await this.sportRepository.delete({ id });
     } catch (err: any) {
       if (err.code == 23503) {
-        throw new ForbiddenException(
-          'This sport is already used in some appointment'
-        );
+        throw new ForbiddenException('This sport is already in use');
       } else {
         throw err;
       }
     }
+  }
+
+  async update(id: number, updateSportDto: UpdateSportDto) {
+    return await this.sportRepository.update(id, updateSportDto);
   }
 }

@@ -1,6 +1,7 @@
 import {
   HttpErrorResponse,
   HttpEvent,
+  HttpEventType,
   HttpHandler,
   HttpHeaders,
   HttpInterceptor,
@@ -11,37 +12,42 @@ import { Store } from '@ngrx/store';
 import {
   catchError,
   EMPTY,
-  exhaustMap,
+  filter,
   Observable,
   Subject,
+  switchMap,
   take,
   takeUntil,
-  takeWhile,
   tap,
   throwError,
 } from 'rxjs';
 import { refresh } from './features/auth/store/auth.actions';
-import { ConfigService } from './features/global/services/config/config.service';
 import { authFeature } from './features/auth/store/auth.feature';
+import { ConfigService } from './features/global/services/config/config.service';
+
 @Injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
   constructor(private store: Store, private configService: ConfigService) {}
   intercept(
-    request: HttpRequest<any>,
+    request: HttpRequest<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
     handler: HttpHandler
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): Observable<HttpEvent<any>> {
     if (!request.url.startsWith(this.configService.getBackendBaseURL())) {
       return handler.handle(request);
     }
 
-    let finished = new Subject<void>();
+    const finished = new Subject<void>();
 
     return this.store
       .select(authFeature.selectAccessTokenWithDecodedPayload)
       .pipe(
+        // tap((val) => {
+        //   console.log(request.url, val);
+        // }),
         takeUntil(finished),
         take(2),
-        exhaustMap((data) => {
+        switchMap((data) => {
           const { accessToken, payload } = data;
           return handler
             .handle(
@@ -57,7 +63,6 @@ export class MyHttpInterceptor implements HttpInterceptor {
               })
             )
             .pipe(
-              tap(() => finished.next()),
               catchError((err: HttpErrorResponse) => {
                 if (err.status == 401) {
                   if (payload != null && checkIfJwtExpired(payload.exp)) {
@@ -66,7 +71,9 @@ export class MyHttpInterceptor implements HttpInterceptor {
                   }
                 }
                 return throwError(() => err);
-              })
+              }),
+              filter((val) => val.type == HttpEventType.Response),
+              tap(() => finished.next())
             );
         })
       );

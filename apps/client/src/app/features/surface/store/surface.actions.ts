@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { CreateSurfaceDto, SurfaceDto } from '@rwa/shared';
+import { CreateSurfaceDto, SurfaceDto, UpdateSurfaceDto } from '@rwa/shared';
 
 export const loadAllSurfaces = createAction('[Surface] Load All Surfaces');
 export const loadAllSurfacesSuccess = createAction(
@@ -14,6 +14,16 @@ export const createSurface = createAction(
 export const createSurfaceSuccess = createAction(
   '[Surface] Create Surface Success',
   props<{ data: SurfaceDto }>()
+);
+
+export const updateSurface = createAction(
+  '[Surface] Update Surface',
+  props<{
+    data: {
+      id: number;
+      dto: UpdateSurfaceDto;
+    };
+  }>()
 );
 
 export const deleteSurface = createAction(

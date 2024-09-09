@@ -1,5 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { MessageService } from 'primeng/api';
+import { catchError, EMPTY, exhaustMap, map, of, throwError } from 'rxjs';
+import { ParticipationService } from '../services/participation/participation.service';
+import { ParticipationsSidebarService } from '../services/participations-sidebar/participations-sidebar.service';
 import {
   joinAppointment,
   joinAppointmentFail,
@@ -11,11 +16,6 @@ import {
   rejectParticipation,
   showParticipants,
 } from './participation.actions';
-import { catchError, EMPTY, exhaustMap, map, of, throwError } from 'rxjs';
-import { ParticipationService } from '../services/participation/participation.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MessageService } from 'primeng/api';
-import { ParticipationsSidebarService } from '../services/participations-sidebar/participations-sidebar.service';
 
 @Injectable()
 export class ParticipationEffects {
@@ -29,7 +29,7 @@ export class ParticipationEffects {
   load$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadMyParticipations),
-      exhaustMap((action) => {
+      exhaustMap(() => {
         return this.participationService.getMyParticipations().pipe(
           map((data) => {
             return loadMyParticipationsSuccess({ data });

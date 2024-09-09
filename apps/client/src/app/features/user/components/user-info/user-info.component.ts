@@ -9,17 +9,15 @@ import { KnobModule } from 'primeng/knob';
 import { RatingModule } from 'primeng/rating';
 import {
   combineLatest,
-  distinct,
   filter,
   map,
   Observable,
-  share,
   shareReplay,
   Subject,
   switchMap,
   takeUntil,
-  tap,
 } from 'rxjs';
+import { isNotNull } from '../../../global/functions/rxjs-filter';
 import { ConfigService } from '../../../global/services/config/config.service';
 import { ImageService } from '../../../image/services/image/image.service';
 import { RatingService } from '../../../rating/services/rating/rating.service';
@@ -83,9 +81,9 @@ export class UserInfoComponent implements OnDestroy {
         }
       }),
       takeUntil(this.death),
-      filter((val) => val != null),
+      filter(isNotNull),
       switchMap((id) => {
-        return this.userService.getUserInfoById(id!);
+        return this.userService.getUserInfoById(id);
       }),
       shareReplay(1)
     );
@@ -154,12 +152,14 @@ export class UserInfoComponent implements OnDestroy {
     );
   }
 
-  onFileChange(event: any) {
+  onFileChange(event: Event) {
+    if (event.target === null) throw `Unexpected error`;
+
     if (this.info == undefined) {
       throw `This should not happen`;
     }
 
-    const file = event.target.files[0];
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (file != undefined) {
       this.imageService.uploadImage(file).subscribe((data) => {
         if (this.info == undefined) {

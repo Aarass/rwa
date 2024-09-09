@@ -17,6 +17,7 @@ import {
 } from '../../../participation/store/participation.actions';
 import { cancelAppointment } from '../../store/appointment.actions';
 import { toPostgresIntervalString } from '../../../global/functions/date-utility';
+import { ConfigService } from '../../../global/services/config/config.service';
 
 @Component({
   selector: 'app-appointment',
@@ -49,6 +50,7 @@ export class AppointmentComponent implements OnChanges {
   constructor(
     private store: Store,
     private router: Router,
+    private configService: ConfigService,
     private confirmationService: ConfirmationService
   ) {
     selectPayload(this.store)
@@ -167,5 +169,11 @@ export class AppointmentComponent implements OnChanges {
 
   nameClick() {
     this.router.navigateByUrl(`user?id=${this.appointment.organizerId}`);
+  }
+
+  getImageUrl() {
+    return `${this.configService.getBackendBaseURL()}/images/${
+      this.appointment.sport.imageName
+    }`;
   }
 }

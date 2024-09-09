@@ -3,21 +3,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AppointmentDto } from '@rwa/shared';
+import { filter, map, Observable, switchMap, tap, withLatestFrom } from 'rxjs';
 import {
-  combineLatest,
-  exhaustMap,
-  filter,
-  map,
-  Observable,
-  of,
-  switchMap,
-  tap,
-  withLatestFrom,
-  zip,
-} from 'rxjs';
-import { AppointmentService } from '../../services/appointment/appointment.service';
+  isNotNull,
+  isNotUndefined,
+} from '../../../global/functions/rxjs-filter';
 import {
-  addAppointment,
   loadAppointment,
   removeAppointment,
 } from '../../store/appointment.actions';
@@ -48,8 +39,7 @@ export class SingleAppointmentComponent implements OnDestroy {
           return null;
         }
       }),
-      filter((id) => id != null),
-      map((val) => val!),
+      filter(isNotNull),
       switchMap((id) => {
         return this.store
           .select(appointmentFeature.selectAppointmentById(id))
@@ -68,8 +58,7 @@ export class SingleAppointmentComponent implements OnDestroy {
             })
           );
       }),
-      filter((val) => val != undefined),
-      map((val) => val!)
+      filter(isNotUndefined)
     );
   }
 

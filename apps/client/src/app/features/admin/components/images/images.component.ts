@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { GalleriaModule } from 'primeng/galleria';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { ImageService } from '../../../image/services/image/image.service';
-import { map } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
+import { GalleriaModule, GalleriaResponsiveOptions } from 'primeng/galleria';
+import { ImageService } from '../../../image/services/image/image.service';
 
 type ImageData = {
   name: string;
@@ -21,7 +20,7 @@ type ImageData = {
 export class ImagesComponent implements OnInit {
   images: ImageData[] | null = null;
 
-  responsiveOptions: any[] = [
+  responsiveOptions: GalleriaResponsiveOptions[] = [
     {
       breakpoint: '1024px',
       numVisible: 5,
@@ -47,7 +46,7 @@ export class ImagesComponent implements OnInit {
     });
   }
 
-  delete(item: any) {
+  delete(item: ImageData) {
     if (this.images == null) {
       console.error('Imposible');
       return;

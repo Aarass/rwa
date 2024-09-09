@@ -1,27 +1,20 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
-import { PanelModule } from 'primeng/panel';
+import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { AppointmentDto, ParticipationDto, UserDto } from '@rwa/shared';
+import { AppointmentDto, ParticipationDto } from '@rwa/shared';
 import { AccordionModule } from 'primeng/accordion';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DividerModule } from 'primeng/divider';
+import { InplaceModule } from 'primeng/inplace';
+import { PanelModule } from 'primeng/panel';
 import { TagModule } from 'primeng/tag';
-import {
-  exhaustMap,
-  filter,
-  lastValueFrom,
-  map,
-  Observable,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { filter, Observable, switchMap } from 'rxjs';
+import { selectPayload } from '../../../auth/store/auth.feature';
+import { isNotNull } from '../../../global/functions/rxjs-filter';
 import { rejectParticipation } from '../../../participation/store/participation.actions';
 import { participationFeature } from '../../../participation/store/participation.feature';
-import { selectPayload } from '../../../auth/store/auth.feature';
-import { InplaceModule } from 'primeng/inplace';
 import { appointmentFeature } from '../../store/appointment.feature';
 
 @Component({
@@ -49,10 +42,10 @@ export class ParticipantsComponent {
     this.appointment$ = this.store
       .select(participationFeature.selectSelectedAppointmentId)
       .pipe(
-        filter((val) => val != null),
+        filter(isNotNull),
         switchMap((id) => {
           return this.store.select(
-            appointmentFeature.selectAppointmentById(id!)
+            appointmentFeature.selectAppointmentById(id)
           );
         })
         // tap((val) => console.log(val))

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,17 +7,20 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { CreateSportDto, createSportSchema } from '@rwa/shared';
-import { ZodValidationPipe } from '../global/validation';
-import { SportsService } from './sports.service';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import {
+  CreateSportDto,
+  createSportSchema,
+  UpdateSportDto,
+  updateSportSchema,
+} from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { ZodValidationPipe } from '../global/validation';
 import { ImagesService } from '../images/images.service';
+import { SportsService } from './sports.service';
 
 @Controller('sports')
 export class SportsController {
@@ -31,12 +35,27 @@ export class SportsController {
     @Body(new ZodValidationPipe(createSportSchema))
     createSportDto: CreateSportDto
   ) {
-    try {
-      return await this.sportsService.create(createSportDto);
-    } catch (err) {
-      console.error(err);
-      throw err;
+    return await this.sportsService.create(createSportDto);
+  }
+
+  @Roles(['admin'])
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(updateSportSchema))
+    updateSportDto: UpdateSportDto
+  ) {
+    const sport = await this.sportsService.findOne(id);
+    if (sport == null) {
+      throw new BadRequestException(`Sport doesn't exist`);
     }
+
+    if (updateSportDto.imageName) {
+      try {
+        this.imagesService.remove(sport.imageName);
+      } catch {}
+    }
+    return await this.sportsService.update(id, updateSportDto);
   }
 
   @Public()
@@ -66,7 +85,7 @@ export class SportsController {
     }
 
     try {
-      await this.imagesService.remove(sport.imageUrl);
+      await this.imagesService.remove(sport.imageName);
     } catch {}
     await this.sportsService.remove(id);
   }

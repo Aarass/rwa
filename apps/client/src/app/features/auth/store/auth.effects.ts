@@ -1,6 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, EMPTY, exhaustMap, map, of, switchMap, tap } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { AuthService } from '../services/auth/auth.service';
 import {
   login,
   loginFailed,
@@ -12,10 +15,10 @@ import {
   register,
   registerFailed,
   registerSuccess,
+  restoreSession,
+  restoreSessionFailed,
+  restoreSessionSuccess,
 } from './auth.actions';
-import { AuthService } from '../services/auth/auth.service';
-import { MessageService } from 'primeng/api';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable()
 export class AuthEffects {
@@ -91,14 +94,22 @@ export class AuthEffects {
 
   refresh$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(refresh),
-      exhaustMap(() => {
+      ofType(refresh, restoreSession),
+      exhaustMap((action) => {
         return this.authService.refresh().pipe(
           map((data) => {
-            return refreshSuccess(data);
+            if (action.type == restoreSession.type) {
+              return restoreSessionSuccess(data);
+            } else {
+              return refreshSuccess(data);
+            }
           }),
-          catchError((err: HttpErrorResponse) => {
-            return of(refreshFailed());
+          catchError(() => {
+            if (action.type == restoreSession.type) {
+              return of(restoreSessionFailed());
+            } else {
+              return of(refreshFailed());
+            }
           })
         );
       })

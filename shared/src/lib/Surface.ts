@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { updateAppointmentSchema } from './Appointment';
 
 export interface SurfaceDto {
   id: number;
@@ -12,3 +13,11 @@ export const createSurfaceSchema = z
   .required();
 
 export type CreateSurfaceDto = z.infer<typeof createSurfaceSchema>;
+
+export const updateSurfaceSchema = z
+  .object({
+    name: z.string(),
+  })
+  .required();
+
+export type UpdateSurfaceDto = z.infer<typeof updateSurfaceSchema>;

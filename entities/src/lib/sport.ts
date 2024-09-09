@@ -11,7 +11,7 @@ export class Sport {
   name: string;
 
   @Column()
-  imageUrl: string;
+  imageName: string;
 
   @OneToMany(() => UserPlaysSport, (ups) => ups.sport)
   usersPlayingMe: UserPlaysSport[];

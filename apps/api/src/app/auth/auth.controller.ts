@@ -6,17 +6,15 @@ import {
   Req,
   Res,
   UseGuards,
-  UsePipes,
 } from '@nestjs/common';
+import { User } from '@rwa/entities';
 import { CreateUserDto, createUserSchema } from '@rwa/shared';
 import { Request, Response } from 'express';
 import { ZodValidationPipe } from '../global/validation';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local.guard';
-import { JwtAuthGuard } from './guards/jwt.guard';
-import { ExtractUser } from './decorators/user.decorator';
-import { User } from '@rwa/entities';
 import { Public } from './decorators/public.decorator';
+import { ExtractUser } from './decorators/user.decorator';
+import { LocalAuthGuard } from './guards/local.guard';
 
 @Controller('auth')
 export class AuthController {

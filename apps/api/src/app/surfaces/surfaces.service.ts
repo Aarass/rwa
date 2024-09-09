@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateSurfaceDto } from '@rwa/shared';
+import { CreateSurfaceDto, UpdateSurfaceDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
 import { Surface } from '@rwa/entities';
 
@@ -13,8 +13,17 @@ export class SurfacesService {
     const newSurface = this.surfaceRepository.create(createSurfaceDto);
     return await this.surfaceRepository.save(newSurface);
   }
+
+  async update(id: number, dto: UpdateSurfaceDto) {
+    return await this.surfaceRepository.update(id, dto);
+  }
+
   async findAll() {
-    return await this.surfaceRepository.find();
+    return await this.surfaceRepository.find({
+      order: {
+        id: 'asc',
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -26,9 +35,7 @@ export class SurfacesService {
       return await this.surfaceRepository.delete({ id });
     } catch (err: any) {
       if (err.code == 23503) {
-        throw new ForbiddenException(
-          'This surface is already used in some appointment'
-        );
+        throw new ForbiddenException('This surface is already in use');
       } else {
         throw err;
       }

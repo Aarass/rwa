@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,22 +6,19 @@ import {
   Get,
   InternalServerErrorException,
   NotFoundException,
-  NotImplementedException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { CreateParticipationDto, createParticipationSchema } from '@rwa/shared';
 import { User } from '@rwa/entities';
-import { ExtractUser } from '../auth/decorators/user.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { ParticipationsService } from './participations.service';
+import { CreateParticipationDto, createParticipationSchema } from '@rwa/shared';
 import { AppointmentsService } from '../appointments/appointments.service';
-import { ZodValidationPipe } from '../global/validation';
 import { Public } from '../auth/decorators/public.decorator';
+import { ExtractUser } from '../auth/decorators/user.decorator';
+import { ZodValidationPipe } from '../global/validation';
 import { UpsService } from '../ups/ups.service';
+import { ParticipationsService } from './participations.service';
 
 @Controller('participations')
 export class ParticipationsController {

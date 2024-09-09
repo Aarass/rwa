@@ -45,7 +45,7 @@ export class FiltersComponent {
   death = new Subject<void>();
 
   @Output()
-  onClose = new EventEmitter<void>();
+  close = new EventEmitter<void>();
 
   formGroup = new FormGroup({
     sportId: new FormControl<number | null>(null),
@@ -161,7 +161,7 @@ export class FiltersComponent {
         },
       })
     );
-    this.onClose.emit();
+    this.close.emit();
   }
 
   firstTimeStartTime() {

@@ -3,23 +3,18 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { SportDto } from '@rwa/shared';
-import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { FileUploadModule } from 'primeng/fileupload';
+import { InplaceModule } from 'primeng/inplace';
+import { InputGroupModule } from 'primeng/inputgroup';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
-import {
-  filter,
-  firstValueFrom,
-  Subject,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { filter, firstValueFrom, Subject, switchMap, takeUntil } from 'rxjs';
+import { ConfigService } from '../../../global/services/config/config.service';
 import { ImageService } from '../../../image/services/image/image.service';
-import { createSport, deleteSport } from '../../../sport/store/sport.actions';
+import { SportComponent } from '../../../sport/components/sport/sport.component';
+import { createSport } from '../../../sport/store/sport.actions';
 import { sportFeature } from '../../../sport/store/sport.feature';
 
 @Component({
@@ -33,6 +28,9 @@ import { sportFeature } from '../../../sport/store/sport.feature';
     InputTextModule,
     FileUploadModule,
     FormsModule,
+    InplaceModule,
+    InputGroupModule,
+    SportComponent,
   ],
   templateUrl: './create-sport.component.html',
   styleUrl: './create-sport.component.scss',
@@ -41,16 +39,16 @@ export class CreateSportComponent implements OnInit, OnDestroy {
   death = new Subject<void>();
 
   image: File | null = null;
-  src: string = '';
+  src = '';
 
-  sportName: string = '';
+  sportName = '';
 
   count: number | null = null;
   sports: SportDto[] = [];
 
   constructor(
     private store: Store,
-    private confirmationService: ConfirmationService,
+    private confingService: ConfigService,
     private imageService: ImageService
   ) {}
 
@@ -81,12 +79,13 @@ export class CreateSportComponent implements OnInit, OnDestroy {
     this.death.complete();
   }
 
-  onChange(event: any) {
-    // console.log(event.target.files);
-    const file = event.target.files[0];
+  imageSelected(event: Event) {
+    if (event.target === null) throw `Unexpected error`;
+
+    const file = (event.target as HTMLInputElement).files?.[0];
     if (file != undefined) {
       this.image = file;
-      this.src = URL.createObjectURL(this.image!);
+      this.src = URL.createObjectURL(file);
     }
   }
 
@@ -108,26 +107,12 @@ export class CreateSportComponent implements OnInit, OnDestroy {
       createSport({
         data: {
           name: this.sportName,
-          iconUrl: `http://localhost:3000/images/${imageName}`,
-          imageUrl: `http://localhost:3000/images/${imageName}`,
+          imageName: `${this.confingService.getBackendBaseURL()}/images/${imageName}`,
         },
       })
     );
 
     this.clearImage();
     this.sportName = '';
-  }
-
-  deleteSport(id: number) {
-    this.confirmationService.confirm({
-      header: 'Delete Confirmation',
-      message: 'Are you sure you want to delete this item?',
-      acceptButtonStyleClass: 'p-button-danger p-button-text',
-      rejectButtonStyleClass: 'p-button-text p-button-text',
-      dismissableMask: true,
-      accept: () => {
-        this.store.dispatch(deleteSport({ id }));
-      },
-    });
   }
 }

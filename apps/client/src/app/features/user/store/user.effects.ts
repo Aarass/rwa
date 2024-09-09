@@ -11,8 +11,8 @@ export class UserEffects {
   load$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadMe),
-      exhaustMap((action) => {
-        return this.userService.getUserById(action.id).pipe(
+      exhaustMap(() => {
+        return this.userService.getMe().pipe(
           map((user) => {
             return loadMeSuccess({ data: user });
           })

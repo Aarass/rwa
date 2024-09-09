@@ -1,4 +1,3 @@
-import { NotImplementedException } from '@nestjs/common';
 import { IntervalDto } from '@rwa/shared';
 
 export function toPostgresDateString(date: Date) {

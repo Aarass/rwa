@@ -1,51 +1,5 @@
 $sport-height: 4rem;
 
-.sport-card-dim {
-  height: $sport-height;
-  width: 15rem;
-}
-
-.sport {
-  position: relative;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  align-items: center;
-
-  gap: 1.5rem;
-
-
-
-  img {
-    height: $sport-height;
-    width: $sport-height;
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  // div {
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   height: 33%;
-  //   width: 75%;
-  //   background-color: white;
-
-  //   display: flex;
-  //   justify-content: start;
-  //   align-items: center;
-  // }
-}
-
-// .create-sport-card {
-//   position: absolute;
-//   bottom: 10rem;
-//   left: 50%;
-//   transform: translateX(-50%)
-// }
-
 .create-sport-container {
   height: $sport-height;
   display: flex;

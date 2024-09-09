@@ -21,7 +21,7 @@ export const upsFeature = createFeature({
     adapter.getInitialState({
       isLoading: false,
     }),
-    on(loadMyUpses, createUps, (state, action) => {
+    on(loadMyUpses, createUps, (state) => {
       return {
         ...state,
         isLoading: true,
@@ -39,9 +39,15 @@ export const upsFeature = createFeature({
     on(updateUps, (state, action) => {
       return adapter.updateOne(action.data, state);
     }),
-    on(loadMyUpsesSuccess, createUpsSuccess, createUpsFail, (state, action) => {
+    on(loadMyUpsesSuccess, createUpsSuccess, createUpsFail, (state) => {
       return {
         ...state,
+        isLoading: false,
+      };
+    }),
+    on(logout, (state) => {
+      return {
+        ...adapter.removeAll(state),
         isLoading: false,
       };
     })
@@ -64,7 +70,11 @@ export const upsFeature = createFeature({
 
         return sportIds
           .filter((id) => sportsIPlayDic[id] == undefined)
-          .map((id) => sportsDic[id]!);
+          .map((id) => {
+            const tmp = sportsDic[id];
+            if (tmp == undefined) throw `This should not be possible`; // jer entity adapter odrzava konzistentnost izmedju liste id-a i dict entity-a
+            return tmp;
+          });
       }
     );
 

@@ -16,6 +16,8 @@ import {
   register,
   registerFailed,
   registerSuccess,
+  restoreSessionFailed,
+  restoreSessionSuccess,
 } from './auth.actions';
 import { AuthState, AuthStatus } from './auth.state';
 import { filter, map } from 'rxjs';
@@ -32,31 +34,31 @@ export const authFeature = createFeature({
   name: 'auth',
   reducer: createReducer(
     initialState,
-    on(register, (state, _) => {
+    on(register, (state) => {
       return {
         ...state,
         isCurrentlyRegistering: true,
       };
     }),
-    on(registerSuccess, registerFailed, (state, _) => {
+    on(registerSuccess, registerFailed, (state) => {
       return {
         ...state,
         isCurrentlyRegistering: false,
       };
     }),
-    on(login, (state, _) => {
+    on(login, (state) => {
       return {
         ...state,
         isCurrentlyLoggingIn: true,
       };
     }),
-    on(loginSuccess, loginFailed, (state, _) => {
+    on(loginSuccess, loginFailed, (state) => {
       return {
         ...state,
         isCurrentlyLoggingIn: false,
       };
     }),
-    on(loginSuccess, refreshSuccess, (state, action) => {
+    on(loginSuccess, refreshSuccess, restoreSessionSuccess, (state, action) => {
       return {
         ...state,
         accessToken: action.accessToken,
@@ -64,7 +66,7 @@ export const authFeature = createFeature({
         status: AuthStatus.LoggedIn,
       };
     }),
-    on(loginFailed, refreshFailed, (state, _) => {
+    on(loginFailed, refreshFailed, restoreSessionFailed, (state) => {
       return {
         ...state,
         accessToken: null,
@@ -72,7 +74,7 @@ export const authFeature = createFeature({
         status: AuthStatus.NotLoggedIn,
       };
     }),
-    on(logout, (state, _) => {
+    on(logout, (state) => {
       return {
         ...state,
         accessToken: null,
@@ -92,6 +94,9 @@ export const authFeature = createFeature({
         };
       }
     ),
+    selectIsAdmin: createSelector(selectDecodedPayload, (payload) => {
+      return payload?.user.roles.includes('admin') ?? false;
+    }),
   }),
 });
 
@@ -105,9 +110,9 @@ export const selectPayload = (store: Store) => {
 };
 
 function decodeJwt(accessToken: string): AccessTokenPayload | null {
-  var base64Url = accessToken.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(
+  const base64Url = accessToken.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(
     window
       .atob(base64)
       .split('')

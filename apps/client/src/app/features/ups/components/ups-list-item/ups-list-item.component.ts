@@ -1,11 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { UpsDto } from '@rwa/shared';
@@ -14,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { RatingModule, RatingRateEvent } from 'primeng/rating';
 import { deleteUps, updateUps } from '../../store/ups.actions';
+import { ConfigService } from '../../../global/services/config/config.service';
 
 @Component({
   selector: 'app-ups-list-item',
@@ -24,16 +19,17 @@ import { deleteUps, updateUps } from '../../store/ups.actions';
 })
 export class UpsListItemComponent implements OnChanges {
   @Input()
-  ups: UpsDto | null | undefined;
+  ups!: UpsDto | null;
 
   rating: number | null = null;
 
   constructor(
     private store: Store,
+    private configService: ConfigService,
     private confirmationService: ConfirmationService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.ups != undefined && this.ups != null) {
       this.rating = this.ups.selfRatedSkillLevel;
     }
@@ -72,5 +68,13 @@ export class UpsListItemComponent implements OnChanges {
         })
       );
     }
+  }
+
+  getImageUrl() {
+    if (!this.ups) return;
+
+    return `${this.configService.getBackendBaseURL()}/images/${
+      this.ups.sport.imageName
+    }`;
   }
 }

@@ -9,6 +9,7 @@ import {
   deleteSurfaceSuccess,
   loadAllSurfaces,
   loadAllSurfacesSuccess,
+  updateSurface,
 } from './surface.actions';
 import { MessageService } from 'primeng/api';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -46,6 +47,21 @@ export class SurfaceEffects {
       })
     );
   });
+
+  updateSurface$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(updateSurface),
+        exhaustMap((action) => {
+          return this.surfaceService.updateSurface(
+            action.data.id,
+            action.data.dto
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   deleteSurface$ = createEffect(() => {
     return this.actions$.pipe(

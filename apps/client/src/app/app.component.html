@@ -1,17 +1,17 @@
-<div class="flex flex-column h-screen">
+<div class="flex flex-column h-screen" *ngrxLet="authStatus$ as authStatus">
   <p-menubar class="flex-grow-0">
     <ng-template pTemplate="start" class="ml-8">
       <span class="ml-5"></span>
       <img class="h-4rem cursor-pointer" src="placeholder-logo.png" alt="logo" routerLink="/" />
     </ng-template>
     <ng-template pTemplate="end">
-      <div class="flex align-items-center gap-2" *ngIf="authStatus != null">
-        @if (authStatus == 0) {
+      <div class="flex align-items-center gap-2" *ngIf="authStatus !== null">
+        @if (authStatus === 0) {
         <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
-        <p-button (onClick)="goToSingUpPage()" label="Sign Up" outlined="true" />
+        <p-button label="Sign Up" outlined="true" routerLink="signup" />
         } @else {
         <p-button label="Home" icon="pi pi-home" severity="secondary" routerLink="" text="true" />
-        <p-button label="Profile" icon="pi pi-home" severity="secondary" routerLink="/profile" text="true" />
+        <p-button label="Profile" icon="pi pi-user" severity="secondary" routerLink="/profile" text="true" />
         }
         <span class="mr-5"></span>
       </div>
@@ -19,10 +19,10 @@
   </p-menubar>
   <div class="flex-grow-1 overflow-hidden flex">
     <div class="h-full flex-grow-0">
-      @if (authStatus != 0) {
+      @if (authStatus !== 0) {
       <div class="p-card p-component p-4 w-15rem h-full flex flex-column justify-content-between">
         <div class="flex flex-column row-gap-2">
-          @if(isAdmin) {
+          @if(isAdmin$ | async) {
           <p-button label="Dashboard" icon="pi pi-chart-bar" severity="secondary" styleClass="w-full text-left"
             routerLink="/dashboard" />
           <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
@@ -30,8 +30,6 @@
           } @else {
           <p-button label="Appointments" icon="pi pi-list" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
-          <!-- <p-button label="My Appointments" icon="pi pi-book" severity="secondary"
-            styleClass="w-full text-left white-space-nowrap" (onClick)="showMyAppointments()" /> -->
 
           <p-button label="My Participations" icon="pi pi-list-check" severity="secondary"
             styleClass="w-full text-left white-space-nowrap p-overlay-badge overflow-visible"

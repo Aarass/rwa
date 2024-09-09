@@ -12,18 +12,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { SportDto } from '@rwa/shared';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
-import { Closable } from '../../../global/services/my-dialog/my-dialog.service';
-import { SportDto } from '@rwa/shared';
+import { RatingModule } from 'primeng/rating';
 import { SliderModule } from 'primeng/slider';
-import { Store } from '@ngrx/store';
-import { upsFeature } from '../../store/ups.feature';
 import { Subject, takeUntil } from 'rxjs';
 import { createUps } from '../../store/ups.actions';
-import { RatingModule } from 'primeng/rating';
+import { upsFeature } from '../../store/ups.feature';
 
 @Component({
   selector: 'app-create-ups',
@@ -41,7 +40,7 @@ import { RatingModule } from 'primeng/rating';
   templateUrl: './create-ups.component.html',
   styleUrl: './create-ups.component.scss',
 })
-export class CreateUpsComponent implements OnInit, OnDestroy, Closable {
+export class CreateUpsComponent implements OnInit, OnDestroy {
   death = new Subject<void>();
 
   @Output()

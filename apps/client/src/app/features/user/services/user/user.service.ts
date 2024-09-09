@@ -12,6 +12,10 @@ export class UserService {
     return this.http.get<UserDto>(`http://localhost:3000/users/${id}`);
   }
 
+  getMe() {
+    return this.http.get<UserDto>(`http://localhost:3000/users/me`);
+  }
+
   getUserInfoById(id: number) {
     return this.http.get<UserInfo>(`http://localhost:3000/users/${id}/verbose`);
   }

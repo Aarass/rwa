@@ -1,0 +1,29 @@
+@if (sport) {
+<p-card>
+  <div class="sport sport-card-dim flex align-items-center gap-2">
+    <div class="h-4rem ar-square relative">
+      <img [src]="imageUrl" alt="sport image" class="w-full h-full object-center">
+      <label [for]="'image-upload' + sport.id" class="block absolute inset-0 cursor-pointer"></label>
+      <input [id]="'image-upload' + sport.id" class="hidden" type="file" (change)="updateImageSelected($event)"
+        accept="image/*">
+    </div>
+    <p-inplace closable="closable" styleClass="flex w-11rem overflow-hidden" closable="false" #inplace>
+      <ng-template pTemplate="display">
+        <div class="w-full">
+          <p>{{ sport.name }}</p>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <p-inputGroup>
+          <input type="text" pInputText placeholder="New name" #nameInput
+            (keydown.enter)="editName(inplace, sport, nameInput)" />
+          <button type="button" pButton icon="pi pi-check" class="p-button"
+            (click)="editName(inplace, sport, nameInput)"></button>
+          <button type="button" pButton icon="pi pi-times" class="p-button" (click)="inplace.deactivate()"></button>
+        </p-inputGroup>
+      </ng-template>
+    </p-inplace>
+    <p-button icon="pi pi-trash" severity="danger" (onClick)="deleteSport(sport.id)" />
+  </div>
+</p-card>
+}

@@ -13,7 +13,7 @@
       <div class="flex justify-content-center align-items-center h-full gap-4">
         <p-button icon="pi pi-filter" [rounded]="true" severity="secondary" (onClick)="op.toggle($event)">
           <p-overlayPanel #op>
-            <app-filters (onClose)="op.toggle({})"></app-filters>
+            <app-filters (close)="op.toggle({})"></app-filters>
           </p-overlayPanel>
         </p-button>
         <p-button icon="pi pi-refresh" [rounded]="true" severity="secondary" (onClick)="reloadAppointments()" />

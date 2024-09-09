@@ -8,11 +8,11 @@ import {
 } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Button, ButtonModule } from 'primeng/button';
+import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
 import { combineLatest, fromEvent, Subscription } from 'rxjs';
 import { AppointmentListComponent } from '../../../appointment/components/appointment-list/appointment-list.component';
 import { selectUser } from '../../../user/store/user.feature';
-import { DividerModule } from 'primeng/divider';
 
 @Component({
   selector: 'app-home',

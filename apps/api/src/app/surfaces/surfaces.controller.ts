@@ -6,9 +6,16 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
-import { CreateSurfaceDto, createSurfaceSchema } from '@rwa/shared';
+import {
+  CreateSurfaceDto,
+  createSurfaceSchema,
+  updateSportSchema,
+  UpdateSurfaceDto,
+  updateSurfaceSchema,
+} from '@rwa/shared';
 import { SurfacesService } from './surfaces.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
@@ -24,6 +31,16 @@ export class SurfacesController {
     createSurfaceDto: CreateSurfaceDto
   ) {
     return this.surfacesService.create(createSurfaceDto);
+  }
+
+  @Roles(['admin'])
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ZodValidationPipe(updateSurfaceSchema))
+    updateSurfaceDto: UpdateSurfaceDto
+  ) {
+    return await this.surfacesService.update(id, updateSurfaceDto);
   }
 
   @Public()

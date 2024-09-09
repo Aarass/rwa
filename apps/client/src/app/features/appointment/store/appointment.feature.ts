@@ -1,6 +1,7 @@
 import { createEntityAdapter } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { AppointmentDto } from '@rwa/shared';
+import { logout } from '../../auth/store/auth.actions';
 import {
   joinAppointmentSuccess,
   leaveAppointment,
@@ -75,7 +76,7 @@ export const appointmentFeature = createFeature({
         ),
       };
     }),
-    on(reloadAppointments, (state, action) => {
+    on(reloadAppointments, (state) => {
       return {
         ...state,
         paginationInfo: {
@@ -99,7 +100,7 @@ export const appointmentFeature = createFeature({
         },
       };
     }),
-    on(loadAppointmentsFail, (state, action) => {
+    on(loadAppointmentsFail, (state) => {
       return {
         ...state,
         isLoading: {
@@ -202,6 +203,20 @@ export const appointmentFeature = createFeature({
       return {
         ...state,
         appointments: adapter.removeOne(action.id, state.appointments),
+      };
+    }),
+    on(logout, (state) => {
+      return {
+        ...state,
+        appointments: adapter.removeAll(state.appointments),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
+        paginationInfo: {
+          loadedPages: 0,
+          pageSize: 0,
+        },
       };
     })
   ),

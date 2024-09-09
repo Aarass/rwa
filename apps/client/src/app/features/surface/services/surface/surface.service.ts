@@ -16,6 +16,10 @@ export class SurfaceService {
     return this.http.post<SurfaceDto>('http://localhost:3000/surfaces', dto);
   }
 
+  updateSurface(id: number, dto: CreateSurfaceDto) {
+    return this.http.patch(`http://localhost:3000/surfaces/${id}`, dto);
+  }
+
   deleteSurface(id: number) {
     return this.http.delete(`http://localhost:3000/surfaces/${id}`);
   }

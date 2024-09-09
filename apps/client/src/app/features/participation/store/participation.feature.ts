@@ -1,6 +1,7 @@
 import { createEntityAdapter } from '@ngrx/entity';
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
-import { ParticipationDto, AppointmentDto } from '@rwa/shared';
+import { ParticipationDto } from '@rwa/shared';
+import { logout } from '../../auth/store/auth.actions';
 import {
   joinAppointmentSuccess,
   leaveAppointment,
@@ -42,7 +43,14 @@ export const participationFeature = createFeature({
         ...state,
         selectedAppointmentId: action.data.id,
       };
+    }),
+    on(logout, (state) => {
+      return {
+        ...adapter.removeAll(state),
+        selectedAppointmentId: null,
+      };
     })
+    // ,on(logout, (state) => { })
     // on(rejectParticipation, (state, action) => {
     //   return adapter.updateOne(
     //     { id: action.data.participationId, changes: { approved: false } },
