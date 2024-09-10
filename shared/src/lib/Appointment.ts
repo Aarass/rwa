@@ -34,46 +34,59 @@ export interface AppointmentDto {
   participants: ParticipationDto[];
 }
 
-export const createAppointmentSchema = z.object({
-  locationId: z.string(),
-  date: z.string(), //.date(),
-  startTime: z.string(),
+const baseAppointmentSchema = z.object({
+  locationId: z
+    .string({ message: 'You must select a valid location' })
+    .trim()
+    .min(1),
+  date: z.string().trim().min(1), //.date(),
+  startTime: z.string().trim().min(1),
   environment: z.number().min(0).max(1),
-  duration: z.string(),
-  totalPlayers: z.number(),
-  missingPlayers: z.number(),
-  minSkillLevel: z.number(),
-  maxSkillLevel: z.number(),
-  minAge: z.number(),
-  maxAge: z.number(),
-  pricePerPlayer: z.number(),
+  duration: z
+    .string()
+    .trim()
+    .min(1)
+    .refine((val) => val !== '0', `Appointment duration can't be 0`),
+  totalPlayers: z.number().min(2),
+  missingPlayers: z.number().min(1),
+  minSkillLevel: z.number().min(0).max(5),
+  maxSkillLevel: z.number().min(0).max(5),
+  minAge: z.number().min(0).max(100),
+  maxAge: z.number().min(0).max(100),
+  pricePerPlayer: z.number().min(0),
   additionalInformation: z.string(),
-  surfaceId: z.number(),
-  sportId: z.number(),
+  surfaceId: z.number().min(0),
+  sportId: z.number().min(0),
 });
 
+export const createAppointmentSchema = baseAppointmentSchema.superRefine(
+  (dto, ctx) => {
+    if (dto.minSkillLevel > dto.maxSkillLevel) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Min skill level is bigger than max skill level`,
+      });
+    }
+
+    if (dto.minAge > dto.maxAge) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Min age is bigger than max age`,
+      });
+    }
+
+    if (dto.totalPlayers < dto.missingPlayers) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Can't have more missing than total players`,
+      });
+    }
+  }
+);
+
+export const updateAppointmentSchema = baseAppointmentSchema.partial();
+
 export type CreateAppointmentDto = z.infer<typeof createAppointmentSchema>;
-
-export const updateAppointmentSchema = z
-  .object({
-    locationId: z.string(),
-    date: z.string(), //.date(),
-    startTime: z.string(),
-    environment: z.number().min(0).max(1),
-    duration: z.string(),
-    totalPlayers: z.number(),
-    missingPlayers: z.number(),
-    minSkillLevel: z.number(),
-    maxSkillLevel: z.number(),
-    minAge: z.number(),
-    maxAge: z.number(),
-    pricePerPlayer: z.number(),
-    additionalInformation: z.string(),
-    surfaceId: z.number(),
-    sportId: z.number(),
-  })
-  .partial();
-
 export type UpdateAppointmentDto = z.infer<typeof updateAppointmentSchema>;
 
 export const findAppointmentsSchema = z.object({

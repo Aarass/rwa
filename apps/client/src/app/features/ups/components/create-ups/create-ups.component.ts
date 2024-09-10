@@ -98,13 +98,22 @@ export class CreateUpsComponent implements OnInit, OnDestroy {
     // });
     // return;
 
+    const values = this.formGroup.getRawValue();
+
+    if (
+      values.selectedSportControl === null ||
+      values.skillLevelControl === null
+    ) {
+      return;
+    }
+
     this.isLoading = true;
 
     this.store.dispatch(
       createUps({
         data: {
-          sportId: this.formGroup.controls.selectedSportControl.value!.id,
-          selfRatedSkillLevel: this.formGroup.controls.skillLevelControl.value!,
+          sportId: values.selectedSportControl.id,
+          selfRatedSkillLevel: values.skillLevelControl,
         },
       })
     );

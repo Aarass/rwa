@@ -19,7 +19,7 @@ import { ConfigService } from '../../../global/services/config/config.service';
 })
 export class UpsListItemComponent implements OnChanges {
   @Input()
-  ups!: UpsDto | null;
+  ups!: UpsDto;
 
   rating: number | null = null;
 
@@ -30,7 +30,7 @@ export class UpsListItemComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (this.ups != undefined && this.ups != null) {
+    if (this.ups !== undefined) {
       this.rating = this.ups.selfRatedSkillLevel;
     }
   }
@@ -51,9 +51,6 @@ export class UpsListItemComponent implements OnChanges {
   }
 
   onRate(event: RatingRateEvent) {
-    if (this.ups === undefined || this.ups === null)
-      throw `This should not happen`;
-
     const { value } = event;
 
     if (value != this.ups.selfRatedSkillLevel) {
@@ -71,8 +68,6 @@ export class UpsListItemComponent implements OnChanges {
   }
 
   getImageUrl() {
-    if (!this.ups) return;
-
     return `${this.configService.getBackendBaseURL()}/images/${
       this.ups.sport.imageName
     }`;

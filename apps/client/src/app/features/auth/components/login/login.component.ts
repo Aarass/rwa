@@ -49,17 +49,28 @@ export class LoginComponent {
   }
 
   submit() {
-    if (this.formGroup.valid) {
-      this.store.dispatch(
-        login({
-          username: this.formGroup.controls.usernameControl.value!,
-          password: this.formGroup.controls.passwordControl.value!,
-        })
-      );
-    } else {
-      // TODO
-      // Prikazivanje gresaksa
+    let { usernameControl: username, passwordControl: password } =
+      this.formGroup.getRawValue();
+
+    if (username === null || password === null) {
+      return;
     }
+
+    username = username.trim();
+    password = password.trim();
+
+    if (username === '' || password === '') {
+      return;
+    }
+
+    this.store.dispatch(
+      login({
+        data: {
+          username,
+          password,
+        },
+      })
+    );
   }
 
   onClose() {

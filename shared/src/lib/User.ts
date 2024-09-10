@@ -24,26 +24,36 @@ export type UserInfo = {
   }[];
 };
 
-export const createUserSchema = z
-  .object({
-    username: z.string(),
-    password: z.string().min(6),
-    name: z.string(),
-    surname: z.string(),
-    phoneNumber: z
-      .string()
-      .regex(
-        new RegExp('^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$')
-      ),
-    birthDate: z.string().date(),
-    locationId: z.string(),
-    biography: z.string(),
-  })
-  .required();
+export const createUserSchema = z.object({
+  username: z.string().trim().min(1, 'Username is too short'),
+  password: z
+    .string()
+    .regex(
+      new RegExp('^[a-zA-Z0-9_.-]*$'),
+      `Password can contain only letters, numbers, '-' and '_' `
+    )
+    .min(6, 'Password needs to be at least 6 letters long'),
+  name: z.string().trim().min(1, 'Name is too short'),
+  surname: z.string().trim().min(1, 'Surname is too short'),
+  phoneNumber: z
+    .string()
+    .trim()
+    .regex(
+      new RegExp('^[+]?[(]?[0-9]{3}[)]?[-s.]?[0-9]{3}[-s.]?[0-9]{4,6}$'),
+      'Invalid phone number'
+    ),
+  birthDate: z.string({ message: 'You must select a date' }).date(),
+  locationId: z
+    .string({ message: 'You must select a valid location' })
+    .trim()
+    .min(1),
+  biography: z.string(),
+});
 
 export type CreateUserDto = z.infer<typeof createUserSchema>;
 export const registerUserSchema = createUserSchema;
 export type RegisterUserDto = CreateUserDto;
+
 export interface LoginUserDto {
   username: string;
   password: string;

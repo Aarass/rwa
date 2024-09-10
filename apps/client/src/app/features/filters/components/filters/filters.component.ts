@@ -12,13 +12,14 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SliderModule } from 'primeng/slider';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import { Subject } from 'rxjs';
+import { combineLatest, map, Subject } from 'rxjs';
+import { authFeature } from '../../../auth/store/auth.feature';
 import {
   roundTime,
   toPostgresDateString,
   toPostgresTimeString,
 } from '../../../global/functions/date-utility';
-import { sportFeature } from '../../../sport/store/sport.feature';
+import { upsFeature } from '../../../ups/store/ups.feature';
 import { UserConfigurableFilters } from '../../interfaces/filters';
 import { filtersChanged } from '../../store/filter.actions';
 
@@ -60,21 +61,25 @@ export class FiltersComponent {
     sorting: new FormControl<AppointmentsOrdering | null>(null),
   });
 
-  // sports$: Observable<SportDto[]>;
   sportOptions: { name: string; sportId: number }[] = [];
 
   constructor(private store: Store) {
-    this.store
-      .select(sportFeature.selectAllSports)
-      // this.store
-      //   .select(upsFeature.selectMyUpses)
-      //   .pipe(map((upses) => upses.map((ups) => ups.sport)))
-      .subscribe((sports) => {
-        this.sportOptions = [
-          ...sports.map((sport) => ({ name: sport.name, sportId: sport.id })),
-          { name: 'All (Debug)', sportId: -1 },
-        ];
-      });
+    // const sports$ = this.store.select(sportFeature.selectAllSports);
+    const sports$ = this.store
+      .select(upsFeature.selectMyUpses)
+      .pipe(map((upses) => upses.map((ups) => ups.sport)));
+    const isAdmin$ = this.store.select(authFeature.selectIsAdmin);
+    combineLatest([sports$, isAdmin$]).subscribe((tuple) => {
+      const [sports, isAdmin] = tuple;
+
+      this.sportOptions = [
+        ...sports.map((sport) => ({ name: sport.name, sportId: sport.id })),
+      ];
+
+      if (isAdmin) {
+        this.sportOptions.push({ name: 'All (Debug)', sportId: -1 });
+      }
+    });
   }
 
   clear() {

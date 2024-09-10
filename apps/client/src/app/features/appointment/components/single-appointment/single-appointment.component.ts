@@ -41,22 +41,19 @@ export class SingleAppointmentComponent implements OnDestroy {
       }),
       filter(isNotNull),
       switchMap((id) => {
-        return this.store
-          .select(appointmentFeature.selectAppointmentById(id))
-          .pipe(
-            withLatestFrom(
-              this.store.select(appointmentFeature.selectIsLoading)
-            ),
-            filter((tuple) => tuple[1].val != true),
-            map((tuple) => tuple[0]),
-            tap((val) => {
-              if (val === undefined) {
-                console.log('Dispatched');
-                this.store.dispatch(loadAppointment({ id }));
-                this.addedAppointmentId = id;
-              }
-            })
-          );
+        return this.store.select(appointmentFeature.selectIsLoading).pipe(
+          withLatestFrom(
+            this.store.select(appointmentFeature.selectAppointmentById(id))
+          ),
+          filter((tuple) => tuple[0].val == false),
+          map((tuple) => tuple[1]),
+          tap((val) => {
+            if (val === undefined) {
+              this.store.dispatch(loadAppointment({ id }));
+              this.addedAppointmentId = id;
+            }
+          })
+        );
       }),
       filter(isNotUndefined)
     );
@@ -67,22 +64,4 @@ export class SingleAppointmentComponent implements OnDestroy {
       this.store.dispatch(removeAppointment({ id: this.addedAppointmentId }));
     }
   }
-
-  // ngOnInit(): void {
-  //   this.page.on('navigatingTo', (data: any) => {
-  //     // run init code
-  //     // (note: this will run when you either move forward or back to this page)
-  //   });
-
-  //   this.page.on('navigatingFrom', (data: any) => {
-  //     // run destroy code
-  //     // (note: this will run when you either move forward to a new page or back to the previous page)
-  //   });
-  // }
-
-  // death = new Subject<void>();
-  // ngOnDestroy(): void {
-  //   this.death.next();
-  //   this.death.complete();
-  // }
 }

@@ -10,6 +10,7 @@ import {
 import {
   CreateAppointmentDto,
   CreateParticipationDto,
+  Environment,
   UpdateAppointmentDto,
 } from '../../../shared/src';
 import { Participation } from '../../../entities/src';
@@ -47,6 +48,7 @@ export function testParticipation(
         additionalInformation: '',
         surfaceId: -99,
         sportId: -99,
+        environment: Environment.Outdoor,
       };
 
       accessTokenOrganizer = await ezLogin(server);
@@ -150,7 +152,7 @@ export function testParticipation(
       expect(participation.id).toBe(participationId);
       expect(participation.appointmentId).toBe(appointmentId);
       expect(participation.approved).toBe(false);
-      expect(participation.userHasSeenChanges).toBe(true);
+      expect(participation.userHasSeenChanges).toBe(false);
     });
 
     it('should retrive dirty participation', async () => {

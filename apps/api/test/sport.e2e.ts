@@ -10,7 +10,7 @@ export function testSport(
 ) {
   const newSport: CreateSportDto = {
     name: 'Fudbal',
-    iconUrl: './icon.png',
+    imageName: './icon.png',
   };
   let id: number;
 

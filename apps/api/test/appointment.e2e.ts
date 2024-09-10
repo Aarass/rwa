@@ -3,11 +3,13 @@ import { App } from 'supertest/types';
 import { Appointment, Sport, Surface } from '../../../entities/src';
 import {
   CreateAppointmentDto,
+  Environment,
   FindAppointmentsDto,
   UpdateAppointmentDto,
 } from '../../../shared/src';
 import {
   createAppointment,
+  createFindAppointmentDto,
   createSport,
   createSurface,
   ezLogin,
@@ -73,6 +75,7 @@ export function testAppointment(
       additionalInformation: '',
       surfaceId: -99,
       sportId: -99,
+      environment: Environment.Indoor,
     };
     let appointment1Id: number;
 
@@ -121,7 +124,10 @@ export function testAppointment(
 
     it('should retrieve list of appointments which contain created appointment', async () => {
       const appointments = (
-        await request(server).post(`/appointments/search`).expect(200)
+        await request(server)
+          .post(`/appointments/search`)
+          .send(createFindAppointmentDto({}))
+          .expect(200)
       ).body as Appointment[];
 
       expect(appointments).toBeDefined();
@@ -160,11 +166,13 @@ export function testAppointment(
       const appointments = (
         await request(server)
           .post(`/appointments/search`)
-          .send({
-            filters: {
-              canceled: false,
-            },
-          } as FindAppointmentsDto)
+          .send(
+            createFindAppointmentDto({
+              filters: {
+                canceled: false,
+              },
+            })
+          )
           .expect(200)
       ).body as Appointment[];
 
@@ -202,6 +210,7 @@ export function testAppointment(
         additionalInformation: '',
         surfaceId: concrete.id,
         sportId: soccer.id,
+        environment: Environment.Indoor,
       });
 
       await createAppointment(server, accessTokenOrganizer1, {
@@ -221,6 +230,7 @@ export function testAppointment(
         additionalInformation: '',
         surfaceId: hardwood.id,
         sportId: tenis.id,
+        environment: Environment.Indoor,
       });
     });
 
@@ -229,7 +239,7 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({} as FindAppointmentsDto)
+            .send(createFindAppointmentDto({}))
             .expect(200)
         ).body;
         expect(appointments.length).toBe(3);
@@ -239,11 +249,14 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                sportId: soccer.id,
-              },
-            } as FindAppointmentsDto)
+
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  sportId: soccer.id,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -253,19 +266,22 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                maxDistance: 33,
-              },
-              userLocation: {
-                lat: 43.0260343,
-                lng: 21.918993,
-              },
-              ordering: {
-                by: 'distance',
-                direction: 'ASC',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  maxDistance: 33,
+                },
+
+                userLocation: {
+                  lat: '43.0260343',
+                  lng: '21.918993',
+                },
+                ordering: {
+                  by: 'distance',
+                  direction: 'ASC',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -275,11 +291,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                age: 5,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  age: 5,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(0);
@@ -289,11 +307,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                age: 55,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  age: 55,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(0);
@@ -303,11 +323,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                age: 15,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  age: 15,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -317,11 +339,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                canceled: false,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  canceled: false,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -331,13 +355,15 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                maxDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
-                  .toISOString()
-                  .split('T')[0],
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  maxDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+                    .toISOString()
+                    .split('T')[0],
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -347,13 +373,15 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                minDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
-                  .toISOString()
-                  .split('T')[0],
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  minDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+                    .toISOString()
+                    .split('T')[0],
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(1);
@@ -363,11 +391,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                minTime: '19:00:00',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  minTime: '19:00:00',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -377,11 +407,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                maxTime: '19:00:00',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  maxTime: '19:00:00',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(2);
@@ -391,12 +423,14 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                minTime: '18:00:00',
-                maxTime: '19:00:00',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  minTime: '18:00:00',
+                  maxTime: '19:00:00',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(1);
@@ -406,11 +440,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                canceled: true,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  canceled: true,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(1);
@@ -420,11 +456,13 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              filters: {
-                skip: 10,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                filters: {
+                  skip: 10,
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(0);
@@ -434,16 +472,18 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              ordering: {
-                by: 'distance',
-                direction: 'ASC',
-              },
-              userLocation: {
-                lat: 43.0260343,
-                lng: 21.918993,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                userLocation: {
+                  lat: '43.0260343',
+                  lng: '21.918993',
+                },
+                ordering: {
+                  by: 'distance',
+                  direction: 'ASC',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(3);
@@ -456,16 +496,18 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              ordering: {
-                by: 'distance',
-                direction: 'DESC',
-              },
-              userLocation: {
-                lat: 43.0260343,
-                lng: 21.918993,
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                userLocation: {
+                  lat: '43.0260343',
+                  lng: '21.918993',
+                },
+                ordering: {
+                  by: 'distance',
+                  direction: 'DESC',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(3);
@@ -478,12 +520,14 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              ordering: {
-                by: 'price',
-                direction: 'ASC',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                ordering: {
+                  by: 'price',
+                  direction: 'ASC',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(3);
@@ -496,12 +540,14 @@ export function testAppointment(
         let appointments = (
           await request(server)
             .post(`/appointments/search`)
-            .send({
-              ordering: {
-                by: 'date',
-                direction: 'ASC',
-              },
-            } as FindAppointmentsDto)
+            .send(
+              createFindAppointmentDto({
+                ordering: {
+                  by: 'date',
+                  direction: 'ASC',
+                },
+              })
+            )
             .expect(200)
         ).body;
         expect(appointments.length).toBe(3);

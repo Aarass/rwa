@@ -7,16 +7,18 @@ import {
   createUpsFail,
   createUpsSuccess,
   deleteUps,
+  deleteUpsSuccess,
   loadMyUpses,
   loadMyUpsesSuccess,
   updateUps,
+  updateUpsSuccess,
 } from './ups.actions';
 
 @Injectable()
 export class UpsEffects {
   constructor(private actions$: Actions, private upsService: UpsService) {}
 
-  loadMyUps$ = createEffect(() => {
+  loadMyUpses$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadMyUpses),
       exhaustMap(() => {
@@ -29,7 +31,7 @@ export class UpsEffects {
     );
   });
 
-  createUps = createEffect(() => {
+  createUps$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(createUps),
       exhaustMap((action) => {
@@ -46,27 +48,25 @@ export class UpsEffects {
     );
   });
 
-  updateUpd = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(updateUps),
-        exhaustMap((action) => {
-          return this.upsService.updateUps(action.data.id, action.data.changes);
-        })
-      );
-    },
-    { dispatch: false }
-  );
+  updateUps$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(updateUps),
+      exhaustMap((action) => {
+        return this.upsService
+          .updateUps(action.data.id, action.data.changes)
+          .pipe(map(() => updateUpsSuccess()));
+      })
+    );
+  });
 
-  deleteUps = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(deleteUps),
-        exhaustMap((action) => {
-          return this.upsService.deleteUps(action.id);
-        })
-      );
-    },
-    { dispatch: false }
-  );
+  deleteUps$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(deleteUps),
+      exhaustMap((action) => {
+        return this.upsService
+          .deleteUps(action.id)
+          .pipe(map(() => deleteUpsSuccess()));
+      })
+    );
+  });
 }

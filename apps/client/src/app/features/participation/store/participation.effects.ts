@@ -103,7 +103,7 @@ export class ParticipationEffects {
           return this.participationService
             .rejectParticipation(action.data.participationId)
             .pipe(
-              catchError((err) => {
+              catchError((err: HttpErrorResponse) => {
                 this.messageService.add({
                   key: 'global',
                   severity: 'error',

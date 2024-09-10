@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { Route } from '@angular/router';
+import { Route, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable } from 'rxjs';
+import { filter, map, Observable, tap } from 'rxjs';
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ImagesComponent } from './features/admin/components/images/images.component';
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
@@ -72,18 +72,29 @@ export const appRoutes: Route[] = [
 
 function ifIsLoggedIn(): Observable<boolean> {
   const store = inject(Store);
+  const router = inject(Router);
   return store.select(authFeature.selectStatus).pipe(
     filter(isNotNull),
-    map((val) => val === AuthStatus.LoggedIn)
+    map((val) => val === AuthStatus.LoggedIn),
+    tap((val) => {
+      if (val == false) {
+        router.navigateByUrl('');
+      }
+    })
   );
 }
 
 function ifIsNotLoggedIn(): Observable<boolean> {
-  return ifIsLoggedIn().pipe(map((val) => !val));
+  const store = inject(Store);
+  return store.select(authFeature.selectStatus).pipe(
+    filter(isNotNull),
+    map((val) => val === AuthStatus.NotLoggedIn)
+  );
 }
 
 function ifIsAdmin(): Observable<boolean> {
   const store = inject(Store);
+  const router = inject(Router);
 
   return store.select(authFeature.selectAuthState).pipe(
     filter((state) => {
@@ -95,6 +106,11 @@ function ifIsAdmin(): Observable<boolean> {
         return false;
       }
       return payload.user.roles.includes('admin');
+    }),
+    tap((val) => {
+      if (val == false) {
+        router.navigateByUrl('');
+      }
     })
   );
 }

@@ -16,8 +16,8 @@ import {
 import { filtersFeature } from '../../filters/store/filters.feature';
 import {
   createUpsSuccess,
-  deleteUps,
-  updateUps,
+  deleteUpsSuccess,
+  updateUpsSuccess,
 } from '../../ups/store/ups.actions';
 import { selectUser } from '../../user/store/user.feature';
 import { AppointmentService } from '../services/appointment/appointment.service';
@@ -121,7 +121,7 @@ export class AppointmentEffects {
   load$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadAppointments, reloadAppointments),
-      exhaustMap(() => {
+      exhaustMap((action) => {
         return combineLatest([
           this.store.select(filtersFeature.selectFilters),
           this.store.select(filtersFeature.selectOrdering),
@@ -136,11 +136,13 @@ export class AppointmentEffects {
               .pipe(
                 map((appointments) => {
                   if (appointments.length === 0) {
-                    this.messageService.add({
-                      key: 'global',
-                      severity: 'error',
-                      summary: 'There is no appointments to show',
-                    });
+                    if (action.type === loadAppointments.type) {
+                      this.messageService.add({
+                        key: 'global',
+                        severity: 'error',
+                        summary: 'There is no appointments to show',
+                      });
+                    }
                   }
                   return loadAppointmentsSuccess({ data: appointments });
                 }),
@@ -157,7 +159,7 @@ export class AppointmentEffects {
 
   reload$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(createUpsSuccess, deleteUps, updateUps),
+      ofType(createUpsSuccess, deleteUpsSuccess, updateUpsSuccess),
       map(() => {
         return reloadAppointments();
       })

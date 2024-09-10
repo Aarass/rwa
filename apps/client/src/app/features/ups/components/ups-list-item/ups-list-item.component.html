@@ -1,5 +1,4 @@
-@if (ups !== null) {
-<p-card [header]="ups.sport.name" styleClass="block w-20rem">
+<p-card [header]="ups.sport.name" styleClass="block w-20rem" *ngIf="ups !== null">
   <ng-template pTemplate="header">
     <img alt="Card" [src]="getImageUrl()" class="object-center w-full ar169" />
   </ng-template>
@@ -8,6 +7,3 @@
     <p-button icon="pi pi-trash" severity="danger" (onClick)="delete()" />
   </div>
 </p-card>
-} @else if (ups === null) {
-<p-button icon="pi pi-plus" [rounded]="true" [text]="true" [raised]="true"></p-button>
-}

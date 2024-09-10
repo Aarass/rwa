@@ -2,11 +2,13 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import {
   AccessToken,
+  AppointmentFilters,
   CreateAppointmentDto,
   CreateSportDto,
   CreateSurfaceDto,
   CreateUpsDto,
   CreateUserDto,
+  FindAppointmentsDto,
 } from '../../../../shared/src';
 import {
   Appointment,
@@ -38,7 +40,7 @@ export const createUser = async function (
 export const createSport = async function (server: App, name: string) {
   const newSport: CreateSportDto = {
     name,
-    iconUrl: './icon.png',
+    imageName: './icon.png',
   };
 
   if (process.env.ADMIN_TOKEN == undefined) {
@@ -123,3 +125,39 @@ export const createAppointment = async function (
       .send(newAppointment)
   ).body as Appointment;
 };
+
+export type SimplifiedFind = Partial<Omit<FindAppointmentsDto, 'filters'>> & {
+  filters?: Partial<AppointmentFilters>;
+};
+
+export function createFindAppointmentDto(find: SimplifiedFind) {
+  const dto: FindAppointmentsDto = {
+    filters: {
+      age: null,
+      canceled: null,
+      maxDate: null,
+      maxDistance: null,
+      maxPrice: null,
+      maxTime: null,
+      minDate: null,
+      minTime: null,
+      organizerId: null,
+      skip: null,
+      sportId: null,
+      take: null,
+      userId: null,
+      ...find.filters,
+    },
+    ordering: find.ordering ?? null,
+    userLocation: find.userLocation ?? null,
+  };
+  return dto;
+}
+
+export function toPostgresDateString(date: Date) {
+  return date.toDateString().substring(4);
+}
+
+export function toPostgresTimeString(date: Date) {
+  return date.toTimeString().substring(0, 5);
+}

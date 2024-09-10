@@ -20,6 +20,7 @@ import {
   takeUntil,
   tap,
   throwError,
+  zip,
 } from 'rxjs';
 import { refresh } from './features/auth/store/auth.actions';
 import { authFeature } from './features/auth/store/auth.feature';
@@ -39,44 +40,45 @@ export class MyHttpInterceptor implements HttpInterceptor {
 
     const finished = new Subject<void>();
 
-    return this.store
-      .select(authFeature.selectAccessTokenWithDecodedPayload)
-      .pipe(
-        // tap((val) => {
-        //   console.log(request.url, val);
-        // }),
-        takeUntil(finished),
-        take(2),
-        switchMap((data) => {
-          const { accessToken, payload } = data;
-          return handler
-            .handle(
-              request.clone({
-                withCredentials: true,
-                headers:
-                  accessToken === null
-                    ? undefined
-                    : new HttpHeaders().set(
-                        'Authorization',
-                        `Bearer ${accessToken}`
-                      ),
-              })
-            )
-            .pipe(
-              catchError((err: HttpErrorResponse) => {
-                if (err.status === 401) {
-                  if (payload != null && checkIfJwtExpired(payload.exp)) {
-                    this.store.dispatch(refresh());
-                    return EMPTY;
-                  }
+    return zip(
+      this.store.select(authFeature.selectAccessToken),
+      this.store.select(authFeature.selectDecodedPayload)
+    ).pipe(
+      // tap((val) => {
+      //   console.log(request.url, val);
+      // }),
+      takeUntil(finished),
+      take(2),
+      switchMap((data) => {
+        const [accessToken, payload] = data;
+        return handler
+          .handle(
+            request.clone({
+              withCredentials: true,
+              headers:
+                accessToken === null
+                  ? undefined
+                  : new HttpHeaders().set(
+                      'Authorization',
+                      `Bearer ${accessToken}`
+                    ),
+            })
+          )
+          .pipe(
+            catchError((err: HttpErrorResponse) => {
+              if (err.status === 401) {
+                if (payload != null && checkIfJwtExpired(payload.exp)) {
+                  this.store.dispatch(refresh());
+                  return EMPTY;
                 }
-                return throwError(() => err);
-              }),
-              filter((val) => val.type === HttpEventType.Response),
-              tap(() => finished.next())
-            );
-        })
-      );
+              }
+              return throwError(() => err);
+            }),
+            filter((val) => val.type === HttpEventType.Response),
+            tap(() => finished.next())
+          );
+      })
+    );
   }
 }
 

@@ -1,13 +1,13 @@
 <p-card header="Hi, Welcome!" subheader="Craete an account">
   <div [formGroup]="formGroup" class="form">
-    <p-stepper [linear]="true" transitionOptions="400ms cubic-bezier(0.86, 0, 0.07, 1)">
+    <p-stepper transitionOptions="400ms cubic-bezier(0.86, 0, 0.07, 1)">
       <p-stepperPanel>
         <ng-template pTemplate="content" let-nextCallback="nextCallback" let-prevCallback="prevCallback"
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
               <input pInputText name="register-username" id="register-username" autocomplete="off"
-                formControlName="username" required />
+                formControlName="username" pAutoFocus [autofocus]="true" required />
               <label for="register-username">Username</label>
             </p-floatLabel>
           </div>
@@ -42,7 +42,8 @@
           let-index="index">
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
-              <input pInputText id="name" autocomplete="off" formControlName="name" required />
+              <input pInputText id="name" autocomplete="off" formControlName="name" required pAutoFocus
+                [autofocus]="true" />
               <label for="name">Name</label>
             </p-floatLabel>
           </div>
@@ -92,7 +93,7 @@
           <div class="flex align-items-center gap-3 mb-4">
             <p-floatLabel>
               <textarea id="bio" rows="5" cols="30" pInputTextarea formControlName="biography"></textarea>
-              <label for="bio">Biography</label>
+              <label for="bio">Biography (Optional)</label>
             </p-floatLabel>
           </div>
 

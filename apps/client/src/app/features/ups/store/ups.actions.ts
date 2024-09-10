@@ -23,6 +23,8 @@ export const deleteUps = createAction(
   props<{ id: number }>()
 );
 
+export const deleteUpsSuccess = createAction('[Ups] Delete Ups Success');
+
 export const updateUps = createAction(
   '[Ups] Update Ups',
   props<{
@@ -32,3 +34,4 @@ export const updateUps = createAction(
     };
   }>()
 );
+export const updateUpsSuccess = createAction('[Ups] Update Ups Success');

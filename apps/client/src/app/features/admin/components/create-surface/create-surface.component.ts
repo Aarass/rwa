@@ -55,17 +55,24 @@ export class CreateSurfaceComponent implements OnInit, OnDestroy {
   }
 
   createSurface() {
+    this.newSurfaceName = this.newSurfaceName.trim();
+    if (this.newSurfaceName.length == 0) {
+      return;
+    }
+
     this.store.dispatch(createSurface({ data: { name: this.newSurfaceName } }));
+
     this.newSurfaceName = '';
   }
 
   editSurface(inplace: Inplace, surface: SurfaceDto, input: HTMLInputElement) {
-    if (input.value.length) {
+    const name = input.value.trim();
+    if (name.length) {
       this.store.dispatch(
         updateSurface({
           data: {
             id: surface.id,
-            dto: { name: input.value },
+            dto: { name },
           },
         })
       );

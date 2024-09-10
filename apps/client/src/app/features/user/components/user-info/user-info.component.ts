@@ -2,21 +2,28 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { LetDirective } from '@ngrx/component';
 import { Store } from '@ngrx/store';
 import { RatingDto, RatingStatsDto, UserInfo } from '@rwa/shared';
 import { FileUploadModule } from 'primeng/fileupload';
 import { KnobModule } from 'primeng/knob';
-import { RatingModule } from 'primeng/rating';
+import { RatingModule, RatingRateEvent } from 'primeng/rating';
 import {
   combineLatest,
+  connectable,
+  delayWhen,
   filter,
   map,
   Observable,
-  shareReplay,
+  ReplaySubject,
+  share,
   Subject,
   switchMap,
+  take,
   takeUntil,
+  tap,
 } from 'rxjs';
+import { selectPayload } from '../../../auth/store/auth.feature';
 import { isNotNull } from '../../../global/functions/rxjs-filter';
 import { ConfigService } from '../../../global/services/config/config.service';
 import { ImageService } from '../../../image/services/image/image.service';
@@ -29,6 +36,7 @@ import { selectUser } from '../../store/user.feature';
   selector: 'app-user-info',
   standalone: true,
   imports: [
+    LetDirective,
     CommonModule,
     KnobModule,
     FormsModule,
@@ -41,13 +49,14 @@ import { selectUser } from '../../store/user.feature';
 export class UserInfoComponent implements OnDestroy {
   death = new Subject<void>();
 
+  userInfo$: ReplaySubject<UserInfo>;
+  image$: Observable<string>;
+
   info: UserInfo | undefined;
-  viewerId: number | null = null;
+  viewerId$: Observable<number | null>;
 
   myRating: RatingDto | null = null;
   ratingStats: RatingStatsDto | null = null;
-
-  image$: Observable<string>;
 
   constructor(
     private store: Store,
@@ -57,62 +66,47 @@ export class UserInfoComponent implements OnDestroy {
     private ratingService: RatingService,
     private configService: ConfigService
   ) {
-    const viewerId$ = selectUser(this.store).pipe(
-      takeUntil(this.death),
-      map((val) => {
-        return val?.id ?? null;
-      })
+    this.userInfo$ = new ReplaySubject<UserInfo>(1);
+
+    this.viewerId$ = selectPayload(this.store).pipe(
+      map((payload) => payload?.user.id ?? null)
     );
 
-    viewerId$.subscribe((id) => {
-      this.viewerId = id;
-    });
-
-    const userInfo$ = this.route.queryParamMap.pipe(
-      map((map) => {
-        const id = map.get('id');
-        if (id === null) {
-          return null;
-        }
-        try {
-          return parseInt(id);
-        } catch {
-          return null;
-        }
-      }),
-      takeUntil(this.death),
-      filter(isNotNull),
-      switchMap((id) => {
-        return this.userService.getUserInfoById(id);
-      }),
-      shareReplay(1)
+    const queriedUserId$ = connectable(
+      this.route.queryParamMap.pipe(
+        map((map) => {
+          const id = map.get('id');
+          if (id === null) {
+            return null;
+          }
+          try {
+            return parseInt(id);
+          } catch {
+            return null;
+          }
+        }),
+        filter(isNotNull),
+        share(),
+        tap((val) => console.log('Izaslo iz queriedUserId', val))
+      )
     );
 
-    userInfo$.subscribe((info) => {
+    this.userInfo$.subscribe((info) => {
       this.info = info;
     });
 
-    userInfo$
-      .pipe(
-        switchMap((info) => {
-          return this.ratingService.getStats(info.user.id);
-        })
-      )
-      .subscribe((val) => {
-        this.ratingStats = val;
+    queriedUserId$
+      .pipe(switchMap((userId) => this.ratingService.getStats(userId)))
+      .subscribe((stats) => {
+        this.ratingStats = stats;
       });
 
-    viewerId$
+    queriedUserId$
       .pipe(
-        filter((viewerId) => {
-          return viewerId != null;
-        }),
-        switchMap(() => userInfo$)
-      )
-      .pipe(
-        switchMap((info) => {
-          return this.ratingService.getMyRating(info.user.id);
-        }),
+        delayWhen(() =>
+          selectPayload(this.store).pipe(filter(isNotNull), take(1))
+        ),
+        switchMap((userId) => this.ratingService.getMyRating(userId)),
         map((val) => {
           return (
             val ?? {
@@ -120,17 +114,14 @@ export class UserInfoComponent implements OnDestroy {
               value: 0,
             }
           );
-        })
+        }),
+        takeUntil(this.death)
       )
       .subscribe((val) => {
         this.myRating = val;
       });
 
-    this.image$ = combineLatest([
-      userInfo$,
-      // this.store.select(userFeature.selectMe),
-      selectUser(this.store),
-    ]).pipe(
+    this.image$ = combineLatest([this.userInfo$, selectUser(this.store)]).pipe(
       map((tuple) => {
         const [info, viewer] = tuple;
 
@@ -150,6 +141,12 @@ export class UserInfoComponent implements OnDestroy {
         return this.configService.getPlaceholderImageURL();
       })
     );
+
+    queriedUserId$
+      .pipe(switchMap((id) => this.userService.getUserInfoById(id)))
+      .subscribe(this.userInfo$);
+
+    queriedUserId$.connect();
   }
 
   onFileChange(event: Event) {
@@ -185,11 +182,10 @@ export class UserInfoComponent implements OnDestroy {
     }
   }
 
-  ratingChanged(e: { value: number }) {
+  ratingChanged(e: RatingRateEvent, viewerId: number) {
     if (this.ratingStats === null) throw `This should not happen 1`;
     if (this.myRating === null) throw `This should not happen 2`;
     if (this.info === undefined) throw `This should not happen 3`;
-    if (this.viewerId === null) throw `This should not happen 4`;
 
     const { value: newRating } = e;
     const { avg, count: n } = this.ratingStats;
@@ -204,7 +200,7 @@ export class UserInfoComponent implements OnDestroy {
     this.ratingService
       .postRating({
         userRatedId: this.info.user.id,
-        userRatingId: this.viewerId,
+        userRatingId: viewerId,
         value: newRating,
       })
       .subscribe((res) => {

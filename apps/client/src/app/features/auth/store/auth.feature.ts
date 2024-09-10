@@ -83,17 +83,7 @@ export const authFeature = createFeature({
       };
     })
   ),
-  extraSelectors: ({ selectAccessToken, selectDecodedPayload }) => ({
-    selectAccessTokenWithDecodedPayload: createSelector(
-      selectAccessToken,
-      selectDecodedPayload,
-      (accessToken, decodedPayload) => {
-        return {
-          accessToken: accessToken,
-          payload: decodedPayload,
-        };
-      }
-    ),
+  extraSelectors: ({ selectDecodedPayload }) => ({
     selectIsAdmin: createSelector(selectDecodedPayload, (payload) => {
       return payload?.user.roles.includes('admin') ?? false;
     }),

@@ -11,6 +11,8 @@ import {
   addAppointment,
   cancelAppointment,
   createAppointmentSuccess,
+  loadAppointment,
+  loadAppointments,
   loadAppointmentsFail,
   loadAppointmentsSuccess,
   reloadAppointments,
@@ -74,6 +76,15 @@ export const appointmentFeature = createFeature({
           },
           state.appointments
         ),
+      };
+    }),
+    on(loadAppointment, loadAppointments, (state) => {
+      return {
+        ...state,
+        isLoading: {
+          val: true,
+          shaker: Math.random(),
+        },
       };
     }),
     on(reloadAppointments, (state) => {
@@ -197,6 +208,10 @@ export const appointmentFeature = createFeature({
       return {
         ...state,
         appointments: adapter.addOne(action.data, state.appointments),
+        isLoading: {
+          val: false,
+          shaker: Math.random(),
+        },
       };
     }),
     on(removeAppointment, (state, action) => {

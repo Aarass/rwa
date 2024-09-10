@@ -21,7 +21,11 @@ export class ProfileComponent {
     private store: Store
   ) {
     selectUser(this.store).subscribe((user) => {
-      if (!user) throw `Not logged in user should not have access to this page`;
+      if (!user) {
+        // Ovo se desava prilikom logout-a, redirekcija ne stigne dovoljno brzo
+        // throw `Not logged in user should not have access to this page`;
+        return;
+      }
 
       const queryParams: Params = { id: user.id };
       this.router.navigate([], {

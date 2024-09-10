@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AutoFocusModule } from 'primeng/autofocus';
 import { ButtonModule } from 'primeng/button';
 import { CalendarModule } from 'primeng/calendar';
 import { CardModule } from 'primeng/card';
@@ -12,9 +13,9 @@ import { PasswordModule } from 'primeng/password';
 import { StepperModule } from 'primeng/stepper';
 
 import {
+  createUserSchema,
   LocationSuggestionDto,
   RegisterUserDto,
-  createUserSchema as registerUserSchema,
 } from '@rwa/shared';
 import {
   AutoCompleteCompleteEvent,
@@ -24,17 +25,18 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { LocationService } from '../../../location/services/location/location.service';
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
+import { selectUser } from '../../../user/store/user.feature';
 import { register } from '../../store/auth.actions';
 import { authFeature } from '../../store/auth.feature';
-import { Router } from '@angular/router';
-import { selectUser } from '../../../user/store/user.feature';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
+    AutoFocusModule,
     CommonModule,
     InputTextModule,
     ButtonModule,
@@ -89,7 +91,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.death))
       .subscribe((data) => {
         if (data != null) {
-          this.router.navigateByUrl('appointments');
+          this.router.navigateByUrl('my-sports');
         }
       });
   }
@@ -113,6 +115,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   async submit() {
+    this.messageService.clear();
+
     const values = this.formGroup.getRawValue();
 
     if (
@@ -125,23 +129,21 @@ export class RegisterComponent implements OnInit, OnDestroy {
       values.surname === null ||
       values.username === null
     ) {
-      this.messageService.clear('register');
       this.messageService.add({
         key: 'register',
         severity: 'error',
-        summary:
-          'GLOBAL' + ': ' + 'There are empty fields that need to be filled out',
+        summary: 'There are empty fields that need to be filled out',
       });
       return;
     }
 
-    if (values.location.place_id === undefined) {
-      this.messageService.clear('register');
-      this.messageService.add({
-        key: 'register',
-        severity: 'error',
-        summary: 'LOCATION' + ': ' + 'Invalid location',
-      });
+    if (values.password !== '' && values.password !== values.confirmPassword) {
+      this.showError(`Passwords don't match`);
+      return;
+    }
+
+    if (values.birthDate > new Date()) {
+      this.showError(`You can't be born in future`);
       return;
     }
 
@@ -156,23 +158,37 @@ export class RegisterComponent implements OnInit, OnDestroy {
       username: values.username,
     };
 
-    const zodResult = await registerUserSchema.safeParseAsync(registerUserDto);
-
-    if (zodResult.success === false) {
-      const error = zodResult.error.errors[0];
-      this.messageService.clear('register');
-      this.messageService.add({
-        key: 'register',
-        severity: 'error',
-        summary: error.path.toString().toUpperCase() + ': ' + error.message,
-      });
+    const res = await createUserSchema.safeParseAsync(registerUserDto);
+    if (!res.success) {
+      if (res.error.errors.length > 0) {
+        this.showError(res.error.errors[0].message);
+      }
       return;
     }
+
+    const parsedDto = res.data;
+
+    // if (values.location.place_id === undefined) {
+    //   this.messageService.clear('register');
+    //   this.messageService.add({
+    //     key: 'register',
+    //     severity: 'error',
+    //     summary: 'LOCATION' + ': ' + 'Invalid location',
+    //   });
+    //   return;
+    // }
 
     this.messageService.clear('register');
     this.loading = true;
 
-    this.store.dispatch(register(registerUserDto));
-    return;
+    this.store.dispatch(register({ data: parsedDto }));
+  }
+
+  showError(err: string) {
+    this.messageService.add({
+      key: 'register',
+      severity: 'error',
+      summary: err,
+    });
   }
 }

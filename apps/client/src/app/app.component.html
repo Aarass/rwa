@@ -7,7 +7,7 @@
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2" *ngIf="authStatus !== null">
         @if (authStatus === 0) {
-        <p-button (onClick)="showSignInDialog()" label="Sign In" outlined="false" text="true" />
+        <p-button label="Sign In" outlined="false" text="true" (onClick)="showSignInDialog()" />
         <p-button label="Sign Up" outlined="true" routerLink="signup" />
         } @else {
         <p-button label="Home" icon="pi pi-home" severity="secondary" routerLink="" text="true" />
@@ -19,15 +19,9 @@
   </p-menubar>
   <div class="flex-grow-1 overflow-hidden flex">
     <div class="h-full flex-grow-0">
-      @if (authStatus !== 0) {
+      @if (authStatus !== null && authStatus !== 0) {
       <div class="p-card p-component p-4 w-15rem h-full flex flex-column justify-content-between">
         <div class="flex flex-column row-gap-2">
-          @if(isAdmin$ | async) {
-          <p-button label="Dashboard" icon="pi pi-chart-bar" severity="secondary" styleClass="w-full text-left"
-            routerLink="/dashboard" />
-          <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
-            routerLink="/images" />
-          } @else {
           <p-button label="Appointments" icon="pi pi-list" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="appointments" />
 
@@ -38,6 +32,14 @@
           </p-button>
           <p-button label="My Sports" icon="pi pi-globe" severity="secondary"
             styleClass="w-full text-left white-space-nowrap" routerLink="my-sports" />
+
+          @if(isAdmin$ | async) {
+          <p-divider />
+          <p-button label="Dashboard" icon="pi pi-pen-to-square" severity="secondary" styleClass="w-full text-left"
+            routerLink="/dashboard" />
+          <!-- pi-chart-bar -->
+          <p-button label="Images" icon="pi pi-images" severity="secondary" styleClass="w-full text-left"
+            routerLink="/images" />
           }
         </div>
         <app-profile-summary></app-profile-summary>

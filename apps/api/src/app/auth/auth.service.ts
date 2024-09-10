@@ -4,6 +4,7 @@ import {
   HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import {
@@ -71,6 +72,10 @@ export class AuthService {
   async refresh(
     refreshToken: RefreshToken
   ): Promise<{ newAccessToken: AccessToken; newRefreshToken: RefreshToken }> {
+    if (refreshToken === 'j:null') {
+      throw new ForbiddenException('No token');
+    }
+
     let payload: RefreshTokenPayload;
     try {
       payload = this.jwtService.verify(refreshToken);
@@ -82,8 +87,7 @@ export class AuthService {
     const user = await this.userService.getUserById(payload.sub);
 
     if (user == null) {
-      // Kapiram da ovo moze da se desi ako se user izbrise, u drugim slucajevima mislim da je bug
-      throw new InternalServerErrorException(
+      throw new NotFoundException(
         `Couldn't find user with id found in refresh token\n`
       );
     }
@@ -144,7 +148,7 @@ export class AuthService {
       const access_token = await this.jwtService.signAsync(
         { user: tokenUser },
         {
-          // expiresIn: '10sec',
+          // expiresIn: '5sec',
           expiresIn: '10m',
         }
       );

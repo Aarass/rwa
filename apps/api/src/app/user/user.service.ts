@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
@@ -77,7 +82,13 @@ export class UserService {
       passwordHash: await bcrypt.hash(newUser.password, 10),
     });
 
-    await this.userRepository.insert(user);
+    try {
+      await this.userRepository.insert(user);
+    } catch (err: any) {
+      if (err.code == 23505) {
+        throw new ConflictException('Username is taken');
+      }
+    }
 
     return user;
   }

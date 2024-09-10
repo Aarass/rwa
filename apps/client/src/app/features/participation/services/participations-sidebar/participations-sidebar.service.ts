@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { combineLatest, map, Observable, Subject } from 'rxjs';
 import { participationFeature } from '../../store/participation.feature';
-import { combineLatest, delay, map, Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

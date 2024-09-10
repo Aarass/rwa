@@ -8,6 +8,7 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DividerModule } from 'primeng/divider';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { MenubarModule } from 'primeng/menubar';
 import { RippleModule } from 'primeng/ripple';
@@ -21,11 +22,11 @@ import { authFeature } from './features/auth/store/auth.feature';
 import { AuthStatus } from './features/auth/store/auth.state';
 import { openSignIn } from './features/global/actions/global.actions';
 import { ParticipationsSidebarService } from './features/participation/services/participations-sidebar/participations-sidebar.service';
+import { clearParticipants } from './features/participation/store/participation.actions';
 import { participationFeature } from './features/participation/store/participation.feature';
 import { ProfileSummaryComponent } from './features/profile/components/profile-summary/profile-summary.component';
 import { loadAllSports } from './features/sport/store/sport.actions';
 import { loadAllSurfaces } from './features/surface/store/surface.actions';
-import { clearParticipants } from './features/participation/store/participation.actions';
 
 @Component({
   standalone: true,
@@ -45,6 +46,7 @@ import { clearParticipants } from './features/participation/store/participation.
     CardModule,
     ParticipantsComponent,
     ConfirmDialogModule,
+    DividerModule,
   ],
   selector: 'app-root',
   templateUrl: './app.component.html',

@@ -1,16 +1,15 @@
 <div class="h-full flex flex-column justify-content-center p-8">
   <div class="inset-shadow mb-8">
-    <div class="flex p-4 gap-4 align-items-center overflow-auto nice-scrollbar">
-      @if (sportsLeft) {
-      <app-ups-list-item [ups]="null" class="cursor-pointer" (click)="openUpsDialog()"></app-ups-list-item>
-      }
+    <div class="margin-center flex p-4 gap-4 align-items-center overflow-auto nice-scrollbar">
+      <p-button icon="pi pi-plus cursor-pointer" [rounded]="true" [text]="true" [raised]="true"
+        (click)="openUpsDialog()" *ngIf="sportsLeft"></p-button>
+
       @for (ups of upses; track ups.id) {
       <app-ups-list-item [ups]="ups"></app-ups-list-item>
       }
     </div>
   </div>
   @if (upses.length === 0) {
-  <!-- <p>Here will be shown yours sports</p> -->
   <p class="text-center">Click on "+" to add sports you play</p>
   }
 </div>

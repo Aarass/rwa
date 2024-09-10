@@ -53,10 +53,7 @@ export class AppointmentService {
       userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
     }
 
-    let { filterByUpses } = userFilters;
-    if (user && user.roles.includes('admin')) {
-      filterByUpses = false;
-    }
+    const { filterByUpses } = userFilters;
 
     const findOptions: FindAppointmentsDto = {
       filters: {

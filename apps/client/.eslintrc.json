@@ -3,10 +3,14 @@
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
+      "parserOptions": {
+        "project": "./apps/client/tsconfig.app.json"
+      },
       "files": ["*.ts"],
       "extends": [
         "plugin:@nx/angular",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "plugin:rxjs/recommended"
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
@@ -25,7 +29,8 @@
             "style": "kebab-case"
           }
         ],
-        "@typescript-eslint/no-inferrable-types": "off"
+        "@typescript-eslint/no-inferrable-types": "off",
+        "rxjs/no-implicit-any-catch": "off"
       }
     },
     {

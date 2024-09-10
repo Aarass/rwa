@@ -5,11 +5,12 @@ import { Observable } from 'rxjs';
 import { ParticipationDto } from '@rwa/shared';
 import { participationFeature } from '../../store/participation.feature';
 import { ParticipationComponent } from '../participation/participation.component';
+import { LetDirective } from '@ngrx/component';
 
 @Component({
   selector: 'app-participation-list',
   standalone: true,
-  imports: [CommonModule, ParticipationComponent],
+  imports: [CommonModule, ParticipationComponent, LetDirective],
   templateUrl: './participation-list.component.html',
   styleUrl: './participation-list.component.scss',
 })

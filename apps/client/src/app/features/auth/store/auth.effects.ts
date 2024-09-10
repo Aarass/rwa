@@ -31,8 +31,8 @@ export class AuthEffects {
   register$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(register),
-      exhaustMap((data) => {
-        const registerUserDto = data;
+      exhaustMap((action) => {
+        const registerUserDto = action.data;
         return this.authService.register(registerUserDto).pipe(
           map(() => {
             this.messageService.add({
@@ -40,13 +40,13 @@ export class AuthEffects {
               severity: 'success',
               summary: 'Successfully signed up',
             });
-            return registerSuccess(registerUserDto);
+            return registerSuccess({ data: registerUserDto });
           }),
-          catchError((err) => {
+          catchError((err: HttpErrorResponse) => {
             this.messageService.add({
-              key: 'global',
+              key: 'register',
               severity: 'error',
-              summary: 'Unexpected error',
+              summary: err.error.message,
             });
             console.error(err);
             return of(registerFailed());
@@ -59,35 +59,37 @@ export class AuthEffects {
   login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(login, registerSuccess),
-      exhaustMap((data) => {
-        return this.authService.login(data.username, data.password).pipe(
-          map((data) => {
-            this.messageService.add({
-              key: 'global',
-              severity: 'success',
-              summary: 'Successfully signed in',
-            });
-            return loginSuccess(data);
-          }),
-          catchError((err: HttpErrorResponse) => {
-            if (err.status === 401) {
+      exhaustMap((action) => {
+        return this.authService
+          .login(action.data.username, action.data.password)
+          .pipe(
+            map((data) => {
               this.messageService.add({
                 key: 'global',
-                severity: 'error',
-                // TODO
-                summary: 'Sign in failed',
+                severity: 'success',
+                summary: 'Successfully signed in',
               });
-            } else {
-              this.messageService.add({
-                key: 'global',
-                severity: 'error',
-                summary: 'Unexpected error',
-              });
-              console.error(err);
-            }
-            return of(loginFailed());
-          })
-        );
+              return loginSuccess(data);
+            }),
+            catchError((err: HttpErrorResponse) => {
+              if (err.status === 401) {
+                this.messageService.add({
+                  key: 'global',
+                  severity: 'error',
+                  // TODO
+                  summary: 'Sign in failed',
+                });
+              } else {
+                this.messageService.add({
+                  key: 'global',
+                  severity: 'error',
+                  summary: 'Unexpected error',
+                });
+                console.error(err);
+              }
+              return of(loginFailed());
+            })
+          );
       })
     );
   });

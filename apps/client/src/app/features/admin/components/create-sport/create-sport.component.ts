@@ -56,11 +56,11 @@ export class CreateSportComponent implements OnInit, OnDestroy {
     this.store
       .select(sportFeature.selectIsLoaded)
       .pipe(
-        takeUntil(this.death),
         filter((loaded) => loaded === true),
         switchMap(() => {
           return this.store.select(sportFeature.selectCount);
-        })
+        }),
+        takeUntil(this.death)
       )
       .subscribe((count) => {
         this.count = count;
@@ -99,6 +99,12 @@ export class CreateSportComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.sportName = this.sportName.trim();
+
+    if (this.sportName.length == 0) {
+      return;
+    }
+
     const { name: imageName } = await firstValueFrom(
       this.imageService.uploadImage(this.image)
     );
@@ -107,7 +113,7 @@ export class CreateSportComponent implements OnInit, OnDestroy {
       createSport({
         data: {
           name: this.sportName,
-          imageName: `${this.confingService.getBackendBaseURL()}/images/${imageName}`,
+          imageName,
         },
       })
     );

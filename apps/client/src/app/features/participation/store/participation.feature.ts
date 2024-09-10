@@ -45,7 +45,7 @@ export const participationFeature = createFeature({
         selectedAppointmentId: action.data.id,
       };
     }),
-    on(clearParticipants, (state, action) => {
+    on(clearParticipants, (state) => {
       return {
         ...state,
         selectedAppointmentId: null,

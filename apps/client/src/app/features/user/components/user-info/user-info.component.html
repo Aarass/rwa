@@ -1,5 +1,5 @@
 <div class="p-4 h-full flex overflow-auto nice-scrollbar" *ngIf="info">
-  <div class="flex flex-column gap-4 align-items-center m-auto">
+  <div class="flex flex-column gap-4 align-items-center m-auto" *ngrxLet="viewerId$ | async as viewerId">
     <div class="flex gap-4">
       <div class="grow-0 w-10rem h-10rem relative border-round-xl overflow-hidden">
         <div *ngIf="image$ | async as imageSrc" class="w-full h-full">
@@ -50,9 +50,9 @@
       <p class="m-0 -mt-2 text-sm text-300">{{ ratingStats.count }} ratings</p>
       }
 
-      @if(info.user.id !== viewerId) {
+      @if(viewerId !== null && info.user.id !== viewerId) {
       @if (myRating) {
-      <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event)" (onCancel)="ratingRemoved()"
+      <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event, viewerId)" (onCancel)="ratingRemoved()"
         [cancel]="myRating.value !== 0" />
       }
       }

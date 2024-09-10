@@ -1,8 +1,8 @@
-<div [formGroup]="formGroup" class="form" (keydown.enter)="submit()">
+<div [formGroup]="formGroup" class="form overflow-hidden" (keydown.enter)="submit()">
   <div class="flex align-items-center gap-3 mb-4 mt-4 w-full">
     <p-floatLabel class="w-full">
       <p-dropdown [options]="sports" formControlName="selectedSportControl" optionLabel="name"
-        placeholder="Select a Sport" inputId="sport" styleClass="w-full" />
+        placeholder="Select a Sport" inputId="sport" styleClass="w-full" scrollHeight="100px" />
       <label for=" sport">Select a Sport</label>
     </p-floatLabel>
   </div>

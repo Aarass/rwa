@@ -3,15 +3,18 @@ import { AccessToken, LoginUserDto, RegisterUserDto } from '@rwa/shared';
 
 export const register = createAction(
   '[Auth] Register',
-  props<RegisterUserDto>()
+  props<{ data: RegisterUserDto }>()
 );
 export const registerSuccess = createAction(
   '[Auth] Register Success',
-  props<RegisterUserDto>()
+  props<{ data: RegisterUserDto }>()
 );
 export const registerFailed = createAction('[Auth] Register Failed');
 
-export const login = createAction('[Auth] Login', props<LoginUserDto>());
+export const login = createAction(
+  '[Auth] Login',
+  props<{ data: LoginUserDto }>()
+);
 export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ accessToken: AccessToken }>()
