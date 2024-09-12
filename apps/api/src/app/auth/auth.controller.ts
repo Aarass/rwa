@@ -2,6 +2,7 @@ import { TokenUser } from '@rwa/shared';
 import {
   Body,
   Controller,
+  ForbiddenException,
   HttpCode,
   Post,
   Req,
@@ -56,6 +57,9 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response
   ) {
     const refreshToken = req.cookies['refresh_token'];
+    if (refreshToken === undefined) {
+      throw new ForbiddenException('No token');
+    }
     const { newAccessToken, newRefreshToken } = await this.authService.refresh(
       refreshToken
     );

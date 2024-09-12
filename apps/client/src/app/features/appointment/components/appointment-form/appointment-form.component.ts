@@ -56,6 +56,7 @@ import {
   updateAppointment,
 } from '../../store/appointment.actions';
 import { appointmentFeature } from '../../store/appointment.feature';
+import { upsFeature } from '../../../ups/store/ups.feature';
 
 @Component({
   selector: 'app-appointment-form',
@@ -114,7 +115,10 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
     private appointmentService: AppointmentService,
     private route: ActivatedRoute
   ) {
-    this.sports$ = this.store.select(sportFeature.selectAllSports);
+    // this.sports$ = this.store.select(sportFeature.selectAllSports);
+    this.sports$ = this.store
+      .select(upsFeature.selectMyUpses)
+      .pipe(map((upses) => upses.map((ups) => ups.sport)));
     this.surfaces$ = this.store.select(surfaceFeature.selectAll);
   }
 

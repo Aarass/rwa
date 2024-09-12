@@ -1,4 +1,4 @@
-<div class="p-4 h-full flex overflow-auto nice-scrollbar" *ngIf="info">
+<div class="p-4 h-full flex overflow-auto nice-scrollbar" *ngIf="userInfo$ | async as info">
   <div class="flex flex-column gap-4 align-items-center m-auto" *ngrxLet="viewerId$ | async as viewerId">
     <div class="flex gap-4">
       <div class="grow-0 w-10rem h-10rem relative border-round-xl overflow-hidden">
@@ -9,12 +9,12 @@
         <div class="absolute top-0 right-0 flex align-items-start justify-content-end gap-2 p-2 bg-white"
           style="border-bottom-left-radius: 10px;">
           @if(info.user.imageName === null) {
-          <input id="image-upload" class="hidden" type="file" (change)="onFileChange($event)" accept="image/*">
+          <input id="image-upload" class="hidden" type="file" (change)="onFileChange($event, info)" accept="image/*">
           <label for="image-upload" class="upload">
             <i class="pi pi-upload cursor-pointer"></i>
           </label>
           } @else {
-          <i class="pi pi-trash cursor-pointer" (click)="deleteImage()"></i>
+          <i class="pi pi-trash cursor-pointer" (click)="deleteImage(info)"></i>
           }
         </div>
         }
@@ -44,18 +44,16 @@
         </div>
       </div>
     </div>
-    <div class="flex-center flex-column gap-2 -mb-4">
-      @if (ratingStats) {
+    <div class="flex-center flex-column gap-2 -mb-4" *ngIf="ratingStats$ | async as ratingStats">
       <h2 class="m-0 text-3xl">{{ getFormatedAvg(ratingStats) }}</h2>
       <p class="m-0 -mt-2 text-sm text-300">{{ ratingStats.count }} ratings</p>
-      }
 
-      @if(viewerId !== null && info.user.id !== viewerId) {
-      @if (myRating) {
-      <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event, viewerId)" (onCancel)="ratingRemoved()"
-        [cancel]="myRating.value !== 0" />
-      }
-      }
+      <ng-container *ngIf="myRating$ | async as myRating">
+        @if(viewerId !== null && info.user.id !== viewerId) {
+        <p-rating [ngModel]="myRating.value" (onRate)="ratingChanged($event, info, myRating, ratingStats, viewerId)"
+          (onCancel)="ratingRemoved(myRating, ratingStats)" [cancel]="myRating.value !== 0" />
+        }
+      </ng-container>
     </div>
     <div class="flex gap-4">
       <div class="flex flex-column align-items-center">

@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+
 import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -17,6 +18,7 @@ import {
   Observable,
   ReplaySubject,
   share,
+  shareReplay,
   Subject,
   switchMap,
   take,
@@ -31,6 +33,7 @@ import { RatingService } from '../../../rating/services/rating/rating.service';
 import { UserService } from '../../services/user/user.service';
 import { setImage } from '../../store/user.actions';
 import { selectUser } from '../../store/user.feature';
+import { log } from '../../../global/functions/rxjs-log';
 
 @Component({
   selector: 'app-user-info',
@@ -49,14 +52,12 @@ import { selectUser } from '../../store/user.feature';
 export class UserInfoComponent implements OnDestroy {
   death = new Subject<void>();
 
-  userInfo$: ReplaySubject<UserInfo>;
-  image$: Observable<string>;
-
-  info: UserInfo | undefined;
   viewerId$: Observable<number | null>;
 
-  myRating: RatingDto | null = null;
-  ratingStats: RatingStatsDto | null = null;
+  image$: Observable<string>;
+  userInfo$ = new ReplaySubject<UserInfo>(1);
+  myRating$ = new ReplaySubject<RatingDto>(1);
+  ratingStats$ = new ReplaySubject<RatingStatsDto>(1);
 
   constructor(
     private store: Store,
@@ -66,13 +67,13 @@ export class UserInfoComponent implements OnDestroy {
     private ratingService: RatingService,
     private configService: ConfigService
   ) {
-    this.userInfo$ = new ReplaySubject<UserInfo>(1);
-
     this.viewerId$ = selectPayload(this.store).pipe(
       map((payload) => payload?.user.id ?? null)
     );
 
     const queriedUserId$ = connectable(
+      // log(
+      //   'Queried user',
       this.route.queryParamMap.pipe(
         map((map) => {
           const id = map.get('id');
@@ -86,20 +87,14 @@ export class UserInfoComponent implements OnDestroy {
           }
         }),
         filter(isNotNull),
-        share(),
-        tap((val) => console.log('Izaslo iz queriedUserId', val))
+        share()
       )
+      // )
     );
-
-    this.userInfo$.subscribe((info) => {
-      this.info = info;
-    });
 
     queriedUserId$
       .pipe(switchMap((userId) => this.ratingService.getStats(userId)))
-      .subscribe((stats) => {
-        this.ratingStats = stats;
-      });
+      .subscribe(this.ratingStats$);
 
     queriedUserId$
       .pipe(
@@ -117,9 +112,13 @@ export class UserInfoComponent implements OnDestroy {
         }),
         takeUntil(this.death)
       )
-      .subscribe((val) => {
-        this.myRating = val;
-      });
+      .subscribe(this.myRating$);
+
+    queriedUserId$
+      .pipe(switchMap((id) => this.userService.getUserInfoById(id)))
+      .subscribe(this.userInfo$);
+
+    queriedUserId$.connect();
 
     this.image$ = combineLatest([this.userInfo$, selectUser(this.store)]).pipe(
       map((tuple) => {
@@ -141,92 +140,89 @@ export class UserInfoComponent implements OnDestroy {
         return this.configService.getPlaceholderImageURL();
       })
     );
-
-    queriedUserId$
-      .pipe(switchMap((id) => this.userService.getUserInfoById(id)))
-      .subscribe(this.userInfo$);
-
-    queriedUserId$.connect();
   }
 
-  onFileChange(event: Event) {
+  onFileChange(event: Event, info: UserInfo) {
     if (event.target === null) throw `Unexpected error`;
-
-    if (this.info === undefined) {
-      throw `This should not happen`;
-    }
 
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file != undefined) {
       this.imageService.uploadImage(file).subscribe((data) => {
-        if (this.info === undefined) {
-          throw 'User info became undefined while waiting for the image to upload';
-        }
+        // this.info.user.imageName = data.name;
+        info.user.imageName = data.name;
+        this.userInfo$.next(info);
 
-        this.info.user.imageName = data.name;
         this.store.dispatch(setImage({ name: null }));
         this.store.dispatch(setImage({ name: data.name }));
       });
     }
   }
 
-  deleteImage() {
-    if (this.info === undefined) {
-      throw `This should not happen`;
-    }
-
-    if (this.info.user.imageName) {
-      this.imageService.deleteImage(this.info.user.imageName).subscribe();
-      this.info.user.imageName = null;
+  deleteImage(info: UserInfo) {
+    if (info.user.imageName) {
+      this.imageService.deleteImage(info.user.imageName).subscribe();
       this.store.dispatch(setImage({ name: null }));
+
+      info.user.imageName = null;
+      this.userInfo$.next(info);
     }
   }
 
-  ratingChanged(e: RatingRateEvent, viewerId: number) {
-    if (this.ratingStats === null) throw `This should not happen 1`;
-    if (this.myRating === null) throw `This should not happen 2`;
-    if (this.info === undefined) throw `This should not happen 3`;
+  ratingChanged(
+    e: RatingRateEvent,
+    info: UserInfo,
+    myRating: RatingDto,
+    ratingStats: RatingStatsDto,
+    viewerId: number
+  ) {
+    const newRating = e.value;
+    const avg = ratingStats.avg;
+    const n = ratingStats.count;
 
-    const { value: newRating } = e;
-    const { avg, count: n } = this.ratingStats;
-
-    if (this.myRating.value === 0) {
-      this.ratingStats.avg = ((avg ?? 0) * n + newRating) / (n + 1);
-      this.ratingStats.count++;
+    if (myRating.value === 0) {
+      ratingStats.avg = ((avg ?? 0) * n + newRating) / (n + 1);
+      ratingStats.count++;
     } else {
-      this.ratingStats.avg = (avg ?? 0) + (newRating - this.myRating.value) / n;
+      ratingStats.avg = (avg ?? 0) + (newRating - myRating.value) / n;
     }
-    this.myRating.value = newRating;
+    myRating.value = newRating;
+
+    this.ratingStats$.next(ratingStats);
+    this.myRating$.next(myRating);
+
+    // TODO probaj da zamenis subskripcijom direktno na subject
     this.ratingService
       .postRating({
-        userRatedId: this.info.user.id,
+        userRatedId: info.user.id,
         userRatingId: viewerId,
         value: newRating,
       })
       .subscribe((res) => {
-        if (this.myRating === null) {
-          throw 'My rating became null while waiting for the image to upload';
-        }
-        this.myRating.id = res.id;
+        myRating.id = res.id;
+        this.myRating$.next(myRating);
       });
   }
 
-  ratingRemoved() {
-    if (this.ratingStats === null) throw `This should not happen 1`;
-    if (this.myRating === null) throw `This should not happen 2`;
+  ratingRemoved(myRating: RatingDto, ratingStats: RatingStatsDto) {
+    if (ratingStats === null) throw `This should not happen 1`;
 
-    if (this.myRating.value === 0) return;
+    if (myRating.value === 0) return;
 
-    const { avg, count: n } = this.ratingStats;
+    const avg = ratingStats.avg;
+    const n = ratingStats.count;
+
     if (n === 1) {
-      this.ratingStats.avg = null;
+      ratingStats.avg = null;
     } else {
-      this.ratingStats.avg = ((avg ?? 0) * n - this.myRating.value) / (n - 1);
+      ratingStats.avg = ((avg ?? 0) * n - myRating.value) / (n - 1);
     }
-    this.ratingStats.count--;
-    this.myRating.value = 0;
+    ratingStats.count--;
+    myRating.value = 0;
 
-    this.ratingService.deleteRating(this.myRating.id).subscribe();
+    this.ratingStats$.next(ratingStats);
+    this.myRating$.next(myRating);
+
+    this.ratingService.deleteRating(myRating.id).subscribe();
   }
 
   getFormatedAvg(ratingStats: RatingStatsDto) {

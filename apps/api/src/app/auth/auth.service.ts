@@ -73,7 +73,7 @@ export class AuthService {
     refreshToken: RefreshToken
   ): Promise<{ newAccessToken: AccessToken; newRefreshToken: RefreshToken }> {
     if (refreshToken === 'j:null') {
-      throw new ForbiddenException('No token');
+      throw new ForbiddenException('Removed token');
     }
 
     let payload: RefreshTokenPayload;

@@ -11,14 +11,11 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   catchError,
+  concatMap,
   EMPTY,
   filter,
   Observable,
-  Subject,
-  switchMap,
   take,
-  takeUntil,
-  tap,
   throwError,
   zip,
 } from 'rxjs';
@@ -38,18 +35,22 @@ export class MyHttpInterceptor implements HttpInterceptor {
       return handler.handle(request);
     }
 
-    const finished = new Subject<void>();
+    // if (request.url === this.configService.getRefreshURL()) {
+    //   console.log('refresh');
+
+    //   return handler.handle(
+    //     request.clone({
+    //       withCredentials: true,
+    //     })
+    //   );
+    // }
 
     return zip(
       this.store.select(authFeature.selectAccessToken),
       this.store.select(authFeature.selectDecodedPayload)
     ).pipe(
-      // tap((val) => {
-      //   console.log(request.url, val);
-      // }),
-      takeUntil(finished),
       take(2),
-      switchMap((data) => {
+      concatMap((data) => {
         const [accessToken, payload] = data;
         return handler
           .handle(
@@ -74,10 +75,10 @@ export class MyHttpInterceptor implements HttpInterceptor {
               }
               return throwError(() => err);
             }),
-            filter((val) => val.type === HttpEventType.Response),
-            tap(() => finished.next())
+            filter((val) => val.type === HttpEventType.Response)
           );
-      })
+      }),
+      take(1)
     );
   }
 }
@@ -85,6 +86,46 @@ export class MyHttpInterceptor implements HttpInterceptor {
 function checkIfJwtExpired(exp: number) {
   return Date.now() >= exp * 1000;
 }
+
+//   const finished = new Subject<void>();
+
+//   return zip(
+//     this.store.select(authFeature.selectAccessToken),
+//     this.store.select(authFeature.selectDecodedPayload)
+//   ).pipe(
+//     takeUntil(finished),
+//     take(2),
+//     switchMap((data) => {
+//       const [accessToken, payload] = data;
+//       return handler
+//         .handle(
+//           request.clone({
+//             withCredentials: true,
+//             headers:
+//               accessToken === null
+//                 ? undefined
+//                 : new HttpHeaders().set(
+//                     'Authorization',
+//                     `Bearer ${accessToken}`
+//                   ),
+//           })
+//         )
+//         .pipe(
+//           catchError((err: HttpErrorResponse) => {
+//             if (err.status === 401) {
+//               if (payload != null && checkIfJwtExpired(payload.exp)) {
+//                 this.store.dispatch(refresh());
+//                 return EMPTY;
+//               }
+//             }
+//             return throwError(() => err);
+//           }),
+//           filter((val) => val.type === HttpEventType.Response),
+//           tap(() => finished.next())
+//         );
+//     })
+//   );
+// }
 
 // intercept(
 //   request: HttpRequest<any>,
