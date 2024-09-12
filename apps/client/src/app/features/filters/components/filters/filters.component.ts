@@ -12,7 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SliderModule } from 'primeng/slider';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import { combineLatest, map, Subject } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { authFeature } from '../../../auth/store/auth.feature';
 import {
   roundTime,
@@ -43,8 +43,6 @@ import { filtersChanged } from '../../store/filter.actions';
   styleUrl: './filters.component.scss',
 })
 export class FiltersComponent {
-  death = new Subject<void>();
-
   @Output()
   close = new EventEmitter<void>();
 
@@ -98,22 +96,6 @@ export class FiltersComponent {
   }
 
   applyFilters() {
-    // let sportId, filterByUpses;
-    // if (this.formGroup.controls.sportId.value === -1) {
-    //   sportId = null;
-    //   filterByUpses = true;
-    // } else if (this.formGroup.controls.sportId.value === -2) {
-    //   sportId = null;
-    //   filterByUpses = false;
-    // } else {
-    //   sportId = this.formGroup.controls.sportId.value;
-    //   if (sportId === null) {
-    //     filterByUpses = true;
-    //   } else {
-    //     filterByUpses = false;
-    //   }
-    // }
-
     let sportId = this.formGroup.controls.sportId.value;
     let filterByUpses = true;
 
@@ -121,21 +103,6 @@ export class FiltersComponent {
       sportId = null;
       filterByUpses = false;
     }
-
-    // if (value === -1) {
-    //   sportId = null;
-    //   filterByUpses = true;
-    // } else if (value === -2) {
-    //   sportId = null;
-    //   filterByUpses = false;
-    // } else {
-    //   sportId = value;
-    //   if (sportId === null) {
-    //     filterByUpses = true;
-    //   } else {
-    //     filterByUpses = false;
-    //   }
-    // }
 
     const filters: UserConfigurableFilters = {
       maxDistance: this.formGroup.controls.maxDistance.value,

@@ -10,25 +10,22 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import {
-  AppointmentFilters,
-  appointmentFiltersSchema,
   CreateAppointmentDto,
   createAppointmentSchema,
   FindAppointmentsDto,
   findAppointmentsSchema,
+  TokenUser,
   UpdateAppointmentDto,
   updateAppointmentSchema,
-  TokenUser,
 } from '@rwa/shared';
-import { User } from '@rwa/entities';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
+import '../global/typeorm.extension';
 import { ZodValidationPipe } from '../global/validation';
 import { AppointmentsService } from './appointments.service';
-import '../global/typeorm.extension';
+import { Appointment } from '@rwa/entities';
 
 @Controller('appointments')
 export class AppointmentsController {
@@ -99,7 +96,8 @@ export class AppointmentsController {
     if (
       Object.keys(updateAppointmentDto).every(
         (key) =>
-          (updateAppointmentDto as any)[key] === (appointment as any)[key]
+          updateAppointmentDto[key as keyof UpdateAppointmentDto] ===
+          appointment[key as keyof Appointment]
       )
     ) {
       console.log('Nema potrebe za update');

@@ -1,2 +1,7 @@
 node_modules
 *.spec.ts
+jest.config.ts
+test-setup.ts
+*.e2e.ts
+helper.ts
+rxjs-log.ts

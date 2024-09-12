@@ -1,12 +1,11 @@
 import {
   BadRequestException,
   ForbiddenException,
-  HttpException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@rwa/entities';
 import {
   AccessToken,
   CreateUserDto,
@@ -15,7 +14,6 @@ import {
   TokenUser,
 } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
-import { User } from '@rwa/entities';
 import { UserService } from '../user/user.service';
 
 @Injectable()

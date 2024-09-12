@@ -33,8 +33,8 @@ export class SurfacesService {
   async remove(id: number) {
     try {
       return await this.surfaceRepository.delete({ id });
-    } catch (err: any) {
-      if (err.code == 23503) {
+    } catch (err) {
+      if ((err as Error & { code: string }).code === '23503') {
         throw new ForbiddenException('This surface is already in use');
       } else {
         throw err;

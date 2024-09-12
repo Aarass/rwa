@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app/app.module';
 import { GlobalInterceptor } from './app/global/global.interceptor';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { RolesGuard } from './app/auth/guards/roles.guard';
 
 async function bootstrap() {

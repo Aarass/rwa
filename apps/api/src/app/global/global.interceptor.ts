@@ -9,7 +9,8 @@ import { Observable, map } from 'rxjs';
 
 @Injectable()
 export class GlobalInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(map((data) => instanceToPlain(data)));
   }
 }

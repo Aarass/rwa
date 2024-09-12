@@ -51,9 +51,9 @@ export class SportsController {
     }
 
     if (updateSportDto.imageName) {
-      try {
-        this.imagesService.remove(sport.imageName);
-      } catch {}
+      if (this.imagesService.exists(sport.imageName)) {
+        await this.imagesService.remove(sport.imageName);
+      }
     }
     return await this.sportsService.update(id, updateSportDto);
   }
@@ -84,9 +84,10 @@ export class SportsController {
       throw new NotFoundException();
     }
 
-    try {
+    if (this.imagesService.exists(sport.imageName)) {
       await this.imagesService.remove(sport.imageName);
-    } catch {}
+    }
+
     await this.sportsService.remove(id);
   }
 }

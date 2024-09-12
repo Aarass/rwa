@@ -12,14 +12,13 @@ import {
 import {
   CreateSurfaceDto,
   createSurfaceSchema,
-  updateSportSchema,
   UpdateSurfaceDto,
   updateSurfaceSchema,
 } from '@rwa/shared';
-import { SurfacesService } from './surfaces.service';
-import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { ZodValidationPipe } from '../global/validation';
+import { SurfacesService } from './surfaces.service';
 @Controller('surfaces')
 export class SurfacesController {
   constructor(private readonly surfacesService: SurfacesService) {}

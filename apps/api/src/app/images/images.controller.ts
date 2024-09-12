@@ -78,7 +78,7 @@ export class ImagesController {
     return res.sendFile(name, { root: './uploads' }, (err?) => {
       if (err) {
         if (!res.headersSent) {
-          if ((err as any).code === 'ENOENT') {
+          if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
             res.statusCode = 404;
             res.send({
               statusCode: 404,

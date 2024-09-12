@@ -1,19 +1,16 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
   ParseIntPipe,
+  Post,
 } from '@nestjs/common';
-import { RatingsService } from './ratings.service';
-import { CreateRatingDto } from '@rwa/shared';
+import { CreateRatingDto, TokenUser } from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
-import { User } from '@rwa/entities';
-import { TokenUser } from '@rwa/shared';
+import { RatingsService } from './ratings.service';
 
 @Controller('ratings')
 export class RatingsController {
@@ -30,7 +27,7 @@ export class RatingsController {
   @Public()
   @Get('stats/user/:id')
   async getStats(@Param('id', ParseIntPipe) id: number) {
-    return ((await this.ratingsService.getStats(id)) as any)[0];
+    return await this.ratingsService.getStats(id);
   }
 
   @Public()

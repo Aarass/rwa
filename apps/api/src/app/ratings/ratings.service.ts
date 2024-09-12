@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Rating } from '@rwa/entities';
 import { CreateRatingDto } from '@rwa/shared';
 import { Repository } from 'typeorm';
-import { QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
 @Injectable()
 export class RatingsService {
@@ -25,7 +24,7 @@ export class RatingsService {
   }
 
   async getStats(id: number) {
-    return await this.ratingRepository
+    return (await this.ratingRepository
       .createQueryBuilder()
       .where({
         userRated: {
@@ -33,7 +32,10 @@ export class RatingsService {
         },
       })
       .select(`AVG(value)::float, COUNT(*)::float`)
-      .execute();
+      .getRawOne()) as {
+      avg: number;
+      coutn: number;
+    };
   }
 
   async create(createRatingDto: CreateRatingDto) {

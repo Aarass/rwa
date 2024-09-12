@@ -18,12 +18,10 @@ import {
   Observable,
   ReplaySubject,
   share,
-  shareReplay,
   Subject,
   switchMap,
   take,
   takeUntil,
-  tap,
 } from 'rxjs';
 import { selectPayload } from '../../../auth/store/auth.feature';
 import { isNotNull } from '../../../global/functions/rxjs-filter';
@@ -33,7 +31,6 @@ import { RatingService } from '../../../rating/services/rating/rating.service';
 import { UserService } from '../../services/user/user.service';
 import { setImage } from '../../store/user.actions';
 import { selectUser } from '../../store/user.feature';
-import { log } from '../../../global/functions/rxjs-log';
 
 @Component({
   selector: 'app-user-info',
@@ -190,7 +187,6 @@ export class UserInfoComponent implements OnDestroy {
     this.ratingStats$.next(ratingStats);
     this.myRating$.next(myRating);
 
-    // TODO probaj da zamenis subskripcijom direktno na subject
     this.ratingService
       .postRating({
         userRatedId: info.user.id,

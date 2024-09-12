@@ -1,14 +1,13 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '@rwa/entities';
 import { CreateUserDto } from '@rwa/shared';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { Appointment, Participation, User } from '@rwa/entities';
 import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
@@ -76,7 +75,7 @@ export class UserService {
   async createUser(newUser: CreateUserDto) {
     await this.locationService.checkLocation(newUser.locationId);
 
-    let user: User = this.userRepository.create({
+    const user: User = this.userRepository.create({
       ...newUser,
       roles: ['user'],
       passwordHash: await bcrypt.hash(newUser.password, 10),
@@ -84,8 +83,8 @@ export class UserService {
 
     try {
       await this.userRepository.insert(user);
-    } catch (err: any) {
-      if (err.code == 23505) {
+    } catch (err) {
+      if ((err as Error & { code: string }).code === '23505') {
         throw new ConflictException('Username is taken');
       }
     }

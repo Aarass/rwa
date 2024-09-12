@@ -1,18 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Appointment, Participation, UserPlaysSport } from '@rwa/entities';
 import {
-  AppointmentFilters,
-  AppointmentsOrdering,
   CreateAppointmentDto,
   FindAppointmentsDto,
   UpdateAppointmentDto,
 } from '@rwa/shared';
-import { Entity, Repository, SelectQueryBuilder } from 'typeorm';
-import { Appointment, Participation, UserPlaysSport } from '@rwa/entities';
+import { Repository } from 'typeorm';
 import { LocationsService } from '../locations/locations.service';
-import { GeoPointDto } from 'shared/src/lib/Point';
-import { assert } from 'console';
-import { filter } from 'rxjs';
 
 @Injectable()
 export class AppointmentsService {
@@ -40,9 +35,8 @@ export class AppointmentsService {
         where: { id: appointment.id },
         relations: ['sport', 'surface', 'location', 'organizer'],
       });
-    } catch (err: any) {
-      if (err.code != undefined && err.code == 23503) {
-        console.log(err);
+    } catch (err) {
+      if ((err as Error & { code: string }).code === '23503') {
         throw new BadRequestException(`Referenced object does not exist`);
       }
       console.error(err);
@@ -51,7 +45,7 @@ export class AppointmentsService {
   }
 
   async findAll(criteria: FindAppointmentsDto) {
-    let { filters, ordering, userLocation } = criteria;
+    const { filters, ordering, userLocation } = criteria;
 
     if (filters.skip == null) {
       filters.skip = 0;
@@ -179,11 +173,7 @@ export class AppointmentsService {
   }
 
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
-    const res = await this.appointmentRepository.update(
-      id,
-      updateAppointmentDto
-    );
-
+    await this.appointmentRepository.update(id, updateAppointmentDto);
     await this.participationRepository.update(
       {
         appointmentId: id,

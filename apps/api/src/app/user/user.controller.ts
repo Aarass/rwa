@@ -8,14 +8,12 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@rwa/entities';
-import { CreateUserDto, createUserSchema } from '@rwa/shared';
+import { CreateUserDto, createUserSchema, TokenUser } from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { UserService } from './user.service';
-import { TokenUser } from '@rwa/shared';
 
 @Controller('users')
 export class UserController {

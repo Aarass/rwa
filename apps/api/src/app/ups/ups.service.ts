@@ -58,13 +58,11 @@ export class UpsService {
         where: { id: ups.id },
         relations: ['sport'],
       });
-    } catch (err: any) {
-      if (err.code != undefined) {
-        if (err.code == 23505) {
-          throw new BadRequestException('User already plays that sport');
-        }
+    } catch (err) {
+      if ((err as Error & { code: string }).code === '23505') {
+        throw new BadRequestException('User already plays that sport');
       }
-      return err;
+      throw err;
     }
   }
 

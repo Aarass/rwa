@@ -159,7 +159,7 @@ export function testParticipation(
       const server = getServer();
 
       const update: UpdateAppointmentDto = {
-        missingPlayers: 0,
+        missingPlayers: 1,
       };
 
       const res = await request(server)

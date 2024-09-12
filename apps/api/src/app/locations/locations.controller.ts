@@ -1,18 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  ParseIntPipe,
+  Get,
+  Param,
+  Post,
   Query,
 } from '@nestjs/common';
-import { LocationsService } from './locations.service';
 import { CreateLocationDto, createLocationSchema } from '@rwa/shared';
+import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { ZodValidationPipe } from '../global/validation';
-import { Public } from '../auth/decorators/public.decorator';
+import { LocationsService } from './locations.service';
 
 @Controller('locations')
 export class LocationsController {

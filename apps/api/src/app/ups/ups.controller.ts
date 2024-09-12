@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -11,18 +10,17 @@ import {
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@rwa/entities';
+import {
+  CreateUpsDto,
+  createUpsSchema,
+  TokenUser,
+  UpdateUpsDto,
+  updateUpsSchema,
+} from '@rwa/shared';
 import { Public } from '../auth/decorators/public.decorator';
 import { ExtractUser } from '../auth/decorators/user.decorator';
 import { ZodValidationPipe } from '../global/validation';
 import { UpsService } from './ups.service';
-import {
-  CreateUpsDto,
-  createUpsSchema,
-  UpdateUpsDto,
-  updateUpsSchema,
-} from '@rwa/shared';
-import { TokenUser } from '@rwa/shared';
 
 @Controller('ups')
 export class UpsController {

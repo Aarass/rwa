@@ -11,11 +11,15 @@ export class ImagesService {
     return fs.readdirSync('./uploads');
   }
 
+  exists(name: string) {
+    return fs.existsSync(`./uploads/${name}`);
+  }
+
   remove(name: string) {
     try {
       fs.rmSync(`./uploads/${name}`);
     } catch (err) {
-      if ((err as any).code === 'ENOENT') {
+      if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
         throw new NotFoundException();
       } else {
         console.error(err);

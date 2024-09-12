@@ -1,4 +1,3 @@
-import { TokenUser } from '@rwa/shared';
 import {
   Body,
   Controller,
@@ -9,14 +8,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { User } from '@rwa/entities';
-import { CreateUserDto, createUserSchema } from '@rwa/shared';
+import { CreateUserDto, createUserSchema, TokenUser } from '@rwa/shared';
 import { Request, Response } from 'express';
 import { ZodValidationPipe } from '../global/validation';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { ExtractUser } from './decorators/user.decorator';
 import { LocalAuthGuard } from './guards/local.guard';
+import { User } from '@rwa/entities';
 
 @Controller('auth')
 export class AuthController {
@@ -35,7 +34,13 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
-  async login(@Req() req: any, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Req()
+    req: Request & {
+      user: User;
+    },
+    @Res({ passthrough: true }) res: Response
+  ) {
     const { accessToken, refreshToken } = await this.authService.login(
       req.user
     );

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Participation } from '@rwa/entities';
 import { CreateParticipationDto } from '@rwa/shared';
-import { Participation, User } from '@rwa/entities';
 import { Repository } from 'typeorm';
-import { date } from 'zod';
 
 @Injectable()
 export class ParticipationsService {

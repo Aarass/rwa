@@ -104,8 +104,8 @@ export class ParticipationsController {
         throw new InternalServerErrorException('Unexpected error');
       }
       return await this.participationsService.findOne(participation.id);
-    } catch (err: any) {
-      if (err.code != undefined && err.code == 23505) {
+    } catch (err) {
+      if ((err as Error & { code: string }).code === '23505') {
         console.error('unique_key_violation');
         throw new ForbiddenException(
           `Can't register for the same appointment more than once`

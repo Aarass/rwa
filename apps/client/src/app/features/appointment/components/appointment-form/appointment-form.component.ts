@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -29,16 +29,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { SliderModule } from 'primeng/slider';
 import { TooltipModule } from 'primeng/tooltip';
 import { Nullable } from 'primeng/ts-helpers';
-import {
-  EMPTY,
-  exhaustMap,
-  map,
-  Observable,
-  of,
-  Subject,
-  take,
-  tap,
-} from 'rxjs';
+import { EMPTY, exhaustMap, map, Observable, of, take, tap } from 'rxjs';
 import {
   dateDateFromPostgresString,
   roundTime,
@@ -48,15 +39,14 @@ import {
   toPostgresTimeString,
 } from '../../../global/functions/date-utility';
 import { LocationService } from '../../../location/services/location/location.service';
-import { sportFeature } from '../../../sport/store/sport.feature';
 import { surfaceFeature } from '../../../surface/store/surface.feature';
+import { upsFeature } from '../../../ups/store/ups.feature';
 import { AppointmentService } from '../../services/appointment/appointment.service';
 import {
   createAppointment,
   updateAppointment,
 } from '../../store/appointment.actions';
 import { appointmentFeature } from '../../store/appointment.feature';
-import { upsFeature } from '../../../ups/store/ups.feature';
 
 @Component({
   selector: 'app-appointment-form',
@@ -81,9 +71,7 @@ import { upsFeature } from '../../../ups/store/ups.feature';
   templateUrl: './appointment-form.component.html',
   styleUrl: './appointment-form.component.scss',
 })
-export class AppointmentFormComponent implements OnInit, OnDestroy {
-  death = new Subject<void>();
-
+export class AppointmentFormComponent implements OnInit {
   formGroup = new FormGroup({
     location: new FormControl<LocationSuggestionDto | null>(null),
     selectedSport: new FormControl<SportDto | null>(null),
@@ -202,11 +190,6 @@ export class AppointmentFormComponent implements OnInit, OnDestroy {
         this.formGroup.controls.selectedSport.setValue(appointment.sport);
         this.formGroup.controls.selectedSurface.setValue(appointment.surface);
       });
-  }
-
-  ngOnDestroy(): void {
-    this.death.next();
-    this.death.complete();
   }
 
   getLocationSuggestions(event: AutoCompleteCompleteEvent) {
