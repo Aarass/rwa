@@ -9,6 +9,8 @@ import { LoginComponent } from '../../auth/components/login/login.component';
 import {
   loginSuccess,
   logout,
+  registerSuccess,
+  restoreSessionFailed,
   restoreSessionSuccess,
 } from '../../auth/store/auth.actions';
 import { authFeature } from '../../auth/store/auth.feature';
@@ -58,10 +60,45 @@ export class GlobalEffects {
     { dispatch: false }
   );
 
+  gotoAppointments$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(loginSuccess, restoreSessionSuccess),
+        tap(() => {
+          if (this.router.url === '/signup') {
+            this.router.navigateByUrl('appointments');
+          } else if (this.router.url === '/') {
+            this.router.navigateByUrl('appointments');
+          }
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  gotoMySports$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(registerSuccess),
+        tap(() => {
+          this.router.navigateByUrl('my-sports');
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   loadMe$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loginSuccess, restoreSessionSuccess),
       map(() => loadMe())
+    );
+  });
+
+  loadPreviewAppointments$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(restoreSessionFailed, logout),
+      map(() => reloadAppointments())
     );
   });
 

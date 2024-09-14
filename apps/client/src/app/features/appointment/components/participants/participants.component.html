@@ -1,5 +1,7 @@
 <div *ngIf="appointment$ | async as appointment">
-  <p-accordion class="w-full" *ngIf="getApprovedUsers(appointment) as approved">
+  <p-button icon="pi pi-calendar-clock" [rounded]="true" [text]="true" severity="secondary"
+    (onClick)="showAppointment(appointment)" />
+  <p-accordion class=" w-full" *ngIf="getApprovedUsers(appointment) as approved">
     @if (approved.length === 0) {
     <p class="text-right">No online participants</p>
     } @else {
@@ -47,8 +49,8 @@
   </p-accordion>
   <p-divider styleClass=" mt-0" />
 
-  <p-tag *ngIf=" appointment.totalPlayers - appointment.missingPlayers as offlinePlayers " [value]="'+' + offlinePlayers
-  + ' offline participants'" class="inline-flex justify-content-end w-full mb-3" />
+  <p-tag *ngIf=" appointment.totalPlayers - appointment.missingPlayers as offlinePlayers " [value]="' +' +
+    offlinePlayers + ' offline participants'" class=" inline-flex justify-content-end w-full mb-3" />
 
   <p-divider styleClass="mt-0" />
 

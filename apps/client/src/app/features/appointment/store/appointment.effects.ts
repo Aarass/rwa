@@ -47,26 +47,12 @@ export class AppointmentEffects {
     private router: Router
   ) {}
 
-  // loadMyAppointments$ = createEffect(() => {
-  //   return this.actions$.pipe(
-  //     ofType(loadMyAppointments),
-  //     exhaustMap(() => {
-  //       return this.appointmentService.getMyAppointments().pipe(
-  //         map((data) => {
-  //           return loadMyAppointmentsSuccess({ data });
-  //         })
-  //       );
-  //     })
-  //   );
-  // });
-
   create$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(createAppointment),
       exhaustMap((action) => {
         return this.appointmentService.createAppointment(action.data).pipe(
           map((appointment) => {
-            // this.location.back();
             this.router.navigateByUrl(`appointment?id=${appointment.id}`);
             return createAppointmentSuccess({ data: appointment });
           })

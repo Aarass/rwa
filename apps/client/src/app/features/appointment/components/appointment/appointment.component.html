@@ -77,15 +77,16 @@
       <div class="flex gap-3 mt-1">
         @if (appointment.organizerId === viewerId) {
         <p-button icon="pi pi-users" severity="secondary" (click)="showParticipants()" />
-        <p-button label="Edit" severity="secondary" class="w-full" styleClass="w-full" routerLink="../appointment-form"
-          [queryParams]="{ id: appointment.id }" />
-        <p-button label="Cancel" severity="danger" class="w-full" styleClass="w-full" (onClick)="cancelAppointment()" />
-        } @else if (isRejected) {
-        <p-button severity="secondary" class="w-full" styleClass="w-full" label="Rejected" disabled />
-        <p-button icon="pi pi-users" (click)="showParticipants()" />
+        <p-button label="Edit" severity="secondary" class="flex-grow-1" styleClass="w-full"
+          routerLink="../appointment-form" [queryParams]="{ id: appointment.id }" />
+        <p-button label="Cancel" severity="danger" class="flex-grow-1" styleClass="w-full"
+          (onClick)="cancelAppointment()" />
         } @else {
-        <p-button severity="primary" class="w-full" styleClass="w-full" (onClick)="click()" (mouseenter)="mouseenter()"
-          (mouseleave)="mouseleave()">
+        @if (isRejected) {
+        <p-button severity="secondary" class="flex-grow-1" styleClass="w-full" label="Rejected" disabled />
+        } @else {
+        <p-button severity="primary" class="flex-grow-1" styleClass="w-full" (onClick)="click()"
+          (mouseenter)="mouseenter()" (mouseleave)="mouseleave()">
           <ng-template pTemplate="content">
             <div class="m-auto">
               @if (viewerId === null) { @if (isHovering) {
@@ -111,7 +112,7 @@
             </div>
           </ng-template>
         </p-button>
-
+        }
         <p-button icon="pi pi-users" (click)="showParticipants()" />
         }
       </div>

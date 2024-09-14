@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { Route, Router } from '@angular/router';
+import { GuardResult, Route, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { filter, map, Observable, tap } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { DashboardComponent } from './features/admin/components/dashboard/dashboard.component';
 import { ImagesComponent } from './features/admin/components/images/images.component';
 import { AppointmentFormComponent } from './features/appointment/components/appointment-form/appointment-form.component';
@@ -16,10 +16,12 @@ import { ParticipationListComponent } from './features/participation/components/
 import { ProfileComponent } from './features/profile/components/profile/profile.component';
 import { UpsListComponent } from './features/ups/components/ups-list/ups-list.component';
 import { UserInfoComponent } from './features/user/components/user-info/user-info.component';
+
 export const appRoutes: Route[] = [
   {
     path: '',
     component: HomeComponent,
+    canActivate: [() => ifIsNotLoggedIn('appointments')],
   },
   {
     path: 'profile',
@@ -33,6 +35,7 @@ export const appRoutes: Route[] = [
   {
     path: 'appointments',
     component: AppointmentListComponent,
+    // canActivate: [ifIsLoggedIn],
   },
   {
     path: 'appointment-form',
@@ -56,7 +59,7 @@ export const appRoutes: Route[] = [
   {
     path: 'signup',
     component: RegisterComponent,
-    canActivate: [ifIsNotLoggedIn],
+    canActivate: [() => ifIsNotLoggedIn('appointments')],
   },
   {
     path: 'dashboard',
@@ -70,29 +73,29 @@ export const appRoutes: Route[] = [
   },
 ];
 
-function ifIsLoggedIn(): Observable<boolean> {
+function ifIsLoggedIn(): Observable<GuardResult> {
   const store = inject(Store);
   const router = inject(Router);
   return store.select(authFeature.selectStatus).pipe(
     filter(isNotNull),
     map((val) => val === AuthStatus.LoggedIn),
-    tap((val) => {
-      if (val == false) {
-        router.navigateByUrl('');
-      }
-    })
+    map((val) => val || router.parseUrl(''))
   );
 }
 
-function ifIsNotLoggedIn(): Observable<boolean> {
+function ifIsNotLoggedIn(elseRedirectTo?: string): Observable<GuardResult> {
   const store = inject(Store);
+  const router = inject(Router);
   return store.select(authFeature.selectStatus).pipe(
     filter(isNotNull),
-    map((val) => val === AuthStatus.NotLoggedIn)
+    map((val) => val === AuthStatus.NotLoggedIn),
+    map(
+      (val) => val || (elseRedirectTo ? router.parseUrl(elseRedirectTo) : false)
+    )
   );
 }
 
-function ifIsAdmin(): Observable<boolean> {
+function ifIsAdmin(): Observable<GuardResult> {
   const store = inject(Store);
   const router = inject(Router);
 
@@ -107,10 +110,6 @@ function ifIsAdmin(): Observable<boolean> {
       }
       return payload.user.roles.includes('admin');
     }),
-    tap((val) => {
-      if (val == false) {
-        router.navigateByUrl('');
-      }
-    })
+    map((val) => val || router.parseUrl(''))
   );
 }

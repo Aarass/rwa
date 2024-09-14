@@ -25,10 +25,8 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { LocationService } from '../../../location/services/location/location.service';
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
-import { selectUser } from '../../../user/store/user.feature';
 import { register } from '../../store/auth.actions';
 import { authFeature } from '../../store/auth.feature';
 
@@ -75,8 +73,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   constructor(
     private messageService: MessageService,
     private locationService: LocationService,
-    private store: Store,
-    private router: Router
+    private store: Store
   ) {}
 
   ngOnInit(): void {
@@ -85,14 +82,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.death))
       .subscribe((val) => {
         this.loading = val;
-      });
-
-    selectUser(this.store)
-      .pipe(takeUntil(this.death))
-      .subscribe((data) => {
-        if (data != null) {
-          this.router.navigateByUrl('my-sports');
-        }
       });
   }
 

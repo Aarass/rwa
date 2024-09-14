@@ -10,9 +10,8 @@ import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
-import { combineLatest, fromEvent, Subscription } from 'rxjs';
+import { fromEvent, Subject, takeUntil } from 'rxjs';
 import { AppointmentListComponent } from '../../../appointment/components/appointment-list/appointment-list.component';
-import { selectUser } from '../../../user/store/user.feature';
 
 @Component({
   selector: 'app-home',
@@ -31,28 +30,20 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   @ViewChild('button')
   button!: ElementRef;
 
-  subscription: Subscription | undefined;
+  death = new Subject<void>();
 
   constructor(private store: Store, private router: Router) {}
 
   ngAfterViewInit() {
-    this.subscription = combineLatest([
-      selectUser(this.store),
-      fromEvent(this.button.nativeElement, 'click'),
-    ]).subscribe((tuple) => {
-      const [user] = tuple;
-
-      if (user) {
+    fromEvent(this.button.nativeElement, 'click')
+      .pipe(takeUntil(this.death))
+      .subscribe(() => {
         this.router.navigateByUrl('appointments');
-      } else {
-        this.router.navigateByUrl('signup');
-      }
-    });
+      });
   }
 
   ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.death.next();
+    this.death.complete();
   }
 }
