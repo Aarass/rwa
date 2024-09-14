@@ -77,6 +77,11 @@ export class AppComponent implements OnInit {
     this.store.dispatch(loadAllSurfaces());
   }
 
+  navigationVisible = false;
+  toggleNavigation() {
+    this.navigationVisible = !this.navigationVisible;
+  }
+
   showSignInDialog() {
     this.store.dispatch(openSignIn());
   }

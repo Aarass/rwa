@@ -1,8 +1,12 @@
 <div class="flex flex-column h-small-screen" *ngrxLet="authStatus$ as authStatus">
   <p-menubar class="flex-grow-0">
-    <ng-template pTemplate="start" class="ml-8">
-      <span class="ml-5"></span>
-      <img class="h-4rem cursor-pointer" src="placeholder-logo.png" alt="logo" routerLink="/" />
+    <ng-template pTemplate="start">
+      <div class="flex align-items-center">
+        <span class="w-1rem flex-shrink-1"></span>
+        <p-button [icon]="navigationVisible === true ? 'pi pi-times' : 'pi pi-bars'" [rounded]="true" [text]="true"
+          (click)="toggleNavigation()" severity="secondary" *ngIf="authStatus !== null && authStatus !== 0" />
+        <img class=" h-4rem cursor-pointer" src="placeholder-logo.png" alt="logo" routerLink="/" />
+      </div>
     </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2" *ngIf="authStatus !== null">
@@ -13,12 +17,12 @@
         <p-button label="Home" icon="pi pi-home" severity="secondary" routerLink="" text="true" />
         <p-button label="Profile" icon="pi pi-user" severity="secondary" routerLink="/profile" text="true" />
         }
-        <span class="mr-5"></span>
+        <span class="w-1rem flex-shrink-1"></span>
       </div>
     </ng-template>
   </p-menubar>
   <div class="flex-grow-1 overflow-hidden flex">
-    <div class="h-full flex-grow-0">
+    <div class="h-full flex-grow-0" *ngIf="navigationVisible">
       @if (authStatus !== null && authStatus !== 0) {
       <div class="p-card p-component p-4 w-15rem h-full flex flex-column justify-content-between">
         <div class="flex flex-column row-gap-2">
