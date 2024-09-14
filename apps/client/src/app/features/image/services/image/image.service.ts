@@ -1,26 +1,31 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ConfigService } from '../../../global/services/config/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImageService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   getAllImages() {
-    return this.http.get<string[]>('http://localhost:3000/images');
+    return this.http.get<string[]>(
+      `${this.configService.getBackendBaseURL()}/images`
+    );
   }
 
   uploadImage(image: File) {
     const formData = new FormData();
     formData.append('file', image, image.name);
     return this.http.post<{ name: string }>(
-      `http://localhost:3000/images/upload`,
+      `${this.configService.getBackendBaseURL()}/images/upload`,
       formData
     );
   }
 
   deleteImage(name: string) {
-    return this.http.delete(`http://localhost:3000/images/${name}`);
+    return this.http.delete(
+      `${this.configService.getBackendBaseURL()}/images/${name}`
+    );
   }
 }

@@ -12,7 +12,8 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   app.use(cookieParser());
   app.enableCors({
-    origin: 'http://localhost:4200',
+    // origin: 'http://localhost:4200',
+    origin: 'https://8fef-178-149-108-197.ngrok-free.app',
     credentials: true,
   });
   app.useGlobalInterceptors(new GlobalInterceptor());

@@ -4,7 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ConfigService {
-  private backendBaseURL = 'http://localhost:3000';
+  // private backendBaseURL = 'http://localhost:3000';
+  private backendBaseURL = 'https://56c1-178-149-108-197.ngrok-free.app';
   getBackendBaseURL() {
     return this.backendBaseURL;
   }

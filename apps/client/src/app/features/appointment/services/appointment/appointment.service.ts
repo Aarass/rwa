@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
 import {
   AppointmentDto,
   AppointmentsOrdering,
@@ -10,31 +9,32 @@ import {
   UserDto,
 } from '@rwa/shared';
 import { UserConfigurableFilters } from '../../../filters/interfaces/filters';
+import { ConfigService } from '../../../global/services/config/config.service';
 import { PaginationInfo } from '../../store/appointment.feature';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppointmentService {
-  constructor(private http: HttpClient, private store: Store) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   createAppointment(dto: CreateAppointmentDto) {
     return this.http.post<AppointmentDto>(
-      'http://localhost:3000/appointments',
+      `${this.configService.getBackendBaseURL()}/appointments`,
       dto
     );
   }
 
   updateAppointment(id: number, dto: UpdateAppointmentDto) {
     return this.http.patch<AppointmentDto>(
-      `http://localhost:3000/appointments/${id}`,
+      `${this.configService.getBackendBaseURL()}/appointments/${id}`,
       dto
     );
   }
 
   cancelAppointment(id: number) {
     return this.http.post(
-      `http://localhost:3000/appointments/${id}/cancel`,
+      `${this.configService.getBackendBaseURL()}/appointments/${id}/cancel`,
       {}
     );
   }
@@ -73,14 +73,14 @@ export class AppointmentService {
     };
 
     return this.http.post<AppointmentDto[]>(
-      'http://localhost:3000/appointments/search',
+      `${this.configService.getBackendBaseURL()}/appointments/search`,
       findOptions
     );
   }
 
   getAppointment(id: number) {
     return this.http.get<AppointmentDto>(
-      `http://localhost:3000/appointments/${id}`
+      `${this.configService.getBackendBaseURL()}/appointments/${id}`
     );
   }
 }

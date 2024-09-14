@@ -1,42 +1,43 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CreateParticipationDto, ParticipationDto } from '@rwa/shared';
+import { ConfigService } from '../../../global/services/config/config.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ParticipationService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   getMyParticipations() {
     return this.http.get<ParticipationDto[]>(
-      'http://localhost:3000/participations/user/me'
+      `${this.configService.getBackendBaseURL()}/participations/user/me`
     );
   }
 
   createParticipation(dto: CreateParticipationDto) {
     return this.http.post<ParticipationDto>(
-      'http://localhost:3000/participations',
+      `${this.configService.getBackendBaseURL()}/participations`,
       dto
     );
   }
 
   deleteParticipation(participationId: number) {
     return this.http.delete(
-      `http://localhost:3000/participations/${participationId}`
+      `${this.configService.getBackendBaseURL()}/participations/${participationId}`
     );
   }
 
   markSeen(participationId: number) {
     return this.http.patch(
-      `http://localhost:3000/participations/${participationId}/seen`,
+      `${this.configService.getBackendBaseURL()}/participations/${participationId}/seen`,
       {}
     );
   }
 
   rejectParticipation(participationId: number) {
     return this.http.patch(
-      `http://localhost:3000/participations/${participationId}/reject`,
+      `${this.configService.getBackendBaseURL()}/participations/${participationId}/reject`,
       {}
     );
   }
