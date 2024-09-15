@@ -1,8 +1,9 @@
 @if (surfaces !== null) {
-@if (surfaces.length === 0) {
-<p class="text-center">Here will be shown surfaces</p>
-} @else {
 <div class="w-full h-full flex flex-column justify-content-center align-items-center">
+
+  @if (surfaces.length === 0) {
+  <p class="text-center">Here will be shown surfaces</p>
+  } @else {
   <div
     class="flex flex-column justify-content-center align-items-center h-25rem overflow-auto nice-scrollbar pt-4 px-4 w-25rem">
     @for (surface of surfaces; track surface.id) {
@@ -30,6 +31,7 @@
     </div>
     }
   </div>
+  }
   <p-inputGroup class="w-unset" styleClass="w-unset mt-4">
     <input type="text" pInputText placeholder="Surface" [(ngModel)]="newSurfaceName"
       (keydown.enter)="createSurface()" />
@@ -37,5 +39,4 @@
       (click)="createSurface()"></button>
   </p-inputGroup>
 </div>
-}
 }

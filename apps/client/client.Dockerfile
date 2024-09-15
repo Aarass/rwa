@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 4200
 
-CMD [ "npx", "nx", "serve", "client", "--host", "0.0.0.0" ]
+CMD [ "npx", "nx", "serve", "client", "--host", "0.0.0.0"]

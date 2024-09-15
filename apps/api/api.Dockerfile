@@ -8,7 +8,4 @@ RUN npm install
 COPY . .
 EXPOSE 3000
 
-RUN apk add --no-cache bash
-RUN npm install -g nodemon
-
-CMD [ "/bin/bash", "-c", "npx nx build api; nodemon ./dist/apps/api/main.js" ]
+CMD [ "npx", "nx", "serve", "api", "--host", "0.0.0.0"]
