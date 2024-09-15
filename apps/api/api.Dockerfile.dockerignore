@@ -1,1 +1,7 @@
+/node_modules
+/.nx/cache
+/.nx/workspace-data
+/.angular
+/.git
+/.vscode
 apps/client
