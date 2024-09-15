@@ -12,6 +12,9 @@ export class ImagesService {
   }
 
   exists(name: string) {
+    if (name.trim() == '') {
+      return false;
+    }
     return fs.existsSync(`./uploads/${name}`);
   }
 
