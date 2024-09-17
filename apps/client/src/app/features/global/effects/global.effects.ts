@@ -7,9 +7,9 @@ import { filter, map, merge, switchMap, tap } from 'rxjs';
 import { reloadAppointments } from '../../appointment/store/appointment.actions';
 import { LoginComponent } from '../../auth/components/login/login.component';
 import {
+  loginAfterRegisterSuccess,
   loginSuccess,
   logout,
-  registerSuccess,
   restoreSessionFailed,
   restoreSessionSuccess,
 } from '../../auth/store/auth.actions';
@@ -65,9 +65,7 @@ export class GlobalEffects {
       return this.actions$.pipe(
         ofType(loginSuccess, restoreSessionSuccess),
         tap(() => {
-          if (this.router.url === '/signup') {
-            this.router.navigateByUrl('appointments');
-          } else if (this.router.url === '/') {
+          if (this.router.url === '/') {
             this.router.navigateByUrl('appointments');
           }
         })
@@ -79,7 +77,7 @@ export class GlobalEffects {
   gotoMySports$ = createEffect(
     () => {
       return this.actions$.pipe(
-        ofType(registerSuccess),
+        ofType(loginAfterRegisterSuccess),
         tap(() => {
           this.router.navigateByUrl('my-sports');
         })
@@ -90,7 +88,7 @@ export class GlobalEffects {
 
   loadMe$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(loginSuccess, restoreSessionSuccess),
+      ofType(loginSuccess, loginAfterRegisterSuccess, restoreSessionSuccess),
       map(() => loadMe())
     );
   });
@@ -111,14 +109,14 @@ export class GlobalEffects {
 
   loadMyParticipations$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(loginSuccess, restoreSessionSuccess),
+      ofType(loginSuccess, loginAfterRegisterSuccess, restoreSessionSuccess),
       map(() => loadMyParticipations())
     );
   });
 
   loadMyUpses$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(loginSuccess, restoreSessionSuccess),
+      ofType(loginSuccess, loginAfterRegisterSuccess, restoreSessionSuccess),
       map(() => loadMyUpses())
     );
   });

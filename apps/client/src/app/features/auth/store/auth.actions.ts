@@ -19,6 +19,10 @@ export const loginSuccess = createAction(
   '[Auth] Login Success',
   props<{ accessToken: AccessToken }>()
 );
+export const loginAfterRegisterSuccess = createAction(
+  '[Auth] Login After Register Success',
+  props<{ accessToken: AccessToken }>()
+);
 export const loginFailed = createAction('[Auth] Login Failed');
 
 export const restoreSession = createAction('[Auth] Restore Session');

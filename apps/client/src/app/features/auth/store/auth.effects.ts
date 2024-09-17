@@ -6,6 +6,7 @@ import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 import {
   login,
+  loginAfterRegisterSuccess,
   loginFailed,
   loginSuccess,
   logout,
@@ -69,7 +70,12 @@ export class AuthEffects {
                 severity: 'success',
                 summary: 'Successfully signed in',
               });
-              return loginSuccess(data);
+
+              if (action.type === registerSuccess.type) {
+                return loginAfterRegisterSuccess(data);
+              } else {
+                return loginSuccess(data);
+              }
             }),
             catchError((err: HttpErrorResponse) => {
               if (err.status === 401) {

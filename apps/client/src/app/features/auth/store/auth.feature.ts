@@ -8,6 +8,7 @@ import {
 import { AccessTokenPayload } from '@rwa/shared';
 import {
   login,
+  loginAfterRegisterSuccess,
   loginFailed,
   loginSuccess,
   logout,
@@ -52,20 +53,26 @@ export const authFeature = createFeature({
         isCurrentlyLoggingIn: true,
       };
     }),
-    on(loginSuccess, loginFailed, (state) => {
+    on(loginSuccess, loginAfterRegisterSuccess, loginFailed, (state) => {
       return {
         ...state,
         isCurrentlyLoggingIn: false,
       };
     }),
-    on(loginSuccess, refreshSuccess, restoreSessionSuccess, (state, action) => {
-      return {
-        ...state,
-        accessToken: action.accessToken,
-        decodedPayload: decodeJwt(action.accessToken),
-        status: AuthStatus.LoggedIn,
-      };
-    }),
+    on(
+      loginSuccess,
+      loginAfterRegisterSuccess,
+      refreshSuccess,
+      restoreSessionSuccess,
+      (state, action) => {
+        return {
+          ...state,
+          accessToken: action.accessToken,
+          decodedPayload: decodeJwt(action.accessToken),
+          status: AuthStatus.LoggedIn,
+        };
+      }
+    ),
     on(loginFailed, refreshFailed, restoreSessionFailed, (state) => {
       return {
         ...state,
