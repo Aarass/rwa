@@ -229,8 +229,8 @@ export const appointmentFeature = createFeature({
           shaker: Math.random(),
         },
         paginationInfo: {
+          ...state.paginationInfo,
           loadedPages: 0,
-          pageSize: 0,
         },
       };
     })
