@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Location } from '@rwa/entities';
+import { LocationSuggestionDto } from '@rwa/shared';
 import { firstValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
 
@@ -17,38 +18,32 @@ export class LocationsService {
     private http: HttpService
   ) {}
   async searchOnGoogleAndSave(locationId: string): Promise<Location | null> {
-    const response = await firstValueFrom(
-      this.http.get<GeocodeResponse>(
-        `https://maps.googleapis.com/maps/api/geocode/json?place_id=${locationId}&key=${process.env.GOOGLE_KEY}`
-      )
-    );
+    const url = `https://api.locationiq.com/v1/lookup?key=${process.env.API_KEY}&osm_ids=${locationId}&normalizeaddress=1`;
+    const response = await firstValueFrom(this.http.get(url));
 
     if (response.status != 200) {
       console.error('http status code is not 200');
       return null;
     }
 
-    const json: GeocodeResponse = response.data;
+    const data: Dto[] = response.data;
 
-    if (json.status != 'OK') {
-      console.error('inner status is not OK');
-      return null;
-    }
-
-    if (response.data.results.length != 1) {
+    if (data.length != 1) {
       console.error(
-        `Got unexpected number of locations as a response: ${response.data.results.length}`
+        `Got unexpected number of locations as a response: ${data.length}`
       );
       return null;
     }
 
-    const data = response.data.results[0];
+    const place = data[0];
+
+    console.log(place);
 
     const location = this.locationRepository.create({
       id: locationId,
-      name: data.formatted_address,
-      lat: data.geometry.location.lat,
-      lng: data.geometry.location.lng,
+      name: getDisplayName(place),
+      lat: parseFloat(place.lat),
+      lng: parseFloat(place.lon),
     });
 
     try {
@@ -61,26 +56,18 @@ export class LocationsService {
     return location;
   }
 
-  async suggest(input: string) {
-    const response = await firstValueFrom(
-      this.http.get(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${input}&key=${process.env.GOOGLE_KEY}`
-      )
-    );
+  async suggest(input: string): Promise<LocationSuggestionDto[]> {
+    const url = `https://api.locationiq.com/v1/autocomplete?key=${process.env.API_KEY}&q=${input}&limit=5`;
+    const response = await firstValueFrom(this.http.get(url));
 
-    if (response.status != 200) {
-      console.error('http status code is not 200');
-      return null;
-    }
+    const data: Dto[] = response.data;
 
-    const data = response.data;
+    console.log(data);
 
-    if (data.status != 'OK') {
-      console.error('inner status is not OK');
-      return null;
-    }
-
-    return data;
+    return data.map((el) => ({
+      id: el.osm_type.charAt(0).toUpperCase() + el.osm_id,
+      display_name: getDisplayName(el),
+    }));
   }
 
   async checkLocation(id: string) {
@@ -122,4 +109,35 @@ interface GeocodeResponse {
     };
   }[];
   status: string;
+}
+
+interface Dto {
+  place_id: string;
+  osm_type: string;
+  osm_id: string;
+  lat: string;
+  lon: string;
+  display_name: string;
+  display_place: string;
+  address: Partial<{
+    name: string;
+    house_number: string;
+    road: string;
+    suburb: string;
+    city: string;
+    country: string;
+  }>;
+}
+
+function getDisplayName(place: Dto) {
+  const name = place.address.name ? `${place.address.name} ` : '';
+  const road = place.address.road ? `${place.address.road} ` : '';
+  const house_number = place.address.house_number
+    ? `${place.address.house_number} `
+    : '';
+  const suburb = place.address.suburb ? `${place.address.suburb} ` : '';
+  const city = place.address.city ? `${place.address.city} ` : '';
+  const country = place.address.country ?? '';
+
+  return name + road + house_number + suburb + city + country;
 }

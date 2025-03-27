@@ -151,8 +151,8 @@ export class AppointmentFormComponent implements OnInit {
         }
 
         this.formGroup.controls.location.setValue({
-          description: appointment.location.name,
-          place_id: appointment.location.id,
+          id: appointment.locationId,
+          display_name: appointment.location.name,
         });
 
         this.formGroup.controls.environment.setValue(appointment.environment);
@@ -195,7 +195,7 @@ export class AppointmentFormComponent implements OnInit {
   getLocationSuggestions(event: AutoCompleteCompleteEvent) {
     this.locationService.getSuggestions(event.query).subscribe((res) => {
       if (res != null) {
-        this.suggestions = res.predictions;
+        this.suggestions = res;
       } else {
         this.suggestions = [];
       }
@@ -234,7 +234,7 @@ export class AppointmentFormComponent implements OnInit {
         minutes: values.durationMinutes,
       }),
       environment: values.environment,
-      locationId: values.location.place_id,
+      locationId: values.location.id,
       minAge: values.age[0],
       maxAge: values.age[1],
       minSkillLevel: values.skill[0],

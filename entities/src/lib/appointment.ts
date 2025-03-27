@@ -52,7 +52,7 @@ export class Appointment {
   @Column()
   maxAge: number;
 
-  @Column()
+  @Column({ type: 'float' })
   pricePerPlayer: number;
 
   @Column()

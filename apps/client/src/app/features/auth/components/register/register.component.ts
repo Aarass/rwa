@@ -21,7 +21,17 @@ import {
   AutoCompleteCompleteEvent,
   AutoCompleteModule,
 } from 'primeng/autocomplete';
-import { Subject, take, takeUntil } from 'rxjs';
+import {
+  catchError,
+  EMPTY,
+  empty,
+  from,
+  of,
+  Subject,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { LocationService } from '../../../location/services/location/location.service';
 
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -93,13 +103,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
   getLocationSuggestions(event: AutoCompleteCompleteEvent) {
     this.locationService
       .getSuggestions(event.query)
-      .pipe(take(1))
+      .pipe(
+        catchError((err) => of([] as LocationSuggestionDto[])),
+        take(1)
+      )
       .subscribe((res) => {
-        if (res != null) {
-          this.suggestions = res.predictions;
-        } else {
-          this.suggestions = [];
-        }
+        this.suggestions = res;
       });
   }
 
@@ -139,7 +148,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const registerUserDto: RegisterUserDto = {
       biography: values.biography,
       birthDate: values.birthDate.toISOString().split('T')[0],
-      locationId: values.location.place_id,
+      locationId: values.location.id,
       name: values.name,
       password: values.password,
       phoneNumber: values.phoneNumber,

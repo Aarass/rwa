@@ -173,6 +173,10 @@ export class AppointmentsService {
   }
 
   async update(id: number, updateAppointmentDto: UpdateAppointmentDto) {
+    if (updateAppointmentDto.locationId) {
+      await this.locationService.checkLocation(updateAppointmentDto.locationId);
+    }
+
     await this.appointmentRepository.update(id, updateAppointmentDto);
     await this.participationRepository.update(
       {

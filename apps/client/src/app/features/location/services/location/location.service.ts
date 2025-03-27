@@ -10,12 +10,13 @@ export class LocationService {
   constructor(private http: HttpClient, private configService: ConfigService) {}
 
   getSuggestions(input: string) {
-    return this.http.get<{
-      predictions: LocationSuggestionDto[];
-    }>(`${this.configService.getBackendBaseURL()}/locations/suggestion`, {
-      params: {
-        input,
-      },
-    });
+    return this.http.get<LocationSuggestionDto[]>(
+      `${this.configService.getBackendBaseURL()}/locations/suggestion`,
+      {
+        params: {
+          input,
+        },
+      }
+    );
   }
 }

@@ -2,7 +2,7 @@
   <p-messages key="appoi_form" [hideTransitionOptions]="'0ms'" />
   <div [formGroup]="formGroup" class="form">
     <p-floatLabel class="full">
-      <p-autoComplete [suggestions]="suggestions" optionLabel="description" [formControl]="formGroup.controls.location"
+      <p-autoComplete [suggestions]="suggestions" [formControl]="formGroup.controls.location" optionLabel="display_name"
         (completeMethod)="getLocationSuggestions($event)" styleClass="w-full" inputStyleClass="w-full" required
         inputId="location" />
       <label for="location">Location</label>
