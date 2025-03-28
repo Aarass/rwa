@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 
+declare const process: {
+  env: any;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class ConfigService {
-  private backendBaseURL = 'http://localhost:3000';
-  // private backendBaseURL = 'http://178.149.108.197:3000';
+  private backendBaseURL = process.env.API_URL ?? 'http://localhost:3000';
+
   getBackendBaseURL() {
     return this.backendBaseURL;
   }

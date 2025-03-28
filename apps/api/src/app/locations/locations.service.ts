@@ -37,8 +37,6 @@ export class LocationsService {
 
     const place = data[0];
 
-    console.log(place);
-
     const location = this.locationRepository.create({
       id: locationId,
       name: getDisplayName(place),
@@ -61,8 +59,6 @@ export class LocationsService {
     const response = await firstValueFrom(this.http.get(url));
 
     const data: Dto[] = response.data;
-
-    console.log(data);
 
     return data.map((el) => ({
       id: el.osm_type.charAt(0).toUpperCase() + el.osm_id,

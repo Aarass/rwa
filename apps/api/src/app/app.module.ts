@@ -29,10 +29,6 @@ import { UserModule } from './user/user.module';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     (() => {
-      console.log(process.env.DATABASE_HOST);
-      console.log(process.env.DATABASE_USERNAME);
-      console.log(process.env.DATABASE_PASSWORD);
-      console.log(process.env.DATABASE_NAME);
       return TypeOrmModule.forRoot({
         type: 'postgres',
         host: process.env.DATABASE_HOST ?? 'localhost',
